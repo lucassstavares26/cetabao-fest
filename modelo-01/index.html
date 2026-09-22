@@ -67,11 +67,14 @@
 
   /* ================= CORPO — madeira, luzes e engradados ================= */
   .corpo {
+    --lado: 5.5cqw;
     background:
-      linear-gradient(90deg, rgba(10, 6, 4, .35), rgba(10, 6, 4, .78) 12%, rgba(10, 6, 4, .78) 88%, rgba(10, 6, 4, .35)),
+      url(img/borda-esq.jpg) left top / 6.6cqw 100% no-repeat,
+      url(img/borda-dir.jpg) right top / 6.6cqw 100% no-repeat,
+      linear-gradient(90deg, rgba(10, 6, 4, .55), rgba(10, 6, 4, .82) 20%, rgba(10, 6, 4, .82) 80%, rgba(10, 6, 4, .55)),
       url(img/fundo-madeira.jpg) top center / 100% auto repeat-y;
-    padding: 14px var(--gutter) 0;
-    display: grid; gap: 16px;
+    padding: 2.6cqw var(--lado) 0;
+    display: grid; gap: 2.4cqw;
   }
   .card { border-radius: 18px; text-align: center; }
   .card h2 {
@@ -84,17 +87,18 @@
     background: linear-gradient(180deg, #04142f, var(--navy) 70%);
     border: 1.5px solid var(--borda-azul);
     box-shadow: 0 0 18px rgba(60, 120, 255, .25), inset 0 0 30px rgba(0, 0, 0, .5);
-    padding: 18px 12px 16px;
+    padding: 3cqw 2.6cqw 2.4cqw;
+    margin-inline: 5.6cqw;
   }
-  .contagem h2 { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: clamp(21px, 5.6vw, 28px); margin-bottom: 14px; }
-  .relogio { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .contagem h2 { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: clamp(18px, 5.4cqw, 28px); margin-bottom: 2.4cqw; white-space: nowrap; }
+  .relogio { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2.4cqw; }
   .relogio div {
     background: #00050e; border: 1px solid rgba(255, 255, 255, .3); border-radius: 10px;
-    padding: 12px 0 10px; font-family: var(--titulo);
+    padding: 2.4cqw 0 2cqw; font-family: var(--titulo);
   }
-  .relogio b { display: block; font-weight: 700; line-height: 1; font-size: clamp(38px, 11.5vw, 52px); font-variant-numeric: tabular-nums; }
-  .relogio small { display: block; margin-top: 6px; font-weight: 700; font-size: 13px; letter-spacing: .06em; }
-  .placa { width: 100%; max-width: 480px; margin: 14px auto 0; border-radius: 6px; }
+  .relogio b { display: block; font-weight: 700; line-height: 1; font-size: clamp(30px, 9.6cqw, 52px); font-variant-numeric: tabular-nums; }
+  .relogio small { display: block; margin-top: 1.2cqw; font-weight: 700; font-size: clamp(11px, 3.1cqw, 16px); letter-spacing: .06em; }
+  .placa { width: 88%; margin: 2.6cqw auto 0; border-radius: 6px; }
 
   /* formulário */
   .acesso {
@@ -103,11 +107,11 @@
       linear-gradient(180deg, #022a68, #011d4b);
     border: 1.5px solid rgba(120, 170, 255, .45);
     box-shadow: 0 10px 40px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .12);
-    padding: 26px 16px 20px;
+    padding: 4.4cqw 4.6cqw 3.6cqw;
     scroll-margin-top: 12px;
   }
-  .acesso h2 { font-size: clamp(36px, 10.4vw, 48px); }
-  .acesso .sub { font-size: 17px; line-height: 1.4; font-weight: 500; color: #eef2ff; margin: 12px auto 20px; max-width: 30em; }
+  .acesso h2 { font-size: clamp(24px, 8.2cqw, 46px); white-space: nowrap; }
+  .acesso .sub { font-size: clamp(14.5px, 4.1cqw, 19px); line-height: 1.38; font-weight: 500; color: #eef2ff; margin: 2cqw auto 3.6cqw; max-width: 34em; }
   .acesso .sub strong { color: #fff; font-weight: 700; }
   .campo {
     display: flex; align-items: center; gap: 12px;
@@ -127,7 +131,7 @@
     display: flex; align-items: center; justify-content: center; gap: 10px;
     background: linear-gradient(180deg, #18d33a, var(--verde) 55%, var(--verde-2));
     color: #fff; border: 0; border-radius: 12px; cursor: pointer; padding: 0 12px;
-    font: 800 clamp(18px, 5.2vw, 25px)/1 var(--titulo); text-transform: uppercase; letter-spacing: .01em; white-space: nowrap;
+    font: 800 clamp(16px, 5cqw, 27px)/1 var(--titulo); text-transform: uppercase; letter-spacing: .01em; white-space: nowrap;
     box-shadow: 0 6px 20px rgba(0, 189, 36, .35), inset 0 1px 0 rgba(255, 255, 255, .25);
     animation: pulsa 2.4s ease-in-out infinite;
     transition: transform .12s, filter .2s;
@@ -149,41 +153,35 @@
     background: linear-gradient(180deg, rgba(1, 14, 36, .97), rgba(0, 10, 28, .98));
     border: 1.5px solid var(--borda-ouro);
     box-shadow: 0 0 20px rgba(255, 190, 40, .12);
-    padding: 24px 12px 14px;
+    padding: 4cqw 2cqw 2.4cqw;
   }
-  .beneficios h2 { font-size: clamp(31px, 8.8vw, 40px); }
-  .beneficios .para { font-size: 18px; letter-spacing: .03em; margin: 6px 0 18px; text-transform: uppercase; }
-  .grade { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  @container (min-width: 620px) { .grade { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  .grade li { background: #000d21; border: 1px solid var(--borda-ouro); border-radius: 12px; padding: 14px 8px 18px; }
-  .grade img { width: 76px; margin: 0 auto 8px; }
-  .grade h3 { font: 800 clamp(19px, 5.2vw, 22px)/1.05 var(--titulo); text-transform: uppercase; color: var(--amarelo-texto); margin-bottom: 8px; }
-  .grade p { font-size: 15.5px; line-height: 1.35; color: #f1f3f8; }
+  .beneficios h2 { font-size: clamp(22px, 7.2cqw, 42px); white-space: nowrap; }
+  .beneficios .para { font-size: clamp(14px, 4.2cqw, 22px); letter-spacing: .03em; margin: .8cqw 0 3cqw; text-transform: uppercase; }
+  .grade { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.4cqw; }
+  .grade li { background: #000d21; border: 1px solid var(--borda-ouro); border-radius: 2.2cqw; padding: 2.4cqw 1cqw 3cqw; }
+  .grade img { width: 72%; margin: 0 auto 1.2cqw; }
+  .grade h3 { font: 800 clamp(12px, 3.5cqw, 21px)/1.05 var(--titulo); text-transform: uppercase; color: var(--amarelo-texto); margin-bottom: 1.4cqw; }
+  .grade p { font-size: clamp(11px, 3.1cqw, 15.5px); line-height: 1.3; color: #f1f3f8; hyphens: auto; }
 
-  .cena { margin: 0 calc(-1 * var(--gutter)); }
+  .cena { margin: -1cqw calc(-1 * var(--lado)) 0; }
   .cena img { width: 100%; }
 
-  /* rodapé */
+  /* rodapé: uma linha, como na arte */
   .rodape {
     background: linear-gradient(180deg, #1c0a03, #0c0402);
     border-top: 1px solid rgba(255, 255, 255, .08);
-    padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
-    display: grid; gap: 22px; text-align: center;
+    padding: 3cqw 4cqw calc(3cqw + env(safe-area-inset-bottom));
+    display: grid; grid-template-columns: auto 1fr auto; align-items: start;
   }
-  @container (min-width: 620px) {
-    .rodape { grid-template-columns: auto 1fr auto; text-align: left; align-items: start; padding: 18px 28px 22px; }
-    .rodape > div + div { border-left: 1px solid rgba(255, 255, 255, .15); padding-left: 22px; }
-    .logo-real { margin: 0 !important; }
-    .apoios, .redes { justify-content: flex-start !important; }
-  }
-  .rodape h4 { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; color: #e8e8e8; margin-bottom: 10px; }
-  .logo-real { width: 150px; height: 56px; margin: 0 auto; background: #fff; border-radius: 6px; display: grid; place-items: center; color: #666; font-size: 13px; font-weight: 600; }
-  .apoios { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-  .apoios span { width: 62px; height: 42px; border: 1px solid rgba(255, 255, 255, .35); border-radius: 8px; display: grid; place-items: center; font-size: 12px; color: #ddd; }
-  .redes { display: flex; gap: 6px; justify-content: center; }
-  .redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; transition: background-color .2s; }
+  .rodape > div + div { border-left: 1px solid rgba(255, 255, 255, .15); padding-left: 3cqw; margin-left: 3cqw; }
+  .rodape h4 { font-size: clamp(8px, 2.2cqw, 12.5px); font-weight: 700; letter-spacing: .06em; color: #e8e8e8; margin-bottom: 1.6cqw; }
+  .logo-real { width: 17cqw; height: 7cqw; background: #fff; border-radius: 1cqw; display: grid; place-items: center; color: #666; font-size: clamp(8px, 2cqw, 13px); font-weight: 600; }
+  .apoios { display: flex; gap: 1.2cqw; }
+  .apoios span { flex: 1; max-width: 9cqw; height: 5.6cqw; border: 1px solid rgba(255, 255, 255, .35); border-radius: 1cqw; display: grid; place-items: center; font-size: clamp(7px, 1.8cqw, 12px); color: #ddd; }
+  .redes { display: flex; gap: .4cqw; }
+  .redes a { width: max(26px, 5.4cqw); height: max(26px, 5.4cqw); display: grid; place-items: center; border-radius: 50%; transition: background-color .2s; }
   .redes a:hover { background: rgba(255, 255, 255, .1); }
-  .redes svg { width: 24px; height: 24px; fill: #fff; }
+  .redes svg { width: 72%; height: 72%; fill: #fff; }
 
   /* menu */
   .menu { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end; background: rgba(0, 0, 0, .55); opacity: 0; pointer-events: none; transition: opacity .25s; }
@@ -201,11 +199,6 @@
   .menu nav a.cta { margin-top: 18px; border: 0; background: var(--verde); border-radius: 10px; text-align: center; }
   .menu .fechar { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 12px; width: 48px; height: 48px; background: none; border: 0; color: #fff; font-size: 36px; line-height: 1; cursor: pointer; }
 
-  @container (min-width: 620px) {
-    .corpo { padding: 22px 40px 0; gap: 22px; }
-    .contagem, .acesso, .beneficios { padding-left: 34px; padding-right: 34px; }
-    .cena { margin: 0 -40px; }
-  }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .btn-vip { animation: none; }
