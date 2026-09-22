@@ -273,12 +273,24 @@
   .barra em { font: 800 13px/1 var(--estreita); font-style: normal; letter-spacing: .06em; padding: 6px 8px; border-radius: 8px; background: rgba(125, 11, 11, .12); }
   body.liberado .barra em { display: none; }
 
+  /* ---------- sobe e aparece ao rolar ---------- */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .7s cubic-bezier(.2, .7, .2, 1), transform .7s cubic-bezier(.2, .7, .2, 1);
+  }
+  .reveal.aparece { opacity: 1; transform: none; }
+  .passos li:nth-child(1) { transition-delay: 0s; }
+  .passos li:nth-child(2) { transition-delay: .12s; }
+  .passos li:nth-child(3) { transition-delay: .24s; }
+
   @media (min-width: 1000px) { html { zoom: 1.3; } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     html { scroll-behavior: auto; }
+    .reveal { opacity: 1 !important; transform: none !important; }
   }
 </style>
+<noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
 </head>
 <body>
 
@@ -300,7 +312,7 @@
   </figure>
 
   <section class="porteira" aria-label="Atrações, cadastro e contagem">
-    <div class="nomes">
+    <div class="nomes reveal">
       <h1 class="sr">Cê Tá Bão Fest · Passos-MG · sábado, 28/11 — pré-venda com 10% OFF no Canal VIP</h1>
       <p class="cabeca">Henrique e Diego</p>
       <p class="mais">+ Kamisa 10</p>
@@ -312,7 +324,7 @@
       </ul>
     </div>
 
-    <div class="cartao" id="acesso">
+    <div class="cartao reveal" id="acesso">
       <span class="etiqueta">10% OFF exclusivo</span>
 
       <div class="cartao-cabeca" id="cabeca-form">
@@ -356,7 +368,7 @@
       </div>
     </div>
 
-    <div class="contagem-bloco">
+    <div class="contagem-bloco reveal">
       <p class="rotulo">Pré-venda</p>
       <h2 id="t-porteira" data-aberta="A porteira abriu!">A porteira abre em</h2>
       <div class="contagem" role="timer" aria-label="Contagem para a abertura das vendas">
@@ -373,24 +385,24 @@
     <p class="rotulo">Passo a passo</p>
     <h2 id="t-como">Como garantir os 10%</h2>
     <ol class="passos">
-      <li><span class="n" aria-hidden="true">1</span><h3>Faz seu cadastro</h3><p>Nome, e-mail e WhatsApp aqui na página. Leva menos de 1 minuto.</p></li>
-      <li><span class="n" aria-hidden="true">2</span><h3>Entra no canal</h3><p>O botão do Canal VIP é liberado na hora. Lá dentro, ativa o sininho.</p></li>
-      <li><span class="n" aria-hidden="true">3</span><h3>Compra com 10% OFF</h3><p>Terça, 06/10, ao meio-dia, o link da pré-venda com desconto sai no canal.</p></li>
+      <li class="reveal"><span class="n" aria-hidden="true">1</span><h3>Faz seu cadastro</h3><p>Nome, e-mail e WhatsApp aqui na página. Leva menos de 1 minuto.</p></li>
+      <li class="reveal"><span class="n" aria-hidden="true">2</span><h3>Entra no canal</h3><p>O botão do Canal VIP é liberado na hora. Lá dentro, ativa o sininho.</p></li>
+      <li class="reveal"><span class="n" aria-hidden="true">3</span><h3>Compra com 10% OFF</h3><p>Terça, 06/10, ao meio-dia, o link da pré-venda com desconto sai no canal.</p></li>
     </ol>
   </section>
 
   <section class="palco" aria-labelledby="t-vibe">
-    <figure class="galera"><img src="img/galera.webp" alt="Amigas de chapéu fazendo selfie no Cê Tá Bão Fest" width="800" height="996" loading="lazy" decoding="async"></figure>
-    <h3 id="t-vibe">Música, amizade e <span>Cê Tá Bão.</span></h3>
-    <p>Copo na mão, a turma do lado e o palco aceso. Mais que um evento: uma experiência pra Passos inteira.</p>
-    <div class="ficha">
+    <figure class="galera reveal"><img src="img/galera.webp" alt="Amigas de chapéu fazendo selfie no Cê Tá Bão Fest" width="800" height="996" loading="lazy" decoding="async"></figure>
+    <h3 class="reveal" id="t-vibe">Música, amizade e <span>Cê Tá Bão.</span></h3>
+    <p class="reveal">Copo na mão, a turma do lado e o palco aceso. Mais que um evento: uma experiência pra Passos inteira.</p>
+    <div class="ficha reveal">
       <div><svg aria-hidden="true"><use href="#i-agenda"/></svg><span>Quando</span><b>Sábado, 28 de novembro</b></div>
       <div><svg aria-hidden="true"><use href="#i-local"/></svg><span>Onde</span><b>Parque de Exposições Adolpho Coelho Lemos · Passos-MG</b></div>
     </div>
   </section>
 
   <section class="fim" aria-labelledby="t-fim">
-    <div class="topo">
+    <div class="topo reveal">
       <div class="varal" aria-hidden="true">
         <svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 8 Q50 84 100 8"/></svg>
         <i style="--x:4.5%;--y:14.5px"></i>
@@ -411,7 +423,7 @@
         <span class="chip"><svg><use href="#i-local"/></svg>Passos-MG</span>
       </div>
     </div>
-    <div class="hero">
+    <div class="hero reveal">
       <h2 id="t-fim">
         <span class="sr">Entrou no Canal VIP, ganhou 10% OFF na abertura das vendas do Cê Tá Bão Fest.</span>
         <span class="h1-a" aria-hidden="true">Entrou no canal,</span>
@@ -431,11 +443,11 @@
   </section>
 </main>
 
-<div class="patro">
+<div class="patro reveal">
   <img src="img/patrocinadores.webp" alt="Realização: Headlab Entretenimento e Roy Entretenimento. Brahma. M2. Promoção: Ind 90.9 FM e Jovem Pan FM Passos 96.9." width="1080" height="114" loading="lazy" decoding="async">
 </div>
 
-<footer class="rodape">
+<footer class="rodape reveal">
   <nav class="redes" aria-label="Redes sociais">
     <a data-rede="instagram" href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
     <a data-rede="tiktok" href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.3 2.2 1.7 3.6 3.9 3.8v3.3c-1.5 0-2.8-.4-3.9-1.2v6.4c0 3.5-2.6 5.7-5.6 5.7-3.1 0-5.5-2.3-5.5-5.4 0-3.2 2.7-5.6 6-5.3v3.4c-1.4-.3-2.6.6-2.6 1.9 0 1.2.9 2 2 2 1.2 0 2.1-.8 2.1-2.3V3h3.6z"/></svg></a>
@@ -598,6 +610,19 @@
     barra.classList.toggle('escondida', [...visivel.values()].some(Boolean));
   }, { threshold: 0.1 });
   ['cta-topo', 'acesso'].forEach(id => obs.observe(document.getElementById(id)));
+
+  // ---------- sobe e aparece ao rolar ----------
+  const itensRevelar = document.querySelectorAll('.reveal');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    itensRevelar.forEach(el => el.classList.add('aparece'));
+  } else {
+    const obsRevelar = new IntersectionObserver((es, o) => {
+      es.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('aparece'); o.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    itensRevelar.forEach(el => obsRevelar.observe(el));
+  }
 </script>
 </body>
 </html>
