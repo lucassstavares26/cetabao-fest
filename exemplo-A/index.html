@@ -257,10 +257,9 @@
 
   /* ---------- patrocinadores + rodapé ---------- */
   .patro { position: relative; overflow: hidden; background: var(--faixa); padding: 14px 0; }
-  .patro-trilha { display: flex; align-items: center; width: max-content; gap: 36px; animation: rola-patro 18s linear infinite; }
+  .patro-trilha { display: flex; align-items: center; width: max-content; gap: 36px; }
   .patro-trilha img { flex: none; height: 30px; width: auto; }
   .patro-trilha img.grande { height: 46px; }
-  @keyframes rola-patro { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
   .rodape { padding: 26px var(--lado) calc(75px + env(safe-area-inset-bottom, 0px)); background: var(--ceu-fundo); color: #9fb2da; font-size: 14px; }
   .redes { display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; }
   .redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--vidro); color: #fff; }
@@ -639,6 +638,29 @@
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
     itensRevelar.forEach(el => obsRevelar.observe(el));
+  }
+
+  // ---------- faixa de patrocinadores: rolagem por tempo real (não por CSS) ----------
+  // Motivo: a animação de CSS ficava lenta e piscando no Safari do iPhone,
+  // mesmo depois de vários ajustes. Controlando por JS com o tempo real
+  // (performance.now()), a velocidade fica idêntica em qualquer navegador.
+  const trilha = document.querySelector('.patro-trilha');
+  if (trilha && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const VELOCIDADE = 55; // pixels por segundo
+    let ultimoQuadro = null;
+    let deslocamento = 0;
+    function rolarPatro(agora) {
+      if (ultimoQuadro === null) ultimoQuadro = agora;
+      const dt = Math.min((agora - ultimoQuadro) / 1000, 0.1); // trava dt se a aba ficou em segundo plano
+      ultimoQuadro = agora;
+      const metade = trilha.scrollWidth / 2;
+      if (metade > 0) {
+        deslocamento = (deslocamento + VELOCIDADE * dt) % metade;
+        trilha.style.transform = `translateX(${-deslocamento}px)`;
+      }
+      requestAnimationFrame(rolarPatro);
+    }
+    requestAnimationFrame(rolarPatro);
   }
 </script>
 </body>
