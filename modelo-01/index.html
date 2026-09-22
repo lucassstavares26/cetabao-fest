@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Cê Tá Bão Fest · Passos MG</title>
+<meta name="description" content="Cê Tá Bão Fest — Sábado 28/11 no Parque de Exposições de Passos - MG. Pré-venda dia 06/10 ao meio-dia com 10% OFF exclusivo para quem está no Canal VIP.">
+<meta property="og:title" content="Cê Tá Bão Fest · Passos MG">
+<meta property="og:description" content="A pré-venda mais esperada de Passos está chegando! 06/10 ao meio-dia, 10% OFF exclusivo para quem está no Canal VIP.">
+<meta property="og:image" content="img/topo.jpg">
+<meta name="theme-color" content="#0a1f4a">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preload" as="image" href="img/topo.jpg" fetchpriority="high">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /*
+    As duas artes são exibidas exatamente como foram desenhadas.
+    Os elementos que funcionam (contagem, campos, botões) ficam posicionados
+    por cima, em pixels da arte, e escalam junto com ela.
+  */
+  :root {
+    --u1: calc(100cqw / 774);   /* 1px da arte da parte 1 (774 de largura) */
+    --u2: calc(100cqw / 851);   /* 1px da arte da parte 2 (851 de largura) */
+    --amarelo: #ffc61a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    background: #06132b;
+    font-family: 'Barlow', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(rgba(4, 12, 30, .72), rgba(4, 12, 30, .88)), url(img/fundo-desfocado.jpg) center / cover;
+  }
+  .pagina {
+    max-width: 774px;
+    margin: 0 auto;
+    container-type: inline-size;
+    box-shadow: 0 0 60px rgba(0, 0, 0, .6);
+    overflow: hidden;
+  }
+  .arte { position: relative; }
+  .arte > img { display: block; width: 100%; height: auto; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* elemento posicionado sobre a arte: --x --y --w --h em pixels da arte */
+  .p1 > .sobre { --u: var(--u1); }
+  .p2 > .sobre, .p2 .sobre { --u: var(--u2); }
+  .sobre {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    width: calc(var(--w) * var(--u));
+    height: calc(var(--h) * var(--u));
+  }
+  .clique { border: 0; background: transparent; cursor: pointer; border-radius: calc(var(--r, 8) * var(--u)); transition: background-color .2s, box-shadow .2s, transform .12s; }
+  .clique:hover { background: rgba(255, 255, 255, .1); }
+  .clique:active { transform: scale(.985); }
+  .clique:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
+
+  /* ---------- parte 1 ---------- */
+  .btn-menu { --x: 719; --y: 0; --w: 55; --h: 52; --r: 0; min-width: 40px; min-height: 40px; }
+  .ir-form { --x: 84; --y: 476; --w: 610; --h: 122; }
+  .ir-form:hover { background: transparent; }
+
+  /* ---------- parte 2: contagem ---------- */
+  .cx {
+    --y: 68; --w: 119; --h: 83;
+    background: #00050e;
+    border: max(1px, calc(1.2 * var(--u))) solid #555b66;
+    border-radius: calc(9 * var(--u));
+    color: #fff; text-align: center;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+  }
+  .cx b {
+    position: absolute; left: 0; right: 0; top: calc(13 * var(--u));
+    font-weight: 700; font-size: calc(43 * var(--u)); line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .cx small {
+    position: absolute; left: 0; right: 0; top: calc(57 * var(--u));
+    font-weight: 600; font-size: calc(14.5 * var(--u)); line-height: 1; letter-spacing: .02em;
+  }
+
+  /* ---------- parte 2: formulário ---------- */
+  .campo {
+    --x: 178; --w: 554; --h: 44;
+    background: #fff;
+    display: flex; align-items: center;
+  }
+  .campo input {
+    width: 100%; height: 100%;
+    border: 0; outline: 0; background: transparent;
+    padding: 0 calc(6 * var(--u));
+    font: 400 max(12px, calc(17 * var(--u))) 'Barlow', sans-serif;
+    color: #111;
+  }
+  .campo input::placeholder { color: #8b8f97; opacity: 1; }
+  .moldura {
+    --x: 113; --w: 625; --h: 54;
+    border-radius: calc(7 * var(--u));
+    pointer-events: none;
+    transition: box-shadow .15s;
+  }
+  .moldura.foco { box-shadow: 0 0 0 max(2px, calc(3 * var(--u))) var(--amarelo); }
+  .moldura.erro { box-shadow: 0 0 0 max(2px, calc(3 * var(--u))) #ff3b3b; animation: treme .35s; }
+  @keyframes treme { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .aviso {
+    --x: 113; --y: 548; --w: 625; --h: 34;
+    display: none; align-items: center; justify-content: center;
+    background: #c81e1e; color: #fff; border-radius: calc(6 * var(--u));
+    font: 500 max(12px, calc(15 * var(--u))) 'Barlow', sans-serif;
+    z-index: 2;
+  }
+  .aviso.ver { display: flex; }
+  .btn-vip { --x: 112; --y: 475; --w: 627; --h: 68; --r: 10; animation: pulsa 2.4s ease-in-out infinite; }
+  .btn-vip:hover { background: rgba(255, 255, 255, .12); }
+  .btn-vip[disabled] { cursor: wait; background: rgba(0, 0, 0, .25); animation: none; }
+  @keyframes pulsa {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 200, 40, 0); }
+    50% { box-shadow: 0 0 calc(26 * var(--u)) calc(3 * var(--u)) rgba(0, 220, 50, .55); }
+  }
+
+  /* ---------- parte 2: redes ---------- */
+  .rede { --y: 1219; --w: 36; --h: 36; --r: 18; }
+
+  /* ---------- menu ---------- */
+  .menu {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; justify-content: flex-end;
+    background: rgba(0, 0, 0, .55);
+    opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .menu.aberto { opacity: 1; pointer-events: auto; }
+  .menu nav {
+    width: min(300px, 82vw); height: 100%;
+    background: linear-gradient(180deg, #0b2a66, #04122c);
+    border-left: 3px solid var(--amarelo);
+    padding: calc(70px + env(safe-area-inset-top)) 28px 28px;
+    transform: translateX(100%); transition: transform .3s ease;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .menu.aberto nav { transform: none; }
+  .menu nav a {
+    font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700;
+    font-size: 22px; text-transform: uppercase; letter-spacing: .02em;
+    color: #fff; text-decoration: none; padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+  }
+  .menu nav a:hover { color: var(--amarelo); }
+  .menu nav a.cta { margin-top: 18px; border: 0; background: #00bd24; border-radius: 10px; text-align: center; }
+  .menu .fechar {
+    position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 12px;
+    width: 48px; height: 48px;
+    background: none; border: 0; color: #fff; font-size: 36px; line-height: 1; cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn-vip, .moldura.erro { animation: none; }
+    .menu, .menu nav { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="pagina">
+
+  <!-- PARTE 1 -->
+  <section class="arte p1" id="inicio">
+    <img src="img/topo.jpg" width="1548" height="1198" fetchpriority="high"
+         alt="Cê Tá Bão Fest, Passos - MG. Sábado 28/11 no Parque de Exposições Rodolpho Coelho Lemos. Aqui é música, amizade e Cê Tá Bão! A pré-venda mais esperada de Passos está chegando: 06/10 ao meio-dia, 10% OFF exclusivo para quem está no canal.">
+    <h1 class="sr">Cê Tá Bão Fest — Passos MG — Sábado 28/11. Pré-venda 06/10 ao meio-dia com 10% OFF.</h1>
+    <button class="sobre clique btn-menu" type="button" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false"></button>
+    <a class="sobre clique ir-form" href="#acesso" aria-label="Garantir 10% de desconto — ir para o cadastro"></a>
+  </section>
+
+  <!-- PARTE 2 -->
+  <section class="arte p2" id="contagem">
+    <img src="img/parte2.jpg" width="1702" height="2568" loading="lazy"
+         alt="A pré-venda abre em 06 de outubro às 12h. Garanta seu acesso: preencha seus dados e entre no nosso Canal VIP para receber o link da pré-venda e garantir 10% de desconto. Benefícios exclusivos para quem está no canal: 10% OFF, acesso antecipado, prioridade nos melhores setores e todas as novidades. Passos - MG, Cê Tá Bão!">
+
+    <div role="timer" aria-label="Tempo até a abertura da pré-venda">
+      <div class="sobre cx" style="--x:154"><b data-t="d">00</b><small>DIAS</small></div>
+      <div class="sobre cx" style="--x:296"><b data-t="h">00</b><small>HORAS</small></div>
+      <div class="sobre cx" style="--x:437"><b data-t="m">00</b><small>MIN</small></div>
+      <div class="sobre cx" style="--x:579"><b data-t="s">00</b><small>SEG</small></div>
+    </div>
+
+    <span class="sr" id="acesso"></span>
+    <h2 class="sr">Garanta seu acesso</h2>
+    <form id="form-vip" novalidate>
+      <div class="sobre moldura" id="m-nome" style="--y:344"></div>
+      <label class="sobre campo" style="--y:349">
+        <span class="sr">Nome</span>
+        <input type="text" name="nome" placeholder="Digite seu nome" autocomplete="name" autocapitalize="words" enterkeyhint="next" required>
+      </label>
+      <div class="sobre moldura" id="m-whats" style="--y:408"></div>
+      <label class="sobre campo" style="--y:413">
+        <span class="sr">WhatsApp com DDD</span>
+        <input type="tel" name="whatsapp" placeholder="Digite seu WhatsApp com DDD" autocomplete="tel-national" inputmode="numeric" enterkeyhint="send" maxlength="15" required>
+      </label>
+      <button class="sobre clique btn-vip" type="submit" aria-label="Quero entrar no Canal VIP"></button>
+      <p class="sobre aviso" role="alert"></p>
+    </form>
+
+    <a class="sobre clique rede" style="--x:639" data-rede="instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram"></a>
+    <a class="sobre clique rede" style="--x:674" data-rede="facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook"></a>
+    <a class="sobre clique rede" style="--x:709" data-rede="tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok"></a>
+    <a class="sobre clique rede" style="--x:744" data-rede="youtube" href="#" target="_blank" rel="noopener" aria-label="YouTube"></a>
+    <a class="sobre clique rede" style="--x:779" data-rede="spotify" href="#" target="_blank" rel="noopener" aria-label="Spotify"></a>
+  </section>
+
+</main>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <nav aria-label="Menu">
+    <button class="fechar" type="button" aria-label="Fechar menu">&times;</button>
+    <a href="#inicio">Início</a>
+    <a href="#contagem">Contagem</a>
+    <a href="#acesso">Garanta seu acesso</a>
+    <a class="cta" href="#acesso">Entrar no Canal VIP</a>
+  </nav>
+</div>
+
+<script>
+  /* ================= CONFIGURAÇÃO ================= */
+  // ⚠️ Link do canal/grupo do WhatsApp para onde a pessoa vai depois de preencher
+  const LINK_CANAL = 'https://whatsapp.com/channel/SEU-CANAL-AQUI';
+  // Opcional: endereço que recebe os cadastros (Google Sheets / Make / n8n). Vazio = não envia.
+  const WEBHOOK_CADASTRO = '';
+  // Abertura da pré-venda: 06/10/2026 às 12h (horário de Brasília)
+  const ABERTURA = new Date('2026-10-06T12:00:00-03:00').getTime();
+  const REDES = { instagram: '#', facebook: '#', tiktok: '#', youtube: '#', spotify: '#' };
+  /* ================================================ */
+
+  document.querySelectorAll('[data-rede]').forEach(a => a.href = REDES[a.dataset.rede] || '#');
+
+  // contagem regressiva
+  const campos = {};
+  document.querySelectorAll('[data-t]').forEach(el => campos[el.dataset.t] = el);
+  const dd = n => String(n).padStart(2, '0');
+  function atualizar() {
+    let resto = Math.max(0, Math.floor((ABERTURA - Date.now()) / 1000));
+    const d = Math.floor(resto / 86400); resto %= 86400;
+    const h = Math.floor(resto / 3600); resto %= 3600;
+    campos.d.textContent = dd(d);
+    campos.h.textContent = dd(h);
+    campos.m.textContent = dd(Math.floor(resto / 60));
+    campos.s.textContent = dd(resto % 60);
+  }
+  atualizar();
+  setInterval(atualizar, 1000);
+
+  // formulário
+  const form = document.getElementById('form-vip');
+  const inNome = form.nome, inWhats = form.whatsapp;
+  const aviso = form.querySelector('.aviso');
+  const moldura = { nome: document.getElementById('m-nome'), whats: document.getElementById('m-whats') };
+
+  [[inNome, 'nome'], [inWhats, 'whats']].forEach(([input, qual]) => {
+    input.addEventListener('focus', () => moldura[qual].classList.add('foco'));
+    input.addEventListener('blur', () => moldura[qual].classList.remove('foco'));
+    input.addEventListener('input', () => { moldura[qual].classList.remove('erro'); aviso.classList.remove('ver'); });
+  });
+
+  // máscara: (37) 99999-9999
+  inWhats.addEventListener('input', () => {
+    const n = inWhats.value.replace(/\D/g, '').slice(0, 11);
+    let v = n;
+    if (n.length > 2) v = `(${n.slice(0, 2)}) ${n.slice(2)}`;
+    if (n.length > 7) v = `(${n.slice(0, 2)}) ${n.slice(2, n.length - 4)}-${n.slice(-4)}`;
+    inWhats.value = v;
+  });
+  inNome.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inWhats.focus(); } });
+
+  function erro(qual, input, texto) {
+    const m = moldura[qual];
+    m.classList.remove('erro'); void m.offsetWidth; m.classList.add('erro');
+    aviso.textContent = texto;
+    aviso.classList.add('ver');
+    input.focus();
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const nome = inNome.value.trim();
+    const numero = inWhats.value.replace(/\D/g, '');
+    if (nome.length < 2) return erro('nome', inNome, 'Digite seu nome para continuar.');
+    if (numero.length < 10) return erro('whats', inWhats, 'Digite seu WhatsApp com DDD.');
+
+    const btn = form.querySelector('.btn-vip');
+    btn.disabled = true;
+
+    if (WEBHOOK_CADASTRO) {
+      const params = new URLSearchParams(location.search);
+      const dados = {
+        nome, whatsapp: '55' + numero, data: new Date().toISOString(),
+        utm_source: params.get('utm_source') || '', utm_campaign: params.get('utm_campaign') || ''
+      };
+      try {
+        await Promise.race([
+          fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(dados), keepalive: true }),
+          new Promise(r => setTimeout(r, 2500))
+        ]);
+      } catch (_) { /* segue para o canal mesmo se o envio falhar */ }
+    }
+    location.href = LINK_CANAL;
+  });
+
+  // ao tocar no topo, rola até o formulário e já foca o nome
+  document.querySelectorAll('a[href="#acesso"]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    abrirMenu(false);
+    inNome.closest('.arte').querySelector('.moldura').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => inNome.focus({ preventScroll: true }), 500);
+  }));
+
+  // menu
+  const menu = document.getElementById('menu');
+  const btnMenu = document.querySelector('.btn-menu');
+  function abrirMenu(abrir) {
+    menu.classList.toggle('aberto', abrir);
+    menu.setAttribute('aria-hidden', String(!abrir));
+    btnMenu.setAttribute('aria-expanded', String(abrir));
+    document.body.style.overflow = abrir ? 'hidden' : '';
+  }
+  btnMenu.addEventListener('click', () => abrirMenu(true));
+  menu.addEventListener('click', e => {
+    if (e.target === menu || e.target.closest('.fechar') || e.target.closest('a')) abrirMenu(false);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') abrirMenu(false); });
+</script>
+</body>
+</html>

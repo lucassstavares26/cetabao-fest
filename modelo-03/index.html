@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cê Tá Bão Fest Oficial</title>
+<meta name="description" content="Cê Tá Bão Fest — Sábado 28/11 em Passos-MG. Pré-venda 06/10 ao meio-dia com 10% OFF exclusivo para quem está no Canal VIP.">
+<meta property="og:title" content="Cê Tá Bão Fest · Passos MG">
+<meta property="og:description" content="A porteira abre dia 06/10 ao meio-dia. 10% OFF pra quem está no Canal VIP.">
+<meta property="og:image" content="img/galera.webp">
+<meta name="theme-color" content="#0a1f4a">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600;700;800&family=Caveat+Brush&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --couro: #0a1f4a;
+    --couro-2: #164a98;
+    --poeira: #fff6da;
+    --poeira-2: #ffe9a8;
+    --sol: #ffc61a;
+    --brasa: #e3262d;
+    --ouro: #ffc61a;
+    --tinta: #0a1f4a;
+    --tinta-suave: #3d5287;
+    --verde: #2aa84a;
+    --verde-2: #1f8639;
+    --slab: 'Alfa Slab One', 'Rockwell', Georgia, serif;
+    --texto: 'Source Sans 3', system-ui, sans-serif;
+    --mao: 'Caveat Brush', 'Comic Sans MS', cursive;
+    --ingresso: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+    --gutter: 18px;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--poeira);
+    color: var(--tinta);
+    font: 400 17px/1.5 var(--texto);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+  /* grão de papel/poeira */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(rgba(29, 86, 168, .08) 1px, transparent 1.5px) 0 0 / 7px 7px,
+      radial-gradient(rgba(29, 86, 168, .05) 1px, transparent 1.5px) 3px 4px / 11px 11px,
+      var(--poeira);
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .miolo { max-width: 700px; margin: 0 auto; padding-inline: var(--gutter); }
+  h1, h2, h3 { font-family: var(--slab); font-weight: 400; line-height: 1.02; text-wrap: balance; }
+  .mao { font-family: var(--mao); }
+  .rotulo { font: 800 13px/1 var(--texto); letter-spacing: .18em; text-transform: uppercase; color: var(--brasa); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--sol); outline-offset: 3px; }
+
+  /* ---------- HERO: foto no pôr do sol ---------- */
+  .hero { position: relative; color: #fff; background: var(--couro); isolation: isolate; }
+  .hero .foto { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+  .hero .foto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+  .hero .foto::after {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10, 31, 74, .55) 0%, rgba(10, 31, 74, 0) 26%, rgba(10, 31, 74, .15) 45%, rgba(10, 31, 74, .88) 72%, var(--couro) 100%),
+      linear-gradient(90deg, rgba(29, 86, 168, .28), transparent 65%);
+  }
+  .hero .dentro { max-width: 700px; margin: 0 auto; padding: 18px var(--gutter) 34px; display: grid; }
+  .hero .logo { width: clamp(118px, 32vw, 170px); filter: drop-shadow(0 6px 16px rgba(0, 0, 0, .5)); }
+  .hero .espaco { height: clamp(250px, 68vw, 430px); }
+  .hero .data { font: 800 14px/1 var(--texto); letter-spacing: .16em; text-transform: uppercase; color: var(--ouro); }
+  .hero h1 { font-size: clamp(34px, 9.6vw, 58px); margin-top: 10px; text-shadow: 0 3px 20px rgba(0, 0, 0, .45); }
+  .hero h1 .sol { color: var(--sol); }
+  .hero .mao { font-size: clamp(24px, 6.6vw, 34px); color: var(--poeira); margin-top: 8px; transform: rotate(-2deg); transform-origin: left; }
+  .cta {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 58px; padding: 0 26px; margin-top: 18px; justify-self: start;
+    background: var(--sol); color: var(--tinta); text-decoration: none; border-radius: 999px;
+    font: 800 18px/1 var(--texto); letter-spacing: .02em; text-transform: uppercase;
+    box-shadow: 0 10px 26px rgba(255, 198, 26, .4);
+    transition: transform .12s, filter .2s;
+  }
+  .cta:hover { filter: brightness(1.06); }
+  .cta:active { transform: scale(.98); }
+  .cta svg { width: 18px; height: 18px; }
+
+  /* ---------- faixa de couro costurada ---------- */
+  .couro {
+    background: var(--couro-2);
+    background-image: radial-gradient(rgba(255, 255, 255, .04) 1px, transparent 1.5px);
+    background-size: 5px 5px;
+    color: var(--poeira);
+    position: relative;
+  }
+  .costura { outline: 2px dashed rgba(255, 198, 26, .55); outline-offset: -9px; }
+  .faixa { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; padding: 22px 10px; }
+  .faixa div + div { border-left: 1px solid rgba(255, 246, 218, .18); }
+  .faixa b { display: block; font: 400 clamp(22px, 6.4vw, 34px)/1 var(--slab); color: var(--ouro); }
+  .faixa span { display: block; margin-top: 6px; font: 700 clamp(11.5px, 3.2vw, 14px)/1.2 var(--texto); text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ---------- contagem: placa de rancho ---------- */
+  .secao { padding-block: 54px; }
+  .contagem { text-align: center; }
+  .contagem h2 { font-size: clamp(32px, 9vw, 50px); color: var(--couro); margin-top: 10px; }
+  .contagem .mao { font-size: 24px; color: var(--tinta-suave); }
+  .relogio { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 22px; padding-right: 4px; }
+  .relogio div {
+    background: #ffffff; border: 2px solid var(--couro); border-radius: 12px;
+    padding: 14px 0 12px; box-shadow: 3px 3px 0 var(--couro);
+  }
+  .relogio b { display: block; font: 400 clamp(30px, 9.4vw, 58px)/1 var(--slab); color: var(--brasa); font-variant-numeric: tabular-nums; }
+  .relogio small { display: block; margin-top: 6px; font: 800 12px/1 var(--texto); letter-spacing: .16em; color: var(--tinta-suave); }
+
+  /* ---------- formulário: ingresso ---------- */
+  .faixa-ingresso { padding-block: 48px; }
+  .ingresso {
+    position: relative; background: #fff6da; color: #0a1f4a;
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, .45);
+    scroll-margin-top: 16px;
+  }
+  .ingresso .canhoto {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    background: #e3262d; color: #fff; padding: 12px 22px;
+    font: 800 15px/1 var(--ingresso); letter-spacing: .12em; text-transform: uppercase;
+  }
+  .ingresso .canhoto span:last-child { font-family: var(--texto); font-weight: 700; font-size: 12px; letter-spacing: .08em; opacity: .9; }
+  .ingresso .corpo { padding: 26px 22px 24px; position: relative; border-top: 3px dashed rgba(0, 0, 0, .18); }
+  .ingresso .corpo::before, .ingresso .corpo::after {
+    content: ""; position: absolute; top: -13px; width: 26px; height: 26px; border-radius: 50%; background: var(--couro-2);
+  }
+  .ingresso .corpo::before { left: -13px; }
+  .ingresso .corpo::after { right: -13px; }
+  .ingresso h2 { font: 900 clamp(38px, 10vw, 54px)/.92 var(--ingresso); text-transform: uppercase; color: #0a1f4a; }
+  .ingresso .sub { margin: 10px 0 18px; font-size: 16px; color: #33466f; max-width: 34em; }
+  .ingresso .sub strong { color: #e3262d; }
+  .campo { display: grid; gap: 6px; margin-bottom: 14px; }
+  .campo label { font: 700 13px/1 var(--texto); letter-spacing: .06em; text-transform: uppercase; color: #3d5287; }
+  .campo input {
+    height: 56px; width: 100%; padding: 0 16px;
+    border: 2px solid #f0dc9c; border-radius: 12px; background: #fffaf0;
+    font: 500 17px var(--texto); color: #0a1f4a;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .campo input::placeholder { color: #8a93ab; }
+  .campo input:focus { outline: 0; border-color: #ffb81c; box-shadow: 0 0 0 4px rgba(255, 184, 28, .3); }
+  .campo.erro input { border-color: #e3262d; box-shadow: 0 0 0 4px rgba(227, 38, 45, .18); }
+  .campo .msg { display: none; color: #e3262d; font-weight: 600; font-size: 14px; }
+  .campo.erro .msg { display: block; }
+  .btn-vip {
+    width: 100%; min-height: 62px; margin-top: 6px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    border: 0; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(180deg, #2ad957, #1fbf46 55%, #12993a);
+    color: #fff; font: 800 clamp(20px, 5.4vw, 26px)/1 var(--ingresso); letter-spacing: .04em; text-transform: uppercase;
+    box-shadow: 0 10px 24px rgba(31, 191, 70, .35), inset 0 1px 0 rgba(255, 255, 255, .3);
+    transition: transform .12s, filter .2s;
+  }
+  .btn-vip:hover { filter: brightness(1.07); }
+  .btn-vip:active { transform: scale(.98); }
+  .btn-vip[disabled] { opacity: .75; cursor: wait; }
+  .btn-vip svg { width: 28px; height: 28px; flex: none; }
+  .seguro { display: flex; gap: 8px; align-items: flex-start; margin-top: 14px; font-size: 13.5px; color: #4a5a80; line-height: 1.4; }
+  .seguro svg { width: 14px; height: 16px; flex: none; margin-top: 2px; }
+
+  /* ---------- benefícios: marcas de ferro ---------- */
+  .beneficios h2 { font-size: clamp(32px, 8.6vw, 48px); color: var(--couro); margin: 10px 0 24px; }
+  .lista { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px 16px; }
+  @media (min-width: 640px) { .lista { grid-template-columns: repeat(4, 1fr); } }
+  .lista li { display: grid; gap: 8px; justify-items: start; }
+  .marca {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: grid; place-items: center;
+    border: 3px solid var(--brasa); box-shadow: inset 0 0 0 4px var(--poeira), inset 0 0 0 6px var(--brasa);
+    color: var(--brasa); transform: rotate(-6deg);
+  }
+  .marca svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .lista h3 { font-size: 21px; color: var(--couro); }
+  .lista p { font-size: 15.5px; line-height: 1.4; color: var(--tinta-suave); }
+
+  /* ---------- chapéu / experiência ---------- */
+  .experiencia { display: grid; gap: 0; overflow: hidden; border-radius: 22px; background: var(--couro); color: var(--poeira); }
+  .experiencia img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+  .experiencia .txt { padding: 22px 22px 26px; }
+  .experiencia .mao { font-size: clamp(30px, 8.4vw, 44px); line-height: 1.05; color: var(--poeira); }
+  .experiencia .mao span { color: var(--ouro); }
+  .experiencia p:not(.mao) { margin-top: 10px; color: #c6d4f2; }
+
+  /* ---------- line-up: cartaz ---------- */
+  .cartaz { text-align: center; padding-block: 50px 0; overflow: hidden; }
+  .cartaz .rotulo { color: var(--ouro); }
+  .cartaz h2 { font-size: clamp(46px, 14vw, 84px); color: var(--poeira); margin-top: 10px; }
+  .cartaz .mais { font: 400 clamp(30px, 9vw, 52px)/1 var(--slab); color: var(--sol); margin-top: 6px; }
+  .cartaz ul { list-style: none; margin: 20px auto 0; max-width: 520px; }
+  .cartaz li {
+    font: 800 clamp(17px, 4.8vw, 22px)/1 var(--texto); text-transform: uppercase; letter-spacing: .08em;
+    padding: 12px 0; border-top: 1px dashed rgba(255, 198, 26, .45);
+  }
+  .cartaz li:last-child { border-bottom: 1px dashed rgba(255, 198, 26, .45); }
+  .cartaz .onde { margin-top: 20px; color: #c6d4f2; font-size: 15.5px; }
+  .cartaz .onde strong { color: var(--poeira); }
+  .cartaz-oficial { margin-top: 34px; }
+  .pregado {
+    position: relative; max-width: 420px; margin: 0 auto;
+    padding: 10px; background: #ffffff; border-radius: 4px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
+    transform: rotate(-1.5deg);
+  }
+  .pregado::before, .pregado::after { /* fitas */
+    content: ""; position: absolute; top: -12px; width: 86px; height: 26px;
+    background: rgba(255, 198, 26, .78); box-shadow: 0 2px 4px rgba(0, 0, 0, .25);
+  }
+  .pregado::before { left: -16px; transform: rotate(-32deg); }
+  .pregado::after { right: -16px; transform: rotate(30deg); }
+  .pregado img { width: 100%; border-radius: 2px; }
+  .cartaz-oficial figcaption { margin-top: 18px; font-size: clamp(14px, 4.6vw, 24px); white-space: nowrap; color: var(--ouro); }
+
+  /* ---------- rodapé ---------- */
+  .rodape { background: var(--couro); color: #b9c8ea; text-align: center; font-size: 14px; padding: 30px var(--gutter) calc(110px + env(safe-area-inset-bottom)); }
+  .rodape .logo { width: 110px; margin: 0 auto 12px; }
+  .redes { display: flex; justify-content: center; gap: 6px; margin: 8px 0 16px; }
+  .redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255, 198, 26, .4); transition: background-color .2s; }
+  .redes a:hover { background: var(--couro-2); }
+  .redes svg { width: 22px; height: 22px; fill: var(--poeira); }
+
+  /* ---------- barra fixa ---------- */
+  .barra {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+    background: rgba(10, 31, 74, .94); border-top: 2px dashed rgba(255, 198, 26, .5);
+    transition: transform .3s ease;
+  }
+  .barra.escondida { transform: translateY(110%); }
+  .barra a {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    max-width: 620px; margin: 0 auto; min-height: 54px; padding: 0 20px;
+    background: var(--sol); color: var(--tinta); text-decoration: none; border-radius: 999px;
+    font: 800 17px/1 var(--texto); letter-spacing: .03em; text-transform: uppercase;
+  }
+  .barra a small { font: 700 12px/1.1 var(--texto); text-transform: none; letter-spacing: 0; text-align: right; }
+
+  @media (min-width: 760px) {
+    .experiencia { grid-template-columns: 1.1fr 1fr; align-items: center; }
+    .experiencia img { height: auto; aspect-ratio: 1 / 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .barra { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="foto"><img src="img/galera.webp" width="1124" height="1399" fetchpriority="high" alt=""></div>
+  <div class="dentro">
+    <img class="logo" src="img/logo.webp" width="640" height="673" alt="Cê Tá Bão Fest — Passos, MG">
+    <div class="espaco"></div>
+    <p class="data">Sábado · 28 de novembro · Passos-MG</p>
+    <h1>A pré-venda mais esperada de Passos <span class="sol">está chegando.</span></h1>
+    <p class="mao">aqui é música, amizade e Cê Tá Bão!</p>
+    <a class="cta" href="#acesso">Quero meus 10% OFF
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v12M3 9l6 6 6-6"/></svg>
+    </a>
+  </div>
+</header>
+
+<div class="couro costura">
+  <div class="faixa miolo">
+    <div><b>06/10</b><span>pré-venda</span></div>
+    <div><b>12h</b><span>meio-dia</span></div>
+    <div><b>10%</b><span>off no canal</span></div>
+  </div>
+</div>
+
+<main>
+  <section class="secao contagem miolo" aria-labelledby="t-cont">
+    <p class="rotulo">Falta pouco, sô</p>
+    <h2 id="t-cont">A porteira abre em</h2>
+    <div class="relogio" role="timer" aria-label="Tempo até a abertura da pré-venda">
+      <div><b data-t="d">00</b><small>DIAS</small></div>
+      <div><b data-t="h">00</b><small>HORAS</small></div>
+      <div><b data-t="m">00</b><small>MIN</small></div>
+      <div><b data-t="s">00</b><small>SEG</small></div>
+    </div>
+    <p class="mao" style="margin-top:14px">06 de outubro, meio-dia em ponto</p>
+  </section>
+
+  <section class="couro faixa-ingresso" aria-labelledby="t-form">
+   <div class="miolo">
+    <div class="ingresso" id="acesso">
+     <div class="canhoto"><span>Canal VIP</span><span>Nº 0610 · 12H00</span></div>
+     <div class="corpo">
+      <h2 id="t-form">Garanta seu acesso</h2>
+      <p class="sub">Preencha seus dados e entre no nosso <strong>Canal VIP</strong> para receber o link da pré-venda e garantir <strong>10% de desconto</strong>.</p>
+      <form id="form-vip" novalidate>
+        <div class="campo" id="c-nome">
+          <label for="nome">Seu nome</label>
+          <input id="nome" name="nome" type="text" placeholder="Como você se chama?" autocomplete="name" autocapitalize="words" enterkeyhint="next" required>
+          <p class="msg">Digite seu nome para continuar.</p>
+        </div>
+        <div class="campo" id="c-whats">
+          <label for="whatsapp">WhatsApp com DDD</label>
+          <input id="whatsapp" name="whatsapp" type="tel" placeholder="(35) 99999-9999" autocomplete="tel-national" inputmode="numeric" enterkeyhint="send" maxlength="15" required>
+          <p class="msg">Digite um WhatsApp válido, com DDD.</p>
+        </div>
+        <button class="btn-vip" type="submit">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.4L3 29l6.8-1.8c1.9 1 4 1.6 6.2 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.6c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.1 1.1-3.9-.3-.4C5.8 20 5.3 18 5.3 16 5.3 10.1 10.1 5.4 16 5.4S26.7 10.1 26.7 16 21.9 26.6 16 26.6zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.7 5 .8.4 1.4.6 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+          <span>Quero entrar no Canal VIP</span>
+        </button>
+      </form>
+      <p class="seguro"><svg viewBox="0 0 14 16" aria-hidden="true"><path fill="currentColor" d="M11 7V5a4 4 0 0 0-8 0v2H2v9h10V7h-1zM5 5a2 2 0 0 1 4 0v2H5V5z"/></svg>Seus dados estão seguros. Usaremos apenas para enviar as informações da pré-venda.</p>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <section class="secao beneficios miolo" aria-labelledby="t-benef">
+    <p class="rotulo">Quem está no canal leva</p>
+    <h2 id="t-benef">Benefícios exclusivos</h2>
+    <ul class="lista">
+      <li><span class="marca"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M7 21L21 7"/><circle cx="8.5" cy="8.5" r="2.8"/><circle cx="19.5" cy="19.5" r="2.8"/></svg></span><h3>10% OFF</h3><p>Desconto exclusivo na abertura da pré-venda.</p></li>
+      <li><span class="marca"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 9h22v3.5a2.5 2.5 0 0 0 0 5V21H3v-3.5a2.5 2.5 0 0 0 0-5z"/><path d="M17 9v12" stroke-dasharray="2 2.5"/></svg></span><h3>Acesso antecipado</h3><p>Receba o link antes do público geral.</p></li>
+      <li><span class="marca"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 3.5l3.1 6.4 7 1-5.1 5 1.2 7L14 19.6l-6.2 3.3 1.2-7-5.1-5 7-1z"/></svg></span><h3>Melhores setores</h3><p>Prioridade para escolher os melhores lugares.</p></li>
+      <li><span class="marca"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M8 19v-6.5a6 6 0 0 1 12 0V19l2 2H6z"/><path d="M12 24a2 2 0 0 0 4 0"/></svg></span><h3>Todas as novidades</h3><p>Fique por dentro de tudo em primeira mão.</p></li>
+    </ul>
+  </section>
+
+  <section class="miolo" aria-label="A experiência">
+    <div class="experiencia">
+      <img src="img/alo-passos.webp" width="1000" height="1000" loading="lazy" alt="Alô Passos! Estamos chegando! Galera com copos do Cê Tá Bão em frente ao palco no fim de tarde">
+      <div class="txt">
+        <p class="mao">Mais que um evento. <span>Uma experiência.</span></p>
+        <p>Copo na mão, a galera do lado e o palco aceso no pôr do sol. É assim que Passos vai viver o Cê Tá Bão.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="couro cartaz secao" aria-labelledby="t-line" style="margin-top:54px; padding-bottom:56px">
+    <div class="miolo">
+      <p class="rotulo">Na arena</p>
+      <h2 id="t-line">Henrique &amp; Diego</h2>
+      <p class="mais">+ Kamisa 10</p>
+      <ul>
+        <li>Luan e Rafael</li>
+        <li>DJ Sarah Leonel</li>
+        <li>DJ Dion Dion</li>
+        <li>Grupo Atitude Mais</li>
+      </ul>
+      <p class="onde"><strong>Sábado, 28/11</strong> · Parque de Exposições Adolpho Coelho Lemos</p>
+    </div>
+    <figure class="cartaz-oficial miolo">
+      <div class="pregado">
+        <img src="img/flyer.webp" width="900" height="1600" loading="lazy" alt="Cartaz oficial do Cê Tá Bão Fest: Henrique e Diego + Kamisa 10, Luan e Rafael, DJ Sarah Leonel, DJ Dion Dion e Grupo Atitude Mais. Sábado 28/11, Parque de Exposições Adolpho Coelho Lemos. Realização Headlab e Roy; Brahma, M2; promoção Ind FM e JP FM.">
+      </div>
+      <figcaption class="mao">o cartaz oficial ✦ salva e manda pros amigos</figcaption>
+    </figure>
+  </section>
+</main>
+
+<footer class="rodape">
+  <img class="logo" src="img/logo.webp" width="640" height="673" alt="" loading="lazy">
+  <nav class="redes" aria-label="Redes sociais">
+    <a data-rede="instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" style="fill:none;stroke:#fff6da;stroke-width:2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" style="fill:#fff6da;stroke:none"/></svg></a>
+    <a data-rede="facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-1.6 19.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 12 2z"/></svg></a>
+    <a data-rede="tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg></a>
+    <a data-rede="youtube" href="#" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1c.4-1.6.5-3.2.5-4.8s-.1-3.2-.5-4.8zM9.7 15V9l5.8 3-5.8 3z"/></svg></a>
+  </nav>
+  <p>Cê Tá Bão Fest · Passos-MG · 2026</p>
+</footer>
+
+<div class="barra" id="barra">
+  <a href="#acesso"><span>Quero 10% OFF</span><small>pré-venda 06/10<br>ao meio-dia</small></a>
+</div>
+
+<script>
+  /* ================= CONFIGURAÇÃO ================= */
+  const LINK_CANAL = 'https://whatsapp.com/channel/SEU-CANAL-AQUI';   // ⚠️ link do canal
+  const WEBHOOK_CADASTRO = '';                                         // opcional: planilha/Make/n8n
+  const ABERTURA = new Date('2026-10-06T12:00:00-03:00').getTime();
+  const REDES = { instagram: '#', facebook: '#', tiktok: '#', youtube: '#' };
+  /* ================================================ */
+
+  document.querySelectorAll('[data-rede]').forEach(a => a.href = REDES[a.dataset.rede] || '#');
+
+  const campos = {};
+  document.querySelectorAll('[data-t]').forEach(el => campos[el.dataset.t] = el);
+  const dd = n => String(n).padStart(2, '0');
+  function atualizar() {
+    let r = Math.max(0, Math.floor((ABERTURA - Date.now()) / 1000));
+    const d = Math.floor(r / 86400); r %= 86400;
+    const h = Math.floor(r / 3600); r %= 3600;
+    campos.d.textContent = dd(d); campos.h.textContent = dd(h);
+    campos.m.textContent = dd(Math.floor(r / 60)); campos.s.textContent = dd(r % 60);
+  }
+  atualizar(); setInterval(atualizar, 1000);
+
+  const form = document.getElementById('form-vip');
+  const inNome = form.nome, inWhats = form.whatsapp;
+  inWhats.addEventListener('input', () => {
+    const n = inWhats.value.replace(/\D/g, '').slice(0, 11);
+    let v = n;
+    if (n.length > 2) v = `(${n.slice(0, 2)}) ${n.slice(2)}`;
+    if (n.length > 7) v = `(${n.slice(0, 2)}) ${n.slice(2, n.length - 4)}-${n.slice(-4)}`;
+    inWhats.value = v;
+    document.getElementById('c-whats').classList.remove('erro');
+  });
+  inNome.addEventListener('input', () => document.getElementById('c-nome').classList.remove('erro'));
+  inNome.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inWhats.focus(); } });
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const nome = inNome.value.trim(), numero = inWhats.value.replace(/\D/g, '');
+    const okNome = nome.length >= 2, okWhats = numero.length >= 10;
+    document.getElementById('c-nome').classList.toggle('erro', !okNome);
+    document.getElementById('c-whats').classList.toggle('erro', !okWhats);
+    if (!okNome) return inNome.focus();
+    if (!okWhats) return inWhats.focus();
+    const btn = form.querySelector('.btn-vip');
+    btn.disabled = true; btn.querySelector('span').textContent = 'Entrando...';
+    if (WEBHOOK_CADASTRO) {
+      const p = new URLSearchParams(location.search);
+      try {
+        await Promise.race([
+          fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, keepalive: true,
+            body: JSON.stringify({ nome, whatsapp: '55' + numero, data: new Date().toISOString(), utm_source: p.get('utm_source') || '', utm_campaign: p.get('utm_campaign') || '' }) }),
+          new Promise(r => setTimeout(r, 2500))
+        ]);
+      } catch (_) {}
+    }
+    location.href = LINK_CANAL;
+  });
+
+  // links para o formulário rolam suave e já abrem o teclado no nome
+  document.querySelectorAll('a[href="#acesso"]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => inNome.focus({ preventScroll: true }), 600);
+  }));
+
+  // barra fixa: escondida no topo e quando o formulário está visível
+  const barra = document.getElementById('barra');
+  const estado = { topo: true, form: false };
+  const obs = new IntersectionObserver(es => {
+    es.forEach(e => estado[e.target.dataset.obs] = e.isIntersecting);
+    barra.classList.toggle('escondida', estado.topo || estado.form);
+  }, { threshold: 0.1 });
+  const cta = document.querySelector('.hero .cta'); cta.dataset.obs = 'topo'; obs.observe(cta);
+  const cartao = document.getElementById('acesso'); cartao.dataset.obs = 'form'; obs.observe(cartao);
+</script>
+</body>
+</html>
