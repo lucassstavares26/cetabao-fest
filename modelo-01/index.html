@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, nofollow">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cê Tá Bão Fest · Passos MG</title>
 <meta name="description" content="Cê Tá Bão Fest — Sábado 28/11 no Parque de Exposições de Passos - MG. Pré-venda dia 06/10 ao meio-dia com 10% OFF exclusivo para quem está no Canal VIP.">
 <meta property="og:title" content="Cê Tá Bão Fest · Passos MG">
@@ -15,158 +15,200 @@
 <link rel="preload" as="image" href="img/topo.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-  /*
-    As duas artes são exibidas exatamente como foram desenhadas.
-    Os elementos que funcionam (contagem, campos, botões) ficam posicionados
-    por cima, em pixels da arte, e escalam junto com ela.
-  */
   :root {
-    --u1: calc(100cqw / 774);   /* 1px da arte da parte 1 (774 de largura) */
-    --u2: calc(100cqw / 851);   /* 1px da arte da parte 2 (851 de largura) */
+    --u1: calc(100cqw / 774);   /* 1px da arte do topo — só para as áreas clicáveis sobre ela */
+    --verde: #00bd24;
+    --verde-2: #009a1d;
     --amarelo: #ffc61a;
+    --amarelo-texto: #ffd21f;
+    --navy: #010b1d;
+    --madeira: #140b06;
+    --borda-azul: rgba(110, 160, 255, .55);
+    --borda-ouro: rgba(214, 170, 55, .8);
+    --titulo: 'Barlow Semi Condensed', 'Arial Narrow', sans-serif;
+    --gutter: 14px;
+    color-scheme: dark;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body {
-    background: #06132b;
-    font-family: 'Barlow', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -webkit-tap-highlight-color: transparent;
+    background: #06132b; color: #fff;
+    font: 400 16px/1.45 'Barlow', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
   }
   body::before {
-    content: "";
-    position: fixed; inset: 0; z-index: -1;
-    background: linear-gradient(rgba(4, 12, 30, .72), rgba(4, 12, 30, .88)), url(img/fundo-desfocado.jpg) center / cover;
+    content: ""; position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(rgba(4, 12, 30, .7), rgba(4, 12, 30, .88)), url(img/fundo-desfocado.jpg) center / cover;
   }
+  img { display: block; max-width: 100%; height: auto; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 3px; }
   .pagina {
-    max-width: 774px;
-    margin: 0 auto;
+    max-width: 774px; margin: 0 auto;
     container-type: inline-size;
     box-shadow: 0 0 60px rgba(0, 0, 0, .6);
-    overflow: hidden;
+    overflow: hidden; background: var(--madeira);
   }
-  .arte { position: relative; }
-  .arte > img { display: block; width: 100%; height: auto; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-  /* elemento posicionado sobre a arte: --x --y --w --h em pixels da arte */
-  .p1 > .sobre { --u: var(--u1); }
-  .p2 > .sobre, .p2 .sobre { --u: var(--u2); }
+  /* ================= TOPO — arte exata ================= */
+  .topo { position: relative; }
+  .topo > img { width: 100%; }
   .sobre {
-    position: absolute;
-    left: calc(var(--x) * var(--u));
-    top: calc(var(--y) * var(--u));
-    width: calc(var(--w) * var(--u));
-    height: calc(var(--h) * var(--u));
+    position: absolute; border: 0; background: transparent; cursor: pointer;
+    left: calc(var(--x) * var(--u1)); top: calc(var(--y) * var(--u1));
+    width: calc(var(--w) * var(--u1)); height: calc(var(--h) * var(--u1));
   }
-  .clique { border: 0; background: transparent; cursor: pointer; border-radius: calc(var(--r, 8) * var(--u)); transition: background-color .2s, box-shadow .2s, transform .12s; }
-  .clique:hover { background: rgba(255, 255, 255, .1); }
-  .clique:active { transform: scale(.985); }
-  .clique:focus-visible { outline: 3px solid var(--amarelo); outline-offset: 2px; }
+  .btn-menu { --x: 719; --y: 0; --w: 55; --h: 52; min-width: 44px; min-height: 44px; transition: background-color .2s; }
+  .btn-menu:hover { background: rgba(255, 255, 255, .12); }
+  .ir-form { --x: 84; --y: 476; --w: 610; --h: 122; border-radius: 6px; }
 
-  /* ---------- parte 1 ---------- */
-  .btn-menu { --x: 719; --y: 0; --w: 55; --h: 52; --r: 0; min-width: 40px; min-height: 40px; }
-  .ir-form { --x: 84; --y: 476; --w: 610; --h: 122; }
-  .ir-form:hover { background: transparent; }
-
-  /* ---------- parte 2: contagem ---------- */
-  .cx {
-    --y: 68; --w: 119; --h: 83;
-    background: #00050e;
-    border: max(1px, calc(1.2 * var(--u))) solid #555b66;
-    border-radius: calc(9 * var(--u));
-    color: #fff; text-align: center;
-    font-family: 'Barlow Semi Condensed', sans-serif;
+  /* ================= CORPO — madeira, luzes e engradados ================= */
+  .corpo {
+    background:
+      linear-gradient(90deg, rgba(10, 6, 4, .35), rgba(10, 6, 4, .78) 12%, rgba(10, 6, 4, .78) 88%, rgba(10, 6, 4, .35)),
+      url(img/fundo-madeira.jpg) top center / 100% auto repeat-y;
+    padding: 14px var(--gutter) 0;
+    display: grid; gap: 16px;
   }
-  .cx b {
-    position: absolute; left: 0; right: 0; top: calc(13 * var(--u));
-    font-weight: 700; font-size: calc(43 * var(--u)); line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-  .cx small {
-    position: absolute; left: 0; right: 0; top: calc(57 * var(--u));
-    font-weight: 600; font-size: calc(14.5 * var(--u)); line-height: 1; letter-spacing: .02em;
+  .card { border-radius: 18px; text-align: center; }
+  .card h2 {
+    font-family: var(--titulo); font-weight: 800; text-transform: uppercase;
+    line-height: 1; letter-spacing: .01em; text-wrap: balance;
   }
 
-  /* ---------- parte 2: formulário ---------- */
+  /* contagem */
+  .contagem {
+    background: linear-gradient(180deg, #04142f, var(--navy) 70%);
+    border: 1.5px solid var(--borda-azul);
+    box-shadow: 0 0 18px rgba(60, 120, 255, .25), inset 0 0 30px rgba(0, 0, 0, .5);
+    padding: 18px 12px 16px;
+  }
+  .contagem h2 { font-family: 'Barlow', sans-serif; font-weight: 700; font-size: clamp(21px, 5.6vw, 28px); margin-bottom: 14px; }
+  .relogio { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .relogio div {
+    background: #00050e; border: 1px solid rgba(255, 255, 255, .3); border-radius: 10px;
+    padding: 12px 0 10px; font-family: var(--titulo);
+  }
+  .relogio b { display: block; font-weight: 700; line-height: 1; font-size: clamp(38px, 11.5vw, 52px); font-variant-numeric: tabular-nums; }
+  .relogio small { display: block; margin-top: 6px; font-weight: 700; font-size: 13px; letter-spacing: .06em; }
+  .placa { width: 100%; max-width: 480px; margin: 14px auto 0; border-radius: 6px; }
+
+  /* formulário */
+  .acesso {
+    background:
+      radial-gradient(120% 60% at 50% 0%, rgba(40, 90, 190, .5), transparent 60%),
+      linear-gradient(180deg, #022a68, #011d4b);
+    border: 1.5px solid rgba(120, 170, 255, .45);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .12);
+    padding: 26px 16px 20px;
+    scroll-margin-top: 12px;
+  }
+  .acesso h2 { font-size: clamp(36px, 10.4vw, 48px); }
+  .acesso .sub { font-size: 17px; line-height: 1.4; font-weight: 500; color: #eef2ff; margin: 12px auto 20px; max-width: 30em; }
+  .acesso .sub strong { color: #fff; font-weight: 700; }
   .campo {
-    --x: 178; --w: 554; --h: 44;
-    background: #fff;
-    display: flex; align-items: center;
+    display: flex; align-items: center; gap: 12px;
+    background: #fff; border-radius: 12px;
+    height: 58px; padding: 0 16px; margin-bottom: 12px;
+    border: 2px solid transparent; transition: border-color .15s, box-shadow .15s;
   }
-  .campo input {
-    width: 100%; height: 100%;
-    border: 0; outline: 0; background: transparent;
-    padding: 0 calc(6 * var(--u));
-    font: 400 max(12px, calc(17 * var(--u))) 'Barlow', sans-serif;
-    color: #111;
+  .campo:focus-within { border-color: var(--amarelo); box-shadow: 0 0 0 3px rgba(255, 198, 26, .35); }
+  .campo.erro { border-color: #ff4d4d; box-shadow: 0 0 0 3px rgba(255, 77, 77, .3); }
+  .campo svg { width: 24px; height: 24px; flex: none; }
+  .campo input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; font: 500 17px 'Barlow', sans-serif; color: #111; }
+  .campo input::placeholder { color: #80858f; }
+  .msg-erro { display: none; color: #ffb3b3; font-size: 14.5px; font-weight: 600; text-align: left; margin: -6px 4px 10px; }
+  .msg-erro.ver { display: block; }
+  .btn-vip {
+    width: 100%; min-height: 64px; margin-top: 4px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: linear-gradient(180deg, #18d33a, var(--verde) 55%, var(--verde-2));
+    color: #fff; border: 0; border-radius: 12px; cursor: pointer; padding: 0 12px;
+    font: 800 clamp(18px, 5.2vw, 25px)/1 var(--titulo); text-transform: uppercase; letter-spacing: .01em; white-space: nowrap;
+    box-shadow: 0 6px 20px rgba(0, 189, 36, .35), inset 0 1px 0 rgba(255, 255, 255, .25);
+    animation: pulsa 2.4s ease-in-out infinite;
+    transition: transform .12s, filter .2s;
   }
-  .campo input::placeholder { color: #8b8f97; opacity: 1; }
-  .moldura {
-    --x: 113; --w: 625; --h: 54;
-    border-radius: calc(7 * var(--u));
-    pointer-events: none;
-    transition: box-shadow .15s;
-  }
-  .moldura.foco { box-shadow: 0 0 0 max(2px, calc(3 * var(--u))) var(--amarelo); }
-  .moldura.erro { box-shadow: 0 0 0 max(2px, calc(3 * var(--u))) #ff3b3b; animation: treme .35s; }
-  @keyframes treme { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-  .aviso {
-    --x: 113; --y: 548; --w: 625; --h: 34;
-    display: none; align-items: center; justify-content: center;
-    background: #c81e1e; color: #fff; border-radius: calc(6 * var(--u));
-    font: 500 max(12px, calc(15 * var(--u))) 'Barlow', sans-serif;
-    z-index: 2;
-  }
-  .aviso.ver { display: flex; }
-  .btn-vip { --x: 112; --y: 475; --w: 627; --h: 68; --r: 10; animation: pulsa 2.4s ease-in-out infinite; }
-  .btn-vip:hover { background: rgba(255, 255, 255, .12); }
-  .btn-vip[disabled] { cursor: wait; background: rgba(0, 0, 0, .25); animation: none; }
+  .btn-vip:hover { filter: brightness(1.08); }
+  .btn-vip:active { transform: scale(.98); }
+  .btn-vip[disabled] { opacity: .75; cursor: wait; animation: none; }
+  .btn-vip svg { width: 30px; height: 30px; flex: none; }
+  .btn-vip .seta { width: 12px; height: 20px; }
   @keyframes pulsa {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 200, 40, 0); }
-    50% { box-shadow: 0 0 calc(26 * var(--u)) calc(3 * var(--u)) rgba(0, 220, 50, .55); }
+    0%, 100% { box-shadow: 0 6px 20px rgba(0, 189, 36, .3), inset 0 1px 0 rgba(255, 255, 255, .25); }
+    50% { box-shadow: 0 6px 30px rgba(0, 220, 50, .65), inset 0 1px 0 rgba(255, 255, 255, .25); }
   }
+  .seguro { display: flex; align-items: flex-start; justify-content: center; gap: 8px; font-size: 14px; color: #dfe6f5; margin-top: 14px; line-height: 1.4; text-align: left; }
+  .seguro svg { width: 14px; height: 16px; flex: none; margin-top: 2px; }
 
-  /* ---------- parte 2: redes ---------- */
-  .rede { --y: 1219; --w: 36; --h: 36; --r: 18; }
-
-  /* ---------- menu ---------- */
-  .menu {
-    position: fixed; inset: 0; z-index: 50;
-    display: flex; justify-content: flex-end;
-    background: rgba(0, 0, 0, .55);
-    opacity: 0; pointer-events: none; transition: opacity .25s;
+  /* benefícios */
+  .beneficios {
+    background: linear-gradient(180deg, rgba(1, 14, 36, .97), rgba(0, 10, 28, .98));
+    border: 1.5px solid var(--borda-ouro);
+    box-shadow: 0 0 20px rgba(255, 190, 40, .12);
+    padding: 24px 12px 14px;
   }
+  .beneficios h2 { font-size: clamp(31px, 8.8vw, 40px); }
+  .beneficios .para { font-size: 18px; letter-spacing: .03em; margin: 6px 0 18px; text-transform: uppercase; }
+  .grade { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  @container (min-width: 620px) { .grade { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .grade li { background: #000d21; border: 1px solid var(--borda-ouro); border-radius: 12px; padding: 14px 8px 18px; }
+  .grade img { width: 76px; margin: 0 auto 8px; }
+  .grade h3 { font: 800 clamp(19px, 5.2vw, 22px)/1.05 var(--titulo); text-transform: uppercase; color: var(--amarelo-texto); margin-bottom: 8px; }
+  .grade p { font-size: 15.5px; line-height: 1.35; color: #f1f3f8; }
+
+  .cena { margin: 0 calc(-1 * var(--gutter)); }
+  .cena img { width: 100%; }
+
+  /* rodapé */
+  .rodape {
+    background: linear-gradient(180deg, #1c0a03, #0c0402);
+    border-top: 1px solid rgba(255, 255, 255, .08);
+    padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
+    display: grid; gap: 22px; text-align: center;
+  }
+  @container (min-width: 620px) {
+    .rodape { grid-template-columns: auto 1fr auto; text-align: left; align-items: start; padding: 18px 28px 22px; }
+    .rodape > div + div { border-left: 1px solid rgba(255, 255, 255, .15); padding-left: 22px; }
+    .logo-real { margin: 0 !important; }
+    .apoios, .redes { justify-content: flex-start !important; }
+  }
+  .rodape h4 { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; color: #e8e8e8; margin-bottom: 10px; }
+  .logo-real { width: 150px; height: 56px; margin: 0 auto; background: #fff; border-radius: 6px; display: grid; place-items: center; color: #666; font-size: 13px; font-weight: 600; }
+  .apoios { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .apoios span { width: 62px; height: 42px; border: 1px solid rgba(255, 255, 255, .35); border-radius: 8px; display: grid; place-items: center; font-size: 12px; color: #ddd; }
+  .redes { display: flex; gap: 6px; justify-content: center; }
+  .redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; transition: background-color .2s; }
+  .redes a:hover { background: rgba(255, 255, 255, .1); }
+  .redes svg { width: 24px; height: 24px; fill: #fff; }
+
+  /* menu */
+  .menu { position: fixed; inset: 0; z-index: 50; display: flex; justify-content: flex-end; background: rgba(0, 0, 0, .55); opacity: 0; pointer-events: none; transition: opacity .25s; }
   .menu.aberto { opacity: 1; pointer-events: auto; }
   .menu nav {
     width: min(300px, 82vw); height: 100%;
-    background: linear-gradient(180deg, #0b2a66, #04122c);
-    border-left: 3px solid var(--amarelo);
+    background: linear-gradient(180deg, #0b2a66, #04122c); border-left: 3px solid var(--amarelo);
     padding: calc(70px + env(safe-area-inset-top)) 28px 28px;
     transform: translateX(100%); transition: transform .3s ease;
     display: flex; flex-direction: column; gap: 6px;
   }
   .menu.aberto nav { transform: none; }
-  .menu nav a {
-    font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700;
-    font-size: 22px; text-transform: uppercase; letter-spacing: .02em;
-    color: #fff; text-decoration: none; padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, .1);
-  }
+  .menu nav a { font: 700 22px var(--titulo); text-transform: uppercase; letter-spacing: .02em; color: #fff; text-decoration: none; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, .1); }
   .menu nav a:hover { color: var(--amarelo); }
-  .menu nav a.cta { margin-top: 18px; border: 0; background: #00bd24; border-radius: 10px; text-align: center; }
-  .menu .fechar {
-    position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 12px;
-    width: 48px; height: 48px;
-    background: none; border: 0; color: #fff; font-size: 36px; line-height: 1; cursor: pointer;
-  }
+  .menu nav a.cta { margin-top: 18px; border: 0; background: var(--verde); border-radius: 10px; text-align: center; }
+  .menu .fechar { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 12px; width: 48px; height: 48px; background: none; border: 0; color: #fff; font-size: 36px; line-height: 1; cursor: pointer; }
 
+  @container (min-width: 620px) {
+    .corpo { padding: 22px 40px 0; gap: 22px; }
+    .contagem, .acesso, .beneficios { padding-left: 34px; padding-right: 34px; }
+    .cena { margin: 0 -40px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .btn-vip, .moldura.erro { animation: none; }
+    .btn-vip { animation: none; }
     .menu, .menu nav { transition: none; }
   }
 </style>
@@ -175,50 +217,89 @@
 
 <main class="pagina">
 
-  <!-- PARTE 1 -->
-  <section class="arte p1" id="inicio">
+  <!-- TOPO: arte exata -->
+  <section class="topo" id="inicio">
     <img src="img/topo.jpg" width="1548" height="1198" fetchpriority="high"
          alt="Cê Tá Bão Fest, Passos - MG. Sábado 28/11 no Parque de Exposições Rodolpho Coelho Lemos. Aqui é música, amizade e Cê Tá Bão! A pré-venda mais esperada de Passos está chegando: 06/10 ao meio-dia, 10% OFF exclusivo para quem está no canal.">
     <h1 class="sr">Cê Tá Bão Fest — Passos MG — Sábado 28/11. Pré-venda 06/10 ao meio-dia com 10% OFF.</h1>
-    <button class="sobre clique btn-menu" type="button" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false"></button>
-    <a class="sobre clique ir-form" href="#acesso" aria-label="Garantir 10% de desconto — ir para o cadastro"></a>
+    <button class="sobre btn-menu" type="button" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false"></button>
+    <a class="sobre ir-form" href="#acesso" aria-label="Garantir 10% de desconto — ir para o cadastro"></a>
   </section>
 
-  <!-- PARTE 2 -->
-  <section class="arte p2" id="contagem">
-    <img src="img/parte2.jpg" width="1702" height="2568" loading="lazy"
-         alt="A pré-venda abre em 06 de outubro às 12h. Garanta seu acesso: preencha seus dados e entre no nosso Canal VIP para receber o link da pré-venda e garantir 10% de desconto. Benefícios exclusivos para quem está no canal: 10% OFF, acesso antecipado, prioridade nos melhores setores e todas as novidades. Passos - MG, Cê Tá Bão!">
+  <div class="corpo">
 
-    <div role="timer" aria-label="Tempo até a abertura da pré-venda">
-      <div class="sobre cx" style="--x:154"><b data-t="d">00</b><small>DIAS</small></div>
-      <div class="sobre cx" style="--x:296"><b data-t="h">00</b><small>HORAS</small></div>
-      <div class="sobre cx" style="--x:437"><b data-t="m">00</b><small>MIN</small></div>
-      <div class="sobre cx" style="--x:579"><b data-t="s">00</b><small>SEG</small></div>
+    <section class="card contagem" id="contagem" aria-labelledby="t-contagem">
+      <h2 id="t-contagem">A PRÉ-VENDA ABRE EM</h2>
+      <div class="relogio" role="timer" aria-live="off">
+        <div><b data-t="d">00</b><small>DIAS</small></div>
+        <div><b data-t="h">00</b><small>HORAS</small></div>
+        <div><b data-t="m">00</b><small>MIN</small></div>
+        <div><b data-t="s">00</b><small>SEG</small></div>
+      </div>
+      <img class="placa" src="img/placa-data.jpg" width="918" height="110" alt="06 de outubro · 12h">
+    </section>
+
+    <section class="card acesso" id="acesso" aria-labelledby="t-acesso">
+      <h2 id="t-acesso">GARANTA SEU ACESSO</h2>
+      <p class="sub">Preencha seus dados e entre no nosso <strong>Canal VIP</strong> para receber o link da pré-venda e garantir <strong>10% de desconto</strong>.</p>
+      <form id="form-vip" novalidate>
+        <label class="campo" id="c-nome">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7b808a" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+          <span class="sr">Nome</span>
+          <input id="nome" type="text" name="nome" placeholder="Digite seu nome" autocomplete="name" autocapitalize="words" enterkeyhint="next" required>
+        </label>
+        <p class="msg-erro" id="e-nome">Digite seu nome para continuar.</p>
+        <label class="campo" id="c-whats">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#25d366" d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.4L3 29l6.8-1.8c1.9 1 4 1.6 6.2 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.6c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.1 1.1-3.9-.3-.4C5.8 20 5.3 18 5.3 16 5.3 10.1 10.1 5.4 16 5.4S26.7 10.1 26.7 16 21.9 26.6 16 26.6zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.7 5 .8.4 1.4.6 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+          <span class="sr">WhatsApp com DDD</span>
+          <input id="whatsapp" type="tel" name="whatsapp" placeholder="Seu WhatsApp com DDD" autocomplete="tel-national" inputmode="numeric" enterkeyhint="send" maxlength="15" required>
+        </label>
+        <p class="msg-erro" id="e-whats">Digite um WhatsApp válido, com DDD.</p>
+        <button class="btn-vip" type="submit">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.4L3 29l6.8-1.8c1.9 1 4 1.6 6.2 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.6c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.1 1.1-3.9-.3-.4C5.8 20 5.3 18 5.3 16 5.3 10.1 10.1 5.4 16 5.4S26.7 10.1 26.7 16 21.9 26.6 16 26.6zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.7 5 .8.4 1.4.6 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+          <span>Quero entrar no Canal VIP</span>
+          <svg class="seta" viewBox="0 0 14 22" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l8 8-8 8"/></svg>
+        </button>
+      </form>
+      <p class="seguro"><svg viewBox="0 0 14 16" aria-hidden="true"><path fill="#fff" d="M11 7V5a4 4 0 0 0-8 0v2H2v9h10V7h-1zM5 5a2 2 0 0 1 4 0v2H5V5z"/></svg>Seus dados estão seguros. Usaremos apenas para enviar as informações da pré-venda.</p>
+    </section>
+
+    <section class="card beneficios" id="beneficios" aria-labelledby="t-benef">
+      <h2 id="t-benef">BENEFÍCIOS EXCLUSIVOS</h2>
+      <p class="para">Para quem está no canal</p>
+      <ul class="grade">
+        <li><img src="img/icone-1.png" width="168" height="140" alt="" loading="lazy"><h3>10% OFF</h3><p>Desconto exclusivo na abertura da pré-venda.</p></li>
+        <li><img src="img/icone-2.png" width="168" height="140" alt="" loading="lazy"><h3>Acesso antecipado</h3><p>Receba o link antes do público geral.</p></li>
+        <li><img src="img/icone-3.png" width="168" height="140" alt="" loading="lazy"><h3>Prioridade nos melhores setores</h3><p>Escolha os melhores lugares.</p></li>
+        <li><img src="img/icone-4.png" width="168" height="140" alt="" loading="lazy"><h3>Todas as novidades</h3><p>Fique por dentro de tudo em primeira mão.</p></li>
+      </ul>
+    </section>
+
+    <div class="cena">
+      <img src="img/cena-final.jpg" width="1702" height="580" loading="lazy" alt="Chapéu do Cê Tá Bão Fest e engradado vermelho com a logo: Passos - MG, Cê Tá Bão!">
     </div>
+  </div>
 
-    <span class="sr" id="acesso"></span>
-    <h2 class="sr">Garanta seu acesso</h2>
-    <form id="form-vip" novalidate>
-      <div class="sobre moldura" id="m-nome" style="--y:344"></div>
-      <label class="sobre campo" style="--y:349">
-        <span class="sr">Nome</span>
-        <input type="text" name="nome" placeholder="Digite seu nome" autocomplete="name" autocapitalize="words" enterkeyhint="next" required>
-      </label>
-      <div class="sobre moldura" id="m-whats" style="--y:408"></div>
-      <label class="sobre campo" style="--y:413">
-        <span class="sr">WhatsApp com DDD</span>
-        <input type="tel" name="whatsapp" placeholder="Digite seu WhatsApp com DDD" autocomplete="tel-national" inputmode="numeric" enterkeyhint="send" maxlength="15" required>
-      </label>
-      <button class="sobre clique btn-vip" type="submit" aria-label="Quero entrar no Canal VIP"></button>
-      <p class="sobre aviso" role="alert"></p>
-    </form>
-
-    <a class="sobre clique rede" style="--x:639" data-rede="instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram"></a>
-    <a class="sobre clique rede" style="--x:674" data-rede="facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook"></a>
-    <a class="sobre clique rede" style="--x:709" data-rede="tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok"></a>
-    <a class="sobre clique rede" style="--x:744" data-rede="youtube" href="#" target="_blank" rel="noopener" aria-label="YouTube"></a>
-    <a class="sobre clique rede" style="--x:779" data-rede="spotify" href="#" target="_blank" rel="noopener" aria-label="Spotify"></a>
-  </section>
+  <footer class="rodape">
+    <div>
+      <h4>REALIZAÇÃO:</h4>
+      <div class="logo-real">SUA LOGO</div>
+    </div>
+    <div>
+      <h4>APOIO:</h4>
+      <div class="apoios"><span>LOGO</span><span>LOGO</span><span>LOGO</span><span>LOGO</span><span>LOGO</span></div>
+    </div>
+    <div>
+      <h4>SIGA NOSSAS REDES</h4>
+      <nav class="redes" aria-label="Redes sociais">
+        <a data-rede="instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" style="fill:none;stroke:#fff;stroke-width:2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" style="fill:#fff;stroke:none"/></svg></a>
+        <a data-rede="facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-1.6 19.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 12 2z"/></svg></a>
+        <a data-rede="tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg></a>
+        <a data-rede="youtube" href="#" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1c.4-1.6.5-3.2.5-4.8s-.1-3.2-.5-4.8zM9.7 15V9l5.8 3-5.8 3z"/></svg></a>
+        <a data-rede="spotify" href="#" target="_blank" rel="noopener" aria-label="Spotify"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.6.6 0 0 1-.9.2c-2.4-1.5-5.3-1.8-8.8-1a.6.6 0 1 1-.3-1.2c3.8-.9 7.1-.5 9.8 1.1.3.2.4.6.2.9zm1.2-2.7a.8.8 0 0 1-1.1.3c-2.7-1.7-6.9-2.2-10.1-1.2a.8.8 0 1 1-.5-1.5c3.7-1.1 8.3-.6 11.4 1.3.4.2.5.7.3 1.1zm.1-2.8C14.7 9 9.4 8.8 6.3 9.7a1 1 0 1 1-.6-1.8c3.5-1.1 9.4-.9 13.1 1.3a1 1 0 0 1-.9 1.7z"/></svg></a>
+      </nav>
+    </div>
+  </footer>
 
 </main>
 
@@ -228,104 +309,78 @@
     <a href="#inicio">Início</a>
     <a href="#contagem">Contagem</a>
     <a href="#acesso">Garanta seu acesso</a>
+    <a href="#beneficios">Benefícios</a>
     <a class="cta" href="#acesso">Entrar no Canal VIP</a>
   </nav>
 </div>
 
 <script>
   /* ================= CONFIGURAÇÃO ================= */
-  // ⚠️ Link do canal/grupo do WhatsApp para onde a pessoa vai depois de preencher
-  const LINK_CANAL = 'https://whatsapp.com/channel/SEU-CANAL-AQUI';
-  // Opcional: endereço que recebe os cadastros (Google Sheets / Make / n8n). Vazio = não envia.
-  const WEBHOOK_CADASTRO = '';
-  // Abertura da pré-venda: 06/10/2026 às 12h (horário de Brasília)
+  const LINK_CANAL = 'https://whatsapp.com/channel/SEU-CANAL-AQUI';   // ⚠️ link do canal
+  const WEBHOOK_CADASTRO = '';                                         // opcional: planilha/Make/n8n
   const ABERTURA = new Date('2026-10-06T12:00:00-03:00').getTime();
   const REDES = { instagram: '#', facebook: '#', tiktok: '#', youtube: '#', spotify: '#' };
   /* ================================================ */
 
   document.querySelectorAll('[data-rede]').forEach(a => a.href = REDES[a.dataset.rede] || '#');
 
-  // contagem regressiva
   const campos = {};
   document.querySelectorAll('[data-t]').forEach(el => campos[el.dataset.t] = el);
   const dd = n => String(n).padStart(2, '0');
   function atualizar() {
-    let resto = Math.max(0, Math.floor((ABERTURA - Date.now()) / 1000));
-    const d = Math.floor(resto / 86400); resto %= 86400;
-    const h = Math.floor(resto / 3600); resto %= 3600;
-    campos.d.textContent = dd(d);
-    campos.h.textContent = dd(h);
-    campos.m.textContent = dd(Math.floor(resto / 60));
-    campos.s.textContent = dd(resto % 60);
+    let r = Math.max(0, Math.floor((ABERTURA - Date.now()) / 1000));
+    const d = Math.floor(r / 86400); r %= 86400;
+    const h = Math.floor(r / 3600); r %= 3600;
+    campos.d.textContent = dd(d); campos.h.textContent = dd(h);
+    campos.m.textContent = dd(Math.floor(r / 60)); campos.s.textContent = dd(r % 60);
   }
-  atualizar();
-  setInterval(atualizar, 1000);
+  atualizar(); setInterval(atualizar, 1000);
 
-  // formulário
   const form = document.getElementById('form-vip');
   const inNome = form.nome, inWhats = form.whatsapp;
-  const aviso = form.querySelector('.aviso');
-  const moldura = { nome: document.getElementById('m-nome'), whats: document.getElementById('m-whats') };
-
-  [[inNome, 'nome'], [inWhats, 'whats']].forEach(([input, qual]) => {
-    input.addEventListener('focus', () => moldura[qual].classList.add('foco'));
-    input.addEventListener('blur', () => moldura[qual].classList.remove('foco'));
-    input.addEventListener('input', () => { moldura[qual].classList.remove('erro'); aviso.classList.remove('ver'); });
-  });
-
-  // máscara: (37) 99999-9999
+  function marcar(qual, erro) {
+    document.getElementById('c-' + qual).classList.toggle('erro', erro);
+    document.getElementById('e-' + qual).classList.toggle('ver', erro);
+  }
   inWhats.addEventListener('input', () => {
     const n = inWhats.value.replace(/\D/g, '').slice(0, 11);
     let v = n;
     if (n.length > 2) v = `(${n.slice(0, 2)}) ${n.slice(2)}`;
     if (n.length > 7) v = `(${n.slice(0, 2)}) ${n.slice(2, n.length - 4)}-${n.slice(-4)}`;
-    inWhats.value = v;
+    inWhats.value = v; marcar('whats', false);
   });
+  inNome.addEventListener('input', () => marcar('nome', false));
   inNome.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inWhats.focus(); } });
-
-  function erro(qual, input, texto) {
-    const m = moldura[qual];
-    m.classList.remove('erro'); void m.offsetWidth; m.classList.add('erro');
-    aviso.textContent = texto;
-    aviso.classList.add('ver');
-    input.focus();
-  }
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    const nome = inNome.value.trim();
-    const numero = inWhats.value.replace(/\D/g, '');
-    if (nome.length < 2) return erro('nome', inNome, 'Digite seu nome para continuar.');
-    if (numero.length < 10) return erro('whats', inWhats, 'Digite seu WhatsApp com DDD.');
-
+    const nome = inNome.value.trim(), numero = inWhats.value.replace(/\D/g, '');
+    const okNome = nome.length >= 2, okWhats = numero.length >= 10;
+    marcar('nome', !okNome); marcar('whats', !okWhats);
+    if (!okNome) return inNome.focus();
+    if (!okWhats) return inWhats.focus();
     const btn = form.querySelector('.btn-vip');
-    btn.disabled = true;
-
+    btn.disabled = true; btn.querySelector('span').textContent = 'Entrando...';
     if (WEBHOOK_CADASTRO) {
-      const params = new URLSearchParams(location.search);
-      const dados = {
-        nome, whatsapp: '55' + numero, data: new Date().toISOString(),
-        utm_source: params.get('utm_source') || '', utm_campaign: params.get('utm_campaign') || ''
-      };
+      const p = new URLSearchParams(location.search);
       try {
         await Promise.race([
-          fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(dados), keepalive: true }),
+          fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, keepalive: true,
+            body: JSON.stringify({ nome, whatsapp: '55' + numero, data: new Date().toISOString(), utm_source: p.get('utm_source') || '', utm_campaign: p.get('utm_campaign') || '' }) }),
           new Promise(r => setTimeout(r, 2500))
         ]);
-      } catch (_) { /* segue para o canal mesmo se o envio falhar */ }
+      } catch (_) {}
     }
     location.href = LINK_CANAL;
   });
 
-  // ao tocar no topo, rola até o formulário e já foca o nome
+  // links para o formulário: rolagem suave e teclado já no nome
   document.querySelectorAll('a[href="#acesso"]').forEach(a => a.addEventListener('click', e => {
-    e.preventDefault();
-    abrirMenu(false);
-    inNome.closest('.arte').querySelector('.moldura').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => inNome.focus({ preventScroll: true }), 500);
+    e.preventDefault(); abrirMenu(false);
+    document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => inNome.focus({ preventScroll: true }), 600);
   }));
 
-  // menu
   const menu = document.getElementById('menu');
   const btnMenu = document.querySelector('.btn-menu');
   function abrirMenu(abrir) {
