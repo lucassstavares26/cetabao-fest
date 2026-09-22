@@ -252,12 +252,6 @@
   .ficha span { font: 700 12px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--sol-claro); }
   .ficha b { font-weight: 600; color: #fff; }
 
-  /* ---------- chamada final ---------- */
-  .final { padding: 56px var(--lado) 60px; background: linear-gradient(180deg, var(--ceu), var(--ceu-alto)); }
-  .final h2 { font-size: clamp(26px, 7.6vw, 34px); color: #fff; }
-  .final h2 em { font-style: normal; color: var(--sol); }
-  .final p { margin: 12px auto 24px; color: var(--ceu-texto); }
-
   /* ---------- patrocinadores + rodapé ---------- */
   .patro { background: var(--faixa); }
   .patro img { width: 100%; }
@@ -393,12 +387,6 @@
       <div><svg aria-hidden="true"><use href="#i-agenda"/></svg><span>Quando</span><b>Sábado, 28 de novembro</b></div>
       <div><svg aria-hidden="true"><use href="#i-local"/></svg><span>Onde</span><b>Parque de Exposições Adolpho Coelho Lemos · Passos-MG</b></div>
     </div>
-  </section>
-
-  <section class="final" aria-labelledby="t-final">
-    <h2 id="t-final" data-t="frase">Faltam <em>14 dias</em> pra porteira abrir</h2>
-    <p>O desconto de 10% é só pra quem estiver no canal na hora que as vendas abrirem.</p>
-    <a class="btn btn-sol" id="cta-final" href="#acesso" data-cta><svg><use href="#i-destrava"/></svg><span>Quero meus 10% OFF</span></a>
   </section>
 
   <section class="fim" aria-labelledby="t-fim">
@@ -609,7 +597,7 @@
     es.forEach(e => visivel.set(e.target, e.isIntersecting));
     barra.classList.toggle('escondida', [...visivel.values()].some(Boolean));
   }, { threshold: 0.1 });
-  ['cta-topo', 'acesso', 'cta-final'].forEach(id => obs.observe(document.getElementById(id)));
+  ['cta-topo', 'acesso'].forEach(id => obs.observe(document.getElementById(id)));
 </script>
 </body>
 </html>
