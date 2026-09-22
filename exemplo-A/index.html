@@ -256,8 +256,10 @@
   .ficha b { font-weight: 600; color: #fff; }
 
   /* ---------- patrocinadores + rodapé ---------- */
-  .patro { background: var(--faixa); }
-  .patro img { width: 100%; }
+  .patro { position: relative; overflow: hidden; background: var(--faixa); padding: 14px 0; }
+  .patro-trilha { display: flex; align-items: center; width: max-content; gap: 36px; animation: rola-patro 26s linear infinite; }
+  .patro-trilha img { flex: none; height: 30px; width: auto; }
+  @keyframes rola-patro { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   .rodape { padding: 26px var(--lado) calc(75px + env(safe-area-inset-bottom, 0px)); background: var(--ceu-fundo); color: #9fb2da; font-size: 14px; }
   .redes { display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; }
   .redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--vidro); color: #fff; }
@@ -384,6 +386,18 @@
     </div>
   </section>
 
+  <div class="patro reveal">
+    <span class="sr">Realização: Headlab Entretenimento e Roy Entretenimento. Apoio: Brahma e M2. Promoção: Ind 90.9 FM e Jovem Pan FM Passos 96.9.</span>
+    <div class="patro-trilha" aria-hidden="true">
+      <img src="img/patro-realizacao.webp" alt="" height="114" loading="lazy" decoding="async">
+      <img src="img/patro-apoio.webp" alt="" height="114" loading="lazy" decoding="async">
+      <img src="img/patro-promocao.webp" alt="" height="114" loading="lazy" decoding="async">
+      <img src="img/patro-realizacao.webp" alt="" height="114" loading="lazy" decoding="async">
+      <img src="img/patro-apoio.webp" alt="" height="114" loading="lazy" decoding="async">
+      <img src="img/patro-promocao.webp" alt="" height="114" loading="lazy" decoding="async">
+    </div>
+  </div>
+
   <section class="como" aria-labelledby="t-como">
     <p class="rotulo">Passo a passo</p>
     <h2 id="t-como">Como garantir os 10%</h2>
@@ -446,10 +460,6 @@
     </div>
   </section>
 </main>
-
-<div class="patro reveal">
-  <img src="img/patrocinadores.webp" alt="Realização: Headlab Entretenimento e Roy Entretenimento. Brahma. M2. Promoção: Ind 90.9 FM e Jovem Pan FM Passos 96.9." width="1080" height="114" loading="lazy" decoding="async">
-</div>
 
 <footer class="rodape reveal">
   <nav class="redes" aria-label="Redes sociais">
