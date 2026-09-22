@@ -261,7 +261,7 @@
   /* ---------- patrocinadores + rodapé ---------- */
   .patro { background: var(--faixa); }
   .patro img { width: 100%; }
-  .rodape { padding: 26px var(--lado) 84px; background: var(--ceu-fundo); color: #9fb2da; font-size: 14px; }
+  .rodape { padding: 26px var(--lado) calc(75px + env(safe-area-inset-bottom, 0px)); background: var(--ceu-fundo); color: #9fb2da; font-size: 14px; }
   .redes { display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; }
   .redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--vidro); color: #fff; }
   .redes svg { width: 20px; height: 20px; }
