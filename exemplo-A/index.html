@@ -9,7 +9,7 @@
 <meta property="og:title" content="Cê Tá Bão Fest · Passos-MG">
 <meta property="og:description" content="Entrou no canal, ganhou 10% OFF. Vendas abrem terça, 06/10, ao meio-dia.">
 <meta property="og:image" content="img/artistas.webp">
-<meta name="theme-color" content="#0b52ad">
+<meta name="theme-color" content="#003c86">
 <meta name="format-detection" content="telephone=no">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/favicon.png">
@@ -107,8 +107,8 @@
   .chip svg { width: 15px; height: 15px; color: var(--sol); }
 
   /* ---------- hero ---------- */
-  .hero { padding: 26px var(--lado) 0; background: var(--ceu); }
-  .hero h1 { display: grid; justify-items: center; gap: 2px; }
+  .hero { padding: 26px var(--lado) 52px; background: var(--ceu); }
+  .hero h2 { display: grid; justify-items: center; gap: 2px; }
   .h1-a { font-size: clamp(25px, 7.4vw, 34px); color: #fff; }
   .h1-b { font-size: clamp(25px, 7.4vw, 34px); color: var(--sol); }
   .h1-placa {
@@ -131,19 +131,20 @@
   .hero .btn { margin-top: 22px; }
   .mini { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 12px; font-size: 14px; color: var(--ceu-texto); }
   .mini svg { width: 15px; height: 15px; color: var(--sol); }
-  .artistas { position: relative; margin: 22px calc(var(--lado) * -1) 0; }
+  .artistas { position: relative; }
   .artistas img { width: 100%; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%); mask-image: linear-gradient(180deg, transparent 0, #000 16%); }
   .artistas::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; background: linear-gradient(180deg, rgba(180, 18, 18, 0), var(--engradado)); }
 
   /* ---------- contagem + cadastro (engradado) ---------- */
   .porteira {
-    padding: 28px var(--lado) 44px;
+    padding: 6px var(--lado) 48px;
     background:
       repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px),
       linear-gradient(180deg, var(--engradado), #9c0e0e);
   }
   .porteira .rotulo { color: var(--sol-claro); }
-  .porteira > h2 { margin-top: 10px; font-size: clamp(25px, 7.4vw, 32px); color: #fff; }
+  .contagem-bloco { margin-top: 46px; }
+  .contagem-bloco > h2 { margin-top: 10px; font-size: clamp(25px, 7.4vw, 32px); color: #fff; }
   .contagem { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 20px; }
   .caixa {
     position: relative; padding: 25px 2px 12px; border-radius: 14px;
@@ -156,7 +157,7 @@
   .quando { display: inline-block; margin-top: 20px; padding: 10px 16px; border-radius: 999px; background: rgba(0, 0, 0, .2); font: 700 15px/1.2 var(--estreita); letter-spacing: .08em; text-transform: uppercase; color: var(--sol-claro); }
 
   .cartao {
-    position: relative; margin-top: 40px; padding: 36px 18px 22px;
+    position: relative; margin-top: 34px; padding: 36px 18px 22px;
     border-radius: 24px; background: #fff; color: var(--tinta);
     box-shadow: 0 8px 0 var(--engradado-escuro), 0 26px 50px rgba(0, 0, 0, .3);
     scroll-margin-top: 14px;
@@ -232,11 +233,13 @@
   /* ---------- palco ---------- */
   .palco { padding: 56px var(--lado) 60px; background: var(--ceu-fundo); }
   .palco .rotulo { color: var(--sol-claro); }
-  .cabeca { margin-top: 16px; font: 400 clamp(31px, 9.6vw, 44px)/1.02 var(--placa); color: var(--sol); text-wrap: balance; }
-  .mais { margin-top: 8px; font: 400 clamp(26px, 8vw, 36px)/1 var(--placa); color: #fff; }
+  /* nomes logo abaixo da foto, sobre o engradado vermelho, como no flyer */
+  .nomes { padding-top: 2px; }
+  .cabeca { font: 400 clamp(31px, 9.6vw, 44px)/1.02 var(--placa); color: #fff; text-wrap: balance; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  .mais { margin-top: 8px; font: 400 clamp(26px, 8vw, 36px)/1 var(--placa); color: #fff; text-shadow: 0 3px 0 var(--engradado-escuro); }
   .demais { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 20px; }
-  .demais li { padding: 10px 14px 9px; border-radius: 999px; background: var(--vidro); border: 1px solid var(--vidro-borda); font: 400 14px/1 var(--placa); color: var(--sol-claro); }
-  .galera { width: 84%; margin: 44px auto 0; transform: rotate(-2deg); }
+  .demais li { padding: 10px 14px 9px; border-radius: 999px; background: rgba(0, 0, 0, .2); border: 1px solid rgba(255, 224, 122, .3); font: 400 14px/1 var(--placa); color: var(--sol); }
+  .galera { width: 84%; margin: 0 auto; transform: rotate(-2deg); }
   .galera img { aspect-ratio: 4 / 5; object-fit: cover; border: 6px solid var(--sol); border-radius: 22px; box-shadow: 0 22px 50px rgba(0, 0, 0, .45); }
   .palco h3 { margin-top: 34px; font-size: clamp(25px, 7.4vw, 32px); color: #fff; }
   .palco h3 span { color: var(--sol); }
@@ -295,60 +298,23 @@
   <symbol id="i-ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
-<header class="topo">
-  <div class="varal" aria-hidden="true">
-    <svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 8 Q50 84 100 8"/></svg>
-    <i style="--x:4.5%;--y:14.5px"></i>
-    <i style="--x:13.6%;--y:25.9px;--d:-.8s"></i>
-    <i style="--x:22.7%;--y:34.7px;--d:-1.9s"></i>
-    <i style="--x:31.8%;--y:41px;--d:-.4s"></i>
-    <i style="--x:40.9%;--y:44.7px;--d:-2.6s"></i>
-    <i style="--x:50%;--y:46px;--d:-1.2s"></i>
-    <i style="--x:59.1%;--y:44.7px;--d:-3s"></i>
-    <i style="--x:68.2%;--y:41px;--d:-.6s"></i>
-    <i style="--x:77.3%;--y:34.7px;--d:-2.2s"></i>
-    <i style="--x:86.4%;--y:25.9px;--d:-1.5s"></i>
-    <i style="--x:95.5%;--y:14.5px;--d:-2.9s"></i>
-  </div>
-  <img class="logo" src="img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420" fetchpriority="high">
-  <div class="chips">
-    <span class="chip"><svg><use href="#i-agenda"/></svg>Sáb · 28/11</span>
-    <span class="chip"><svg><use href="#i-local"/></svg>Passos-MG</span>
-  </div>
-</header>
-
 <main>
-  <section class="hero">
-    <h1>
-      <span class="sr">Entrou no Canal VIP, ganhou 10% OFF na abertura das vendas do Cê Tá Bão Fest.</span>
-      <span class="h1-a" aria-hidden="true">Entrou no canal,</span>
-      <span class="h1-b" aria-hidden="true">ganhou</span>
-      <span class="h1-placa" aria-hidden="true">10% OFF</span>
-      <span class="h1-c" aria-hidden="true">na abertura das vendas</span>
-    </h1>
-    <p class="lead">A pré-venda do Cê Tá Bão Fest sai primeiro no nosso <strong>Canal VIP do WhatsApp</strong>. Quem estiver lá dentro compra com <strong>10% de desconto</strong>.</p>
-    <dl class="fatos">
-      <div><dt>Vendas abrem</dt><dd>06/10</dd></div>
-      <div><dt>Horário</dt><dd>12h00</dd></div>
-      <div><dt>O festival</dt><dd>28/11</dd></div>
-    </dl>
-    <a class="btn btn-sol" id="cta-topo" href="#acesso" data-cta><svg><use href="#i-destrava"/></svg><span>Quero meus 10% OFF</span></a>
-    <p class="mini"><svg><use href="#i-trava"/></svg>Grátis · leva menos de 1 minuto</p>
-    <figure class="artistas">
-      <img src="img/artistas.webp" alt="Henrique e Diego, Kamisa 10 e os artistas do Cê Tá Bão Fest" width="800" height="722">
-    </figure>
-  </section>
+  <figure class="artistas">
+    <img src="img/artistas.webp" alt="Henrique e Diego, Kamisa 10 e os artistas do Cê Tá Bão Fest" width="800" height="722" fetchpriority="high">
+  </figure>
 
-  <section class="porteira" aria-labelledby="t-porteira">
-    <p class="rotulo">Pré-venda</p>
-    <h2 id="t-porteira" data-aberta="A porteira abriu!">A porteira abre em</h2>
-    <div class="contagem" role="timer" aria-label="Contagem para a abertura das vendas">
-      <div class="caixa"><b data-t="d">14</b><span>dias</span></div>
-      <div class="caixa"><b data-t="h">02</b><span>horas</span></div>
-      <div class="caixa"><b data-t="m">30</b><span>min</span></div>
-      <div class="caixa"><b data-t="s">00</b><span>seg</span></div>
+  <section class="porteira" aria-label="Atrações, cadastro e contagem">
+    <div class="nomes">
+      <h1 class="sr">Cê Tá Bão Fest · Passos-MG · sábado, 28/11 — pré-venda com 10% OFF no Canal VIP</h1>
+      <p class="cabeca">Henrique e Diego</p>
+      <p class="mais">+ Kamisa 10</p>
+      <ul class="demais">
+        <li>Luan e Rafael</li>
+        <li>DJ Sarah Leonel</li>
+        <li>DJ Dion Dion</li>
+        <li>Grupo Atitude Mais</li>
+      </ul>
     </div>
-    <p class="quando" data-aberta="Vendas abertas: o link com 10% OFF está no canal">Terça · 06/10 · meio-dia em ponto</p>
 
     <div class="cartao" id="acesso">
       <span class="etiqueta">10% OFF exclusivo</span>
@@ -393,6 +359,18 @@
         <p class="trava-nota" id="trava-nota"><svg><use href="#i-trava"/></svg><span>Bloqueado até você se cadastrar</span></p>
       </div>
     </div>
+
+    <div class="contagem-bloco">
+      <p class="rotulo">Pré-venda</p>
+      <h2 id="t-porteira" data-aberta="A porteira abriu!">A porteira abre em</h2>
+      <div class="contagem" role="timer" aria-label="Contagem para a abertura das vendas">
+        <div class="caixa"><b data-t="d">14</b><span>dias</span></div>
+        <div class="caixa"><b data-t="h">02</b><span>horas</span></div>
+        <div class="caixa"><b data-t="m">30</b><span>min</span></div>
+        <div class="caixa"><b data-t="s">00</b><span>seg</span></div>
+      </div>
+      <p class="quando" data-aberta="Vendas abertas: o link com 10% OFF está no canal">Terça · 06/10 · meio-dia em ponto</p>
+    </div>
   </section>
 
   <section class="como" aria-labelledby="t-como">
@@ -405,18 +383,9 @@
     </ol>
   </section>
 
-  <section class="palco" aria-labelledby="t-palco">
-    <p class="rotulo" id="t-palco">Quem sobe no palco</p>
-    <p class="cabeca">Henrique e Diego</p>
-    <p class="mais">+ Kamisa 10</p>
-    <ul class="demais">
-      <li>Luan e Rafael</li>
-      <li>DJ Sarah Leonel</li>
-      <li>DJ Dion Dion</li>
-      <li>Grupo Atitude Mais</li>
-    </ul>
+  <section class="palco" aria-labelledby="t-vibe">
     <figure class="galera"><img src="img/galera.webp" alt="Amigas de chapéu fazendo selfie no Cê Tá Bão Fest" width="800" height="996" loading="lazy" decoding="async"></figure>
-    <h3>Música, amizade e <span>Cê Tá Bão.</span></h3>
+    <h3 id="t-vibe">Música, amizade e <span>Cê Tá Bão.</span></h3>
     <p>Copo na mão, a turma do lado e o palco aceso. Mais que um evento: uma experiência pra Passos inteira.</p>
     <div class="ficha">
       <div><svg aria-hidden="true"><use href="#i-agenda"/></svg><span>Quando</span><b>Sábado, 28 de novembro</b></div>
@@ -428,6 +397,47 @@
     <h2 id="t-final" data-t="frase">Faltam <em>14 dias</em> pra porteira abrir</h2>
     <p>O desconto de 10% é só pra quem estiver no canal na hora que as vendas abrirem.</p>
     <a class="btn btn-sol" id="cta-final" href="#acesso" data-cta><svg><use href="#i-destrava"/></svg><span>Quero meus 10% OFF</span></a>
+  </section>
+
+  <section class="fim" aria-labelledby="t-fim">
+    <div class="topo">
+      <div class="varal" aria-hidden="true">
+        <svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 8 Q50 84 100 8"/></svg>
+        <i style="--x:4.5%;--y:14.5px"></i>
+        <i style="--x:13.6%;--y:25.9px;--d:-.8s"></i>
+        <i style="--x:22.7%;--y:34.7px;--d:-1.9s"></i>
+        <i style="--x:31.8%;--y:41px;--d:-.4s"></i>
+        <i style="--x:40.9%;--y:44.7px;--d:-2.6s"></i>
+        <i style="--x:50%;--y:46px;--d:-1.2s"></i>
+        <i style="--x:59.1%;--y:44.7px;--d:-3s"></i>
+        <i style="--x:68.2%;--y:41px;--d:-.6s"></i>
+        <i style="--x:77.3%;--y:34.7px;--d:-2.2s"></i>
+        <i style="--x:86.4%;--y:25.9px;--d:-1.5s"></i>
+        <i style="--x:95.5%;--y:14.5px;--d:-2.9s"></i>
+      </div>
+      <img class="logo" src="img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420" loading="lazy" decoding="async">
+      <div class="chips">
+        <span class="chip"><svg><use href="#i-agenda"/></svg>Sáb · 28/11</span>
+        <span class="chip"><svg><use href="#i-local"/></svg>Passos-MG</span>
+      </div>
+    </div>
+    <div class="hero">
+      <h2 id="t-fim">
+        <span class="sr">Entrou no Canal VIP, ganhou 10% OFF na abertura das vendas do Cê Tá Bão Fest.</span>
+        <span class="h1-a" aria-hidden="true">Entrou no canal,</span>
+        <span class="h1-b" aria-hidden="true">ganhou</span>
+        <span class="h1-placa" aria-hidden="true">10% OFF</span>
+        <span class="h1-c" aria-hidden="true">na abertura das vendas</span>
+      </h2>
+      <p class="lead">A pré-venda do Cê Tá Bão Fest sai primeiro no nosso <strong>Canal VIP do WhatsApp</strong>. Quem estiver lá dentro compra com <strong>10% de desconto</strong>.</p>
+      <dl class="fatos">
+        <div><dt>Vendas abrem</dt><dd>06/10</dd></div>
+        <div><dt>Horário</dt><dd>12h00</dd></div>
+        <div><dt>O festival</dt><dd>28/11</dd></div>
+      </dl>
+      <a class="btn btn-sol" id="cta-topo" href="#acesso" data-cta><svg><use href="#i-destrava"/></svg><span>Quero meus 10% OFF</span></a>
+      <p class="mini"><svg><use href="#i-trava"/></svg>Grátis · leva menos de 1 minuto</p>
+    </div>
   </section>
 </main>
 
