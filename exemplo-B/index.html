@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cê Tá Bão Exemplo B</title>
+<meta name="description" content="Cê Tá Bão Fest — sábado 28/11 em Passos-MG. Cadastre-se e libere seu acesso ao Canal VIP do WhatsApp: o link da pré-venda sai lá primeiro, com 10% OFF. Terça, 06/10, ao meio-dia.">
+<meta property="og:title" content="Cê Tá Bão Fest · Passos-MG">
+<meta property="og:description" content="Quem tá no canal paga 10% menos. Pré-venda terça, 06/10, ao meio-dia.">
+<meta property="og:image" content="img/alo-passos.webp">
+<meta name="theme-color" content="#07132f">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Doto:wght@900&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noite: #07132f;
+    --noite-2: #0c1f4a;
+    --noite-3: #13295c;
+    --breu: #030916;
+    --painel: #040a1b;
+    --painel-borda: #1b2b57;
+    --sol: #ffc61a;
+    --sol-sombra: #b88700;
+    --ambar: #ffb31a;
+    --laranja: #ff8a1f;
+    --brasa: #e3262d;
+    --faixa: #2164a6;
+    --luz: #fff3d6;
+    --texto-2: #cdd5ea;
+    --nevoa: #9eabcc;
+    --linha: rgba(255, 255, 255, .13);
+    --vidro: rgba(255, 255, 255, .05);
+    --zap: #25d366;
+    --zap-sombra: #128c46;
+    --led-off: #ff4d55;
+    --led-on: #3ee07f;
+    --campo-fundo: #081533;
+    --campo-borda: #2b4078;
+    --campo-rotulo: #7f8fb8;
+    --show: 'Lilita One', 'Arial Rounded MT Bold', 'Arial Black', sans-serif;
+    --led: 'Doto', 'Courier New', ui-monospace, monospace;
+    --texto: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --lado: 20px;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { background: var(--breu); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    max-width: 480px; margin-inline: auto;
+    background: var(--noite); color: var(--luz);
+    font: 400 16.5px/1.55 var(--texto); text-align: center;
+    -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+    overflow-x: clip; box-shadow: 0 0 90px rgba(0, 0, 0, .6);
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  h1, h2, h3 { font-family: var(--show); font-weight: 400; line-height: 1.04; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  .rotulo { font: 800 12.5px/1 var(--texto); letter-spacing: .22em; text-transform: uppercase; color: var(--sol); }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--sol); outline-offset: 3px; }
+  a:not([href]) { cursor: not-allowed; }
+
+  /* ---------- botões ---------- */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; min-height: 60px; padding: 16px 24px; border: 0; border-radius: 999px;
+    font: 800 18px/1 var(--texto); letter-spacing: .01em;
+    text-decoration: none; cursor: pointer; touch-action: manipulation;
+    transition: transform .15s, box-shadow .15s, background-color .2s, color .2s;
+  }
+  .btn svg { width: 22px; height: 22px; flex: none; }
+  .btn-sol { background: var(--sol); color: var(--noite); box-shadow: 0 5px 0 var(--sol-sombra), 0 14px 30px rgba(255, 170, 20, .18); }
+  .btn-sol:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--sol-sombra), 0 8px 18px rgba(255, 170, 20, .18); }
+  .btn-zap { background: var(--zap); color: var(--noite); box-shadow: 0 5px 0 var(--zap-sombra), 0 14px 30px rgba(37, 211, 102, .2); }
+  .btn-zap:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--zap-sombra), 0 8px 18px rgba(37, 211, 102, .2); }
+  .btn:disabled { cursor: progress; opacity: .85; }
+  .pulsa { animation: pulso 2.4s ease-out infinite; }
+  @keyframes pulso {
+    0% { box-shadow: 0 5px 0 var(--sol-sombra), 0 0 0 0 rgba(255, 198, 26, .45); }
+    70%, 100% { box-shadow: 0 5px 0 var(--sol-sombra), 0 0 0 18px rgba(255, 198, 26, 0); }
+  }
+  .girando { width: 20px; height: 20px; flex: none; border: 3px solid rgba(7, 19, 47, .25); border-top-color: currentColor; border-radius: 50%; animation: gira .8s linear infinite; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+
+  /* ---------- hero ---------- */
+  .hero { padding-bottom: 34px; background: radial-gradient(100% 40% at 50% 100%, rgba(255, 122, 26, .14), transparent 70%), var(--noite); }
+  .hero-foto { position: relative; }
+  .hero-foto img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .hero-foto::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(180deg, rgba(7, 19, 47, 0), var(--noite)); }
+  .hero-texto { position: relative; margin-top: -64px; padding-inline: var(--lado); display: grid; justify-items: center; gap: 16px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px;
+    border-radius: 999px; background: rgba(7, 19, 47, .7); border: 1px solid rgba(255, 198, 26, .35);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    font: 800 12.5px/1 var(--texto); letter-spacing: .16em; text-transform: uppercase; color: var(--sol);
+  }
+  .chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--brasa); box-shadow: 0 0 8px var(--brasa); animation: pisca 1.2s ease-in-out infinite; }
+  .hero h1 { font-size: clamp(38px, 11.4vw, 52px); color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, .4); }
+  .fogo {
+    background: linear-gradient(180deg, #ffd84a 8%, #ff9f1f 55%, #ff4d1f 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    text-shadow: none; white-space: nowrap;
+  }
+  .lead { max-width: 30em; font-size: 17px; color: var(--texto-2); }
+  .lead b { color: #fff; font-weight: 700; }
+  .hero .btn { margin-top: 6px; }
+  .nota { display: flex; justify-content: center; align-items: center; gap: 7px; font-size: 14px; color: var(--nevoa); }
+  .nota svg { width: 15px; height: 15px; flex: none; color: var(--sol); }
+
+  /* ---------- placar de LED ---------- */
+  .placar-sec { padding: 6px var(--lado) 40px; }
+  .placar {
+    overflow: hidden; padding: 20px 14px 0; border-radius: 20px; border: 2px solid var(--painel-borda);
+    background: radial-gradient(circle, rgba(255, 198, 26, .075) 1.1px, transparent 1.7px) 0 0 / 6px 6px, var(--painel);
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, .6), 0 22px 50px rgba(0, 0, 0, .35);
+  }
+  .placar h2 { font: 800 12.5px/1 var(--texto); letter-spacing: .22em; text-transform: uppercase; color: var(--nevoa); }
+  .ao-vivo { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font: 900 16px/1 var(--led); letter-spacing: .04em; color: var(--sol); }
+  .ao-vivo i { width: 8px; height: 8px; border-radius: 50%; background: var(--brasa); box-shadow: 0 0 8px var(--brasa); animation: pisca 1.2s ease-in-out infinite; }
+  .digitos { display: flex; justify-content: center; align-items: flex-start; gap: 2px; padding-block: 18px 18px; }
+  .digitos div { display: grid; justify-items: center; gap: 10px; min-width: 0; }
+  .digitos b { font: 900 clamp(38px, 11.4vw, 54px)/1 var(--led); color: var(--sol); font-variant-numeric: tabular-nums; letter-spacing: .02em; text-shadow: 0 0 10px rgba(255, 190, 30, .7), 0 0 30px rgba(255, 140, 0, .35); }
+  .digitos span { font: 700 11px/1 var(--texto); letter-spacing: .2em; text-transform: uppercase; color: var(--nevoa); }
+  .digitos > i { font: 900 clamp(30px, 9vw, 44px)/1 var(--led); font-style: normal; color: var(--sol); opacity: .75; animation: pisca 1s ease-in-out infinite; }
+  .letreiro { margin-inline: -14px; padding-block: 11px; overflow: hidden; border-top: 2px solid var(--painel-borda); background: rgba(255, 198, 26, .04); }
+  .letreiro-trilho { display: flex; width: max-content; animation: corre 32s linear infinite; }
+  .letreiro-trilho span { padding-right: 2.5em; white-space: nowrap; font: 900 16px/1 var(--led); letter-spacing: .06em; color: var(--ambar); text-shadow: 0 0 8px rgba(255, 170, 20, .5); }
+  @keyframes corre { to { transform: translateX(-50%); } }
+  @keyframes pisca { 50% { opacity: .2; } }
+
+  /* ---------- passe VIP (cadastro) ---------- */
+  .acesso-sec { padding: 0 var(--lado) 60px; }
+  .passe {
+    position: relative; overflow: hidden; scroll-margin-top: 14px;
+    border-radius: 26px; border: 1px solid rgba(255, 198, 26, .38);
+    background: radial-gradient(90% 40% at 50% 0%, rgba(255, 138, 31, .12), transparent 70%), linear-gradient(180deg, var(--noite-3), var(--noite-2));
+    box-shadow: 0 30px 60px rgba(0, 0, 0, .45), 0 0 80px rgba(255, 150, 30, .1);
+  }
+  .passe-topo {
+    position: relative; display: grid; justify-items: center; gap: 10px; padding: 18px 16px 20px;
+    border-bottom: 2px dashed rgba(255, 255, 255, .18);
+    background: radial-gradient(circle, rgba(255, 198, 26, .07) 1px, transparent 1.6px) 0 0 / 6px 6px, #050c20;
+  }
+  .passe-topo::before, .passe-topo::after { content: ""; position: absolute; bottom: -13px; width: 24px; height: 24px; border-radius: 50%; background: var(--noite); }
+  .passe-topo::before { left: -13px; }
+  .passe-topo::after { right: -13px; }
+  .passe-marca { font: 800 11.5px/1 var(--texto); letter-spacing: .22em; text-transform: uppercase; color: var(--nevoa); }
+  .status { display: inline-flex; align-items: center; gap: 10px; font: 900 19px/1 var(--led); letter-spacing: .06em; color: var(--led-off); text-shadow: 0 0 10px rgba(255, 70, 80, .6); }
+  .status i { width: 10px; height: 10px; border-radius: 50%; background: var(--led-off); box-shadow: 0 0 10px var(--led-off); animation: pisca 1.2s ease-in-out infinite; }
+  body.liberado .status { color: var(--led-on); text-shadow: 0 0 10px rgba(62, 224, 127, .6); }
+  body.liberado .status i { background: var(--led-on); box-shadow: 0 0 10px var(--led-on); animation: none; }
+  .passe-corpo { padding: 28px 18px 24px; }
+  .passe-cabeca h2 { font-size: clamp(28px, 8.4vw, 34px); color: #fff; }
+  .passe-cabeca p { margin-top: 8px; color: var(--texto-2); }
+  form { display: grid; gap: 12px; margin-top: 22px; text-align: left; }
+  .campo { position: relative; }
+  .campo input {
+    width: 100%; height: 60px; padding: 22px 16px 6px 48px;
+    border: 2px solid var(--campo-borda); border-radius: 16px; background: var(--campo-fundo);
+    font: 600 17px/1.2 var(--texto); color: #fff; caret-color: var(--sol);
+    transition: border-color .15s, box-shadow .15s, background-color .15s;
+  }
+  .campo input:-webkit-autofill { -webkit-text-fill-color: #fff; box-shadow: 0 0 0 1000px var(--campo-fundo) inset; }
+  .campo label {
+    position: absolute; left: 50px; top: 19px; pointer-events: none;
+    font: 500 17px/1.2 var(--texto); color: var(--campo-rotulo);
+    transition: top .15s, font-size .15s, color .15s, letter-spacing .15s;
+  }
+  .campo .ic { position: absolute; left: 16px; top: 19px; width: 21px; height: 21px; color: var(--campo-rotulo); pointer-events: none; transition: color .15s; }
+  .campo input:focus { outline: none; border-color: var(--sol); background: #0a1a3f; box-shadow: 0 0 0 4px rgba(255, 198, 26, .16); }
+  .campo input:focus ~ .ic { color: var(--sol); }
+  .campo input:focus + label, .campo input:not(:placeholder-shown) + label { top: 9px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sol); }
+  .campo small { display: none; margin: 6px 4px 0; font-size: 14px; font-weight: 600; color: #ff8a8e; }
+  .campo.erro input { border-color: #ff5a5f; }
+  .campo.erro label, .campo.erro .ic { color: #ff8a8e; }
+  .campo.erro small { display: block; }
+  .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  form .btn { margin-top: 4px; }
+  .lgpd { font-size: 12.5px; line-height: 1.45; color: var(--campo-rotulo); text-align: center; }
+
+  .ok { display: grid; justify-items: center; gap: 10px; animation: surge .45s ease-out; }
+  .ok-icone { width: 66px; height: 66px; display: grid; place-items: center; border-radius: 50%; background: var(--zap); color: var(--noite); box-shadow: 0 0 0 8px rgba(37, 211, 102, .14), 0 0 40px rgba(37, 211, 102, .35); }
+  .ok-icone svg { width: 34px; height: 34px; }
+  .ok h2 { font-size: clamp(28px, 8.4vw, 34px); color: #fff; }
+  .ok p { color: var(--texto-2); }
+  @keyframes surge { from { opacity: 0; transform: translateY(10px); } }
+
+  .trava { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--linha); }
+  .trava-rotulo { font: 800 11.5px/1 var(--texto); letter-spacing: .2em; text-transform: uppercase; color: var(--campo-rotulo); }
+  body.liberado .trava-rotulo { color: var(--led-on); }
+  .trava .btn { margin-top: 12px; }
+  .btn-canal[aria-disabled="true"] { background: rgba(255, 255, 255, .05); color: var(--campo-rotulo); border: 2px dashed rgba(255, 255, 255, .2); box-shadow: none; }
+  .btn-canal.liberado { animation: destrava .6s ease-out, pulso-zap 2.2s .6s ease-out infinite; }
+  .btn-canal.treme { animation: treme .4s ease-in-out; }
+  .trava-nota { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 12px; font-size: 14px; color: var(--nevoa); }
+  .trava-nota svg { width: 16px; height: 16px; flex: none; color: var(--sol); }
+  @keyframes destrava { 0% { transform: scale(.94); } 45% { transform: scale(1.04); } 100% { transform: scale(1); } }
+  @keyframes pulso-zap {
+    0% { box-shadow: 0 5px 0 var(--zap-sombra), 0 0 0 0 rgba(37, 211, 102, .5); }
+    70%, 100% { box-shadow: 0 5px 0 var(--zap-sombra), 0 0 0 16px rgba(37, 211, 102, 0); }
+  }
+  @keyframes treme { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+
+  /* ---------- por dentro do canal ---------- */
+  .canal-sec { padding: 60px var(--lado) 64px; background: linear-gradient(180deg, var(--noite), var(--noite-2)); }
+  .canal-sec h2 { margin-top: 12px; font-size: clamp(32px, 9.4vw, 42px); color: #fff; }
+  .canal-sec h2 span { color: var(--sol); }
+  .canal-sec h2 + p { margin-top: 12px; color: var(--texto-2); }
+  .beneficios { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 26px; }
+  .beneficios li { display: grid; justify-items: center; align-content: start; gap: 7px; padding: 18px 10px 16px; border-radius: 20px; background: var(--vidro); border: 1px solid var(--linha); }
+  .beneficios svg { width: 28px; height: 28px; color: var(--sol); filter: drop-shadow(0 0 8px rgba(255, 198, 26, .45)); }
+  .beneficios b { font: 400 19px/1.1 var(--show); color: #fff; }
+  .beneficios span { font-size: 14px; line-height: 1.38; color: var(--nevoa); }
+  .celular { width: min(300px, 90%); margin: 40px auto 0; display: grid; justify-items: center; gap: 14px; }
+  .tela { width: 100%; overflow: hidden; border-radius: 38px; border: 9px solid #02050d; background: #0b1735; box-shadow: 0 0 0 2px #2a3a66, 0 30px 70px rgba(0, 0, 0, .55), 0 0 100px rgba(255, 150, 30, .14); text-align: left; }
+  .tela-topo { position: relative; display: flex; align-items: center; gap: 10px; padding: 30px 14px 12px; background: #11234f; }
+  .tela-topo::before { content: ""; position: absolute; top: 9px; left: 50%; width: 76px; height: 18px; margin-left: -38px; border-radius: 12px; background: #02050d; }
+  .avatar { width: 42px; height: 42px; flex: none; padding: 3px; border-radius: 50%; background: var(--noite); object-fit: contain; }
+  .tela-topo div { flex: 1; min-width: 0; line-height: 1.2; }
+  .tela-topo b { display: block; font: 700 15px/1.2 var(--texto); color: #fff; }
+  .tela-topo span { font-size: 12.5px; color: var(--nevoa); }
+  .tela-topo svg { width: 22px; height: 22px; flex: none; color: var(--sol); }
+  .feed { display: grid; gap: 10px; padding: 14px 12px 20px; background: radial-gradient(circle, rgba(255, 255, 255, .035) 1px, transparent 1.5px) 0 0 / 14px 14px, #0b1735; }
+  .dia { justify-self: center; padding: 6px 10px; border-radius: 999px; background: rgba(255, 255, 255, .07); font: 700 11.5px/1 var(--texto); letter-spacing: .06em; text-transform: uppercase; color: var(--nevoa); }
+  .msg { padding: 10px 12px 7px; border-radius: 4px 14px 14px 14px; background: #182c5c; font-size: 14.5px; line-height: 1.42; color: #eef1fa; }
+  .msg time { display: block; margin-top: 4px; text-align: right; font-size: 11.5px; color: var(--nevoa); }
+  .msg-destaque { background: var(--sol); color: var(--noite); }
+  .msg-destaque time { color: #6b5200; }
+  .msg-link { display: block; margin-top: 9px; padding: 9px 12px; border-radius: 8px; background: var(--noite); color: var(--sol); font-weight: 800; text-align: center; }
+  .celular figcaption { font-size: 13px; color: var(--nevoa); }
+
+  /* ---------- na arena ---------- */
+  .arena { padding: 60px var(--lado) 64px; background: var(--noite-2); }
+  .l-1 { margin-top: 16px; font: 400 clamp(40px, 12vw, 56px)/1 var(--show); color: var(--sol); text-wrap: balance; }
+  .l-2 { margin-top: 6px; font: 400 clamp(30px, 9vw, 42px)/1 var(--show); color: #fff; }
+  .l-2 em { font-style: normal; color: var(--laranja); }
+  .lineup { list-style: none; max-width: 300px; margin: 22px auto 0; }
+  .lineup li { padding: 11px 0; border-top: 1px solid var(--linha); font: 400 clamp(22px, 6.6vw, 28px)/1.1 var(--show); color: #fff; }
+  .lineup li:last-child { border-bottom: 1px solid var(--linha); }
+  .cartaz { width: 78%; margin: 40px auto 0; transform: rotate(-2.5deg); }
+  .cartaz img { border-radius: 10px; box-shadow: 0 24px 60px rgba(0, 0, 0, .55); }
+  .cartaz figcaption { margin-top: 16px; font: 400 17px/1.2 var(--show); color: var(--sol); transform: rotate(2.5deg); }
+  .ficha { display: grid; gap: 10px; margin-top: 32px; }
+  .ficha div { display: grid; justify-items: center; gap: 4px; padding: 16px 14px; border-radius: 20px; background: var(--vidro); border: 1px solid var(--linha); }
+  .ficha svg { width: 22px; height: 22px; color: var(--sol); }
+  .ficha span { font: 800 11.5px/1 var(--texto); letter-spacing: .2em; text-transform: uppercase; color: var(--nevoa); }
+  .ficha b { font-weight: 600; color: #fff; }
+
+  /* ---------- galera ---------- */
+  .galera { position: relative; isolation: isolate; display: grid; align-items: end; min-height: 560px; }
+  .galera img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; }
+  .galera::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(7, 19, 47, 0) 34%, rgba(7, 19, 47, .9) 82%, var(--noite)); }
+  .galera div { padding: 40px var(--lado) 36px; }
+  .galera h2 { font-size: clamp(40px, 11.4vw, 54px); color: #fff; text-shadow: 0 4px 24px rgba(0, 0, 0, .45); }
+  .galera h2 span { color: var(--sol); }
+  .galera p { margin-top: 12px; font: 800 13px/1.3 var(--texto); letter-spacing: .2em; text-transform: uppercase; color: var(--sol); }
+
+  /* ---------- chamada final ---------- */
+  .final { padding: 56px var(--lado) 64px; background: radial-gradient(80% 60% at 50% 100%, rgba(255, 122, 26, .2), transparent 70%), var(--noite); }
+  .final img { width: 140px; margin: 0 auto 18px; filter: drop-shadow(0 8px 20px rgba(0, 0, 0, .5)); }
+  .final h2 { font-size: clamp(32px, 9.4vw, 42px); color: #fff; }
+  .final h2 span { color: var(--sol); }
+  .final p { margin: 12px auto 26px; color: var(--texto-2); }
+
+  /* ---------- patrocinadores + rodapé ---------- */
+  .patro { background: var(--faixa); }
+  .patro img { width: 100%; }
+  .rodape { padding: 26px var(--lado) 116px; background: var(--painel); color: var(--nevoa); font-size: 14px; }
+  .redes { display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; }
+  .redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, .07); color: #fff; }
+  .redes svg { width: 20px; height: 20px; }
+
+  /* ---------- barra flutuante ---------- */
+  .barra {
+    position: fixed; z-index: 30; left: 50%; bottom: 0; width: 100%; max-width: 480px;
+    padding: 0 14px calc(14px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%); transition: transform .25s ease, opacity .25s ease;
+  }
+  .barra.escondida { transform: translate(-50%, 140%); opacity: 0; pointer-events: none; }
+  .barra .btn { min-height: 56px; box-shadow: 0 5px 0 var(--sol-sombra), 0 16px 36px rgba(0, 0, 0, .55); }
+  .barra .btn-zap { box-shadow: 0 5px 0 var(--zap-sombra), 0 16px 36px rgba(0, 0, 0, .55); }
+  .barra em { font: 900 13px/1 var(--led); font-style: normal; padding: 6px 9px; border-radius: 999px; background: rgba(7, 19, 47, .14); }
+  body.liberado .barra em { display: none; }
+
+  @media (min-width: 1000px) { html { zoom: 1.3; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-zap" viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41z"/></symbol>
+  <symbol id="i-trava" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></symbol>
+  <symbol id="i-destrava" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 7.75-1.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-pessoa" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1.2-4 4.4-6 8-6s6.8 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-email" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sino" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2z"/></symbol>
+  <symbol id="i-agenda" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-local" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-etiqueta" viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="7.5" cy="7.5" r="1.6" fill="currentColor"/></symbol>
+  <symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-estrela" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="hero">
+  <figure class="hero-foto">
+    <img src="img/alo-passos.webp" alt="Alô Passos! Estamos chegando — público no show do Cê Tá Bão Fest ao pôr do sol" width="800" height="800" fetchpriority="high">
+  </figure>
+  <div class="hero-texto">
+    <span class="chip"><i></i>Sáb 28/11 · Passos-MG</span>
+    <h1>Quem tá no canal paga <span class="fogo">10% menos</span>.</h1>
+    <p class="lead">A pré-venda abre <b>terça, 06/10, ao meio-dia</b>, e o link sai primeiro no nosso <b>Canal VIP do WhatsApp</b>.</p>
+    <a class="btn btn-sol pulsa" id="cta-topo" href="#acesso" data-cta><svg><use href="#i-destrava"/></svg><span>Liberar meu acesso</span></a>
+    <p class="nota"><svg><use href="#i-trava"/></svg>Grátis · nome, e-mail e WhatsApp</p>
+  </div>
+</header>
+
+<main>
+  <section class="placar-sec" aria-labelledby="t-placar">
+    <div class="placar">
+      <h2 id="t-placar" data-aberta="A pré-venda abriu">A pré-venda abre em</h2>
+      <p class="ao-vivo"><i></i>TER 06/10 · 12:00</p>
+      <div class="digitos" role="timer" aria-label="Contagem para a abertura da pré-venda">
+        <div><b data-t="d">14</b><span>dias</span></div>
+        <i aria-hidden="true">:</i>
+        <div><b data-t="h">02</b><span>horas</span></div>
+        <i aria-hidden="true">:</i>
+        <div><b data-t="m">30</b><span>min</span></div>
+        <i aria-hidden="true">:</i>
+        <div><b data-t="s">00</b><span>seg</span></div>
+      </div>
+      <div class="letreiro" aria-hidden="true">
+        <div class="letreiro-trilho">
+          <span>PRÉ-VENDA TER 06/10 12H • 10% OFF PRA QUEM TÁ NO CANAL • SÁB 28/11 PASSOS-MG • HENRIQUE E DIEGO + KAMISA 10 •</span>
+          <span>PRÉ-VENDA TER 06/10 12H • 10% OFF PRA QUEM TÁ NO CANAL • SÁB 28/11 PASSOS-MG • HENRIQUE E DIEGO + KAMISA 10 •</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="acesso-sec" aria-labelledby="t-acesso">
+    <div class="passe" id="acesso">
+      <div class="passe-topo">
+        <p class="passe-marca">Canal VIP · Cê Tá Bão Fest</p>
+        <p class="status" aria-live="polite"><i></i><span id="status">ACESSO BLOQUEADO</span></p>
+      </div>
+      <div class="passe-corpo">
+        <div class="passe-cabeca" id="cabeca-form">
+          <h2 id="t-acesso">Libere seu acesso ao Canal VIP</h2>
+          <p>Cadastre seus dados e o botão do canal é liberado na hora.</p>
+        </div>
+        <form id="form-vip" novalidate>
+          <div class="campo" id="c-nome">
+            <input id="nome" name="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder=" " required>
+            <label for="nome">Seu nome</label>
+            <svg class="ic" aria-hidden="true"><use href="#i-pessoa"/></svg>
+            <small>Digite seu nome.</small>
+          </div>
+          <div class="campo" id="c-email">
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder=" " required>
+            <label for="email">Seu melhor e-mail</label>
+            <svg class="ic" aria-hidden="true"><use href="#i-email"/></svg>
+            <small>Digite um e-mail válido.</small>
+          </div>
+          <div class="campo" id="c-whats">
+            <input id="whatsapp" name="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="send" placeholder=" " required>
+            <label for="whatsapp">WhatsApp com DDD</label>
+            <svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg>
+            <small>Digite um WhatsApp válido, com DDD.</small>
+          </div>
+          <input class="isca" type="text" name="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button class="btn btn-sol" type="submit"><svg><use href="#i-destrava"/></svg><span>Liberar meu acesso</span></button>
+          <p class="lgpd">Ao se cadastrar, você aceita receber novidades do Cê Tá Bão Fest por WhatsApp e e-mail.</p>
+        </form>
+
+        <div class="ok" id="ok" hidden>
+          <div class="ok-icone"><svg><use href="#i-ok"/></svg></div>
+          <h2>Tudo certo, <span id="ok-nome">você</span>!</h2>
+          <p>Seu acesso tá liberado. O link da pré-venda com 10% OFF sai no canal na terça, 06/10, ao meio-dia.</p>
+        </div>
+
+        <div class="trava">
+          <p class="trava-rotulo" id="trava-rotulo">Depois do cadastro</p>
+          <a class="btn btn-canal" id="btn-canal" role="link" aria-disabled="true"><svg><use href="#i-trava"/></svg><span>Entrar no Canal VIP</span></a>
+          <p class="trava-nota" id="trava-nota"><svg><use href="#i-trava"/></svg><span>Bloqueado até você se cadastrar</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="canal-sec" aria-labelledby="t-canal">
+    <p class="rotulo">Por dentro do Canal VIP</p>
+    <h2 id="t-canal">O link sai lá primeiro. <span>Com desconto.</span></h2>
+    <p>No canal a gente avisa cada passo da pré-venda. Na terça, 06/10, ao meio-dia, o link com 10% OFF é publicado lá antes de ir pra qualquer outro lugar.</p>
+    <ul class="beneficios">
+      <li><svg aria-hidden="true"><use href="#i-etiqueta"/></svg><b>10% OFF</b><span>Desconto exclusivo na abertura da pré-venda.</span></li>
+      <li><svg aria-hidden="true"><use href="#i-relogio"/></svg><b>Acesso antecipado</b><span>O link chega antes do público geral.</span></li>
+      <li><svg aria-hidden="true"><use href="#i-estrela"/></svg><b>Melhores setores</b><span>Quem chega primeiro escolhe primeiro.</span></li>
+      <li><svg aria-hidden="true"><use href="#i-sino"/></svg><b>Novidades</b><span>Tudo do festival sai no canal antes.</span></li>
+    </ul>
+    <figure class="celular">
+      <div class="tela">
+        <div class="tela-topo">
+          <img class="avatar" src="img/logo.webp" alt="" width="400" height="420" loading="lazy" decoding="async">
+          <div><b>Cê Tá Bão Fest</b><span>Canal VIP</span></div>
+          <svg aria-hidden="true"><use href="#i-sino"/></svg>
+        </div>
+        <div class="feed">
+          <p class="dia">Hoje</p>
+          <div class="msg"><p>Bem-vindo ao Canal VIP do Cê Tá Bão! A pré-venda abre <b>terça, 06/10, ao meio-dia</b>, e o link sai aqui primeiro.</p><time>09:30</time></div>
+          <p class="dia">Seg, 05/10</p>
+          <div class="msg"><p>Amanhã é o dia! Liga o sininho aqui em cima pra ser avisado na hora.</p><time>19:00</time></div>
+          <p class="dia">Ter, 06/10</p>
+          <div class="msg msg-destaque"><p><b>PORTEIRA ABERTA!</b> Pré-venda liberada com 10% OFF pra quem tá no canal.</p><span class="msg-link">Comprar com 10% OFF →</span><time>12:00</time></div>
+        </div>
+      </div>
+      <figcaption>Exemplo das mensagens que chegam no canal</figcaption>
+    </figure>
+  </section>
+
+  <section class="arena" aria-labelledby="t-arena">
+    <p class="rotulo" id="t-arena">Na arena · sábado, 28/11</p>
+    <p class="l-1">Henrique e Diego</p>
+    <p class="l-2"><em>+</em> Kamisa 10</p>
+    <ul class="lineup">
+      <li>Luan e Rafael</li>
+      <li>DJ Sarah Leonel</li>
+      <li>DJ Dion Dion</li>
+      <li>Grupo Atitude Mais</li>
+    </ul>
+    <figure class="cartaz">
+      <img src="img/flyer.webp" alt="Cartaz oficial do Cê Tá Bão Fest com Henrique e Diego, Kamisa 10, Luan e Rafael, DJ Sarah Leonel, DJ Dion Dion e Grupo Atitude Mais" width="720" height="1280" loading="lazy" decoding="async">
+      <figcaption>o cartaz oficial · salva e manda pros amigos</figcaption>
+    </figure>
+    <div class="ficha">
+      <div><svg aria-hidden="true"><use href="#i-agenda"/></svg><span>Quando</span><b>Sábado, 28 de novembro</b></div>
+      <div><svg aria-hidden="true"><use href="#i-local"/></svg><span>Onde</span><b>Parque de Exposições Adolpho Coelho Lemos · Passos-MG</b></div>
+    </div>
+  </section>
+
+  <section class="galera" aria-labelledby="t-galera">
+    <img src="img/galera.webp" alt="" width="800" height="996" loading="lazy" decoding="async">
+    <div>
+      <h2 id="t-galera">Música, amizade e <span>Cê Tá Bão.</span></h2>
+      <p>Mais que um evento. Uma experiência.</p>
+    </div>
+  </section>
+
+  <section class="final" aria-labelledby="t-final">
+    <img src="img/logo.webp" alt="" width="400" height="420" loading="lazy" decoding="async">
+    <h2 id="t-final" data-t="frase">Faltam <span>14 dias</span> pra porteira abrir</h2>
+    <p>O desconto de 10% é só pra quem estiver no canal na abertura da pré-venda.</p>
+    <a class="btn btn-sol" id="cta-final" href="#acesso" data-cta><svg><use href="#i-destrava"/></svg><span>Liberar meu acesso</span></a>
+  </section>
+</main>
+
+<div class="patro">
+  <img src="img/patrocinadores.webp" alt="Realização: Headlab Entretenimento e Roy Entretenimento. Brahma. M2. Promoção: Ind 90.9 FM e Jovem Pan FM Passos 96.9." width="1080" height="114" loading="lazy" decoding="async">
+</div>
+
+<footer class="rodape">
+  <nav class="redes" aria-label="Redes sociais">
+    <a data-rede="instagram" href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
+    <a data-rede="tiktok" href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.3 2.2 1.7 3.6 3.9 3.8v3.3c-1.5 0-2.8-.4-3.9-1.2v6.4c0 3.5-2.6 5.7-5.6 5.7-3.1 0-5.5-2.3-5.5-5.4 0-3.2 2.7-5.6 6-5.3v3.4c-1.4-.3-2.6.6-2.6 1.9 0 1.2.9 2 2 2 1.2 0 2.1-.8 2.1-2.3V3h3.6z"/></svg></a>
+    <a data-rede="facebook" href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.5H16l.5-3h-3V8.7c0-.9.3-1.5 1.6-1.5h1.6V4.5c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.1H8v3h2.5V21h3z"/></svg></a>
+    <a data-rede="youtube" href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2c-.2-.9-.9-1.6-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4c-.9.2-1.6.9-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8c.2.9.9 1.6 1.8 1.8 1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3-5.2 3z"/></svg></a>
+  </nav>
+  <p>Cê Tá Bão Fest · Passos-MG · 2026</p>
+</footer>
+
+<div class="barra escondida" id="barra">
+  <a class="btn btn-sol" href="#acesso" data-cta><svg><use href="#i-destrava"/></svg><span>Liberar meu acesso</span><em data-t="curto">14D 02H</em></a>
+</div>
+
+<script>
+  /* ================= CONFIGURAÇÃO ================= */
+  const LINK_CANAL = 'https://whatsapp.com/channel/SEU-CANAL-AQUI'; // ⚠️ link do canal
+  const WEBHOOK_CADASTRO = ''; // ⚠️ URL do Apps Script da planilha de leads (ver captura-leads-planilha.gs)
+  const ABERTURA = new Date('2026-10-06T12:00:00-03:00').getTime();
+  const REDES = { instagram: '#', facebook: '#', tiktok: '#', youtube: '#' };
+  const ORIGEM = 'lp-exemplo-B';
+  /* ================================================ */
+
+  document.querySelectorAll('[data-rede]').forEach(a => a.href = REDES[a.dataset.rede] || '#');
+
+  // ---------- contagem regressiva (placar, barra e chamada final) ----------
+  const dd = n => String(n).padStart(2, '0');
+  const pinta = (k, v, html) => document.querySelectorAll(`[data-t="${k}"]`).forEach(el => html ? el.innerHTML = v : el.textContent = v);
+  let relogio;
+  function atualizar() {
+    const falta = ABERTURA - Date.now();
+    if (falta <= 0) {
+      ['d', 'h', 'm', 's'].forEach(k => pinta(k, '00'));
+      pinta('frase', 'A pré-venda <span>abriu!</span>', true);
+      pinta('curto', 'ABERTA');
+      document.querySelectorAll('[data-aberta]').forEach(el => el.textContent = el.dataset.aberta);
+      clearInterval(relogio);
+      return;
+    }
+    let r = Math.floor(falta / 1000);
+    const d = Math.floor(r / 86400); r %= 86400;
+    const h = Math.floor(r / 3600); r %= 3600;
+    const m = Math.floor(r / 60);
+    pinta('d', dd(d)); pinta('h', dd(h)); pinta('m', dd(m)); pinta('s', dd(r % 60));
+    pinta('curto', d > 0 ? `${d}D ${dd(h)}H` : `${dd(h)}H ${dd(m)}M`);
+    pinta('frase', d > 1 ? `Faltam <span>${d} dias</span> pra porteira abrir`
+      : d === 1 ? 'Falta <span>1 dia</span> pra porteira abrir'
+      : 'É <span>hoje</span>, ao meio-dia!', true);
+  }
+  atualizar(); relogio = setInterval(atualizar, 1000);
+
+  // ---------- cadastro ----------
+  const form = document.getElementById('form-vip');
+  const campos = [
+    { el: form.nome, caixa: document.getElementById('c-nome'), ok: v => v.trim().length >= 2 },
+    { el: form.email, caixa: document.getElementById('c-email'), ok: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) },
+    { el: form.whatsapp, caixa: document.getElementById('c-whats'), ok: v => v.replace(/\D/g, '').length >= 10 }
+  ];
+  campos.forEach((c, i) => {
+    c.el.addEventListener('input', () => c.caixa.classList.remove('erro'));
+    c.el.addEventListener('blur', () => { if (c.el.value.trim()) c.caixa.classList.toggle('erro', !c.ok(c.el.value)); });
+    if (i < campos.length - 1) c.el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); campos[i + 1].el.focus(); }
+    });
+  });
+  form.whatsapp.addEventListener('input', () => {
+    const n = form.whatsapp.value.replace(/\D/g, '').slice(0, 11);
+    let v = n;
+    if (n.length > 2) v = `(${n.slice(0, 2)}) ${n.slice(2)}`;
+    if (n.length > 6) v = `(${n.slice(0, 2)}) ${n.slice(2, n.length - 4)}-${n.slice(-4)}`;
+    form.whatsapp.value = v;
+  });
+
+  async function enviarLead(dados) {
+    if (!WEBHOOK_CADASTRO) { console.warn('WEBHOOK_CADASTRO vazio: o cadastro não foi salvo.', dados); return; }
+    try {
+      await Promise.race([
+        fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) }),
+        new Promise(r => setTimeout(r, 4000))
+      ]);
+    } catch (_) {}
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    let primeiroErro = null;
+    campos.forEach(c => {
+      const valido = c.ok(c.el.value);
+      c.caixa.classList.toggle('erro', !valido);
+      if (!valido && !primeiroErro) primeiroErro = c.el;
+    });
+    if (primeiroErro) return primeiroErro.focus();
+
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="girando" aria-hidden="true"></i><span>Liberando...</span>';
+
+    const nome = form.nome.value.trim().replace(/\s+/g, ' ');
+    if (!form.empresa.value) {
+      const p = new URLSearchParams(location.search);
+      await enviarLead({
+        nome, email: form.email.value.trim().toLowerCase(), whatsapp: '55' + form.whatsapp.value.replace(/\D/g, ''),
+        origem: ORIGEM, pagina: location.href.split('#')[0], data: new Date().toISOString(),
+        utm_source: p.get('utm_source') || '', utm_medium: p.get('utm_medium') || '', utm_campaign: p.get('utm_campaign') || '',
+        utm_content: p.get('utm_content') || '', utm_term: p.get('utm_term') || ''
+      });
+    }
+    liberar(nome.split(' ')[0]);
+  });
+
+  // ---------- botão do canal: bloqueado até o cadastro ----------
+  const canal = document.getElementById('btn-canal');
+  canal.addEventListener('click', e => {
+    if (document.body.classList.contains('liberado')) return;
+    e.preventDefault();
+    canal.classList.remove('treme'); void canal.offsetWidth; canal.classList.add('treme');
+    const vazio = campos.find(c => !c.ok(c.el.value));
+    if (vazio) vazio.el.focus();
+  });
+
+  function viraCanal(el) {
+    el.href = LINK_CANAL;
+    el.classList.remove('btn-sol', 'pulsa'); el.classList.add('btn-zap');
+    el.querySelector('use').setAttribute('href', '#i-zap');
+    el.querySelector('span').textContent = 'Entrar no Canal VIP';
+  }
+
+  function liberar(primeiroNome) {
+    document.body.classList.add('liberado');
+    document.getElementById('status').textContent = 'ACESSO LIBERADO';
+    document.getElementById('cabeca-form').hidden = true;
+    form.hidden = true;
+    document.getElementById('ok-nome').textContent = primeiroNome || 'você';
+    document.getElementById('ok').hidden = false;
+
+    canal.removeAttribute('aria-disabled');
+    canal.removeAttribute('role');
+    canal.classList.remove('treme');
+    viraCanal(canal);
+    canal.classList.add('liberado');
+    document.getElementById('trava-rotulo').textContent = 'Acesso liberado';
+    const nota = document.getElementById('trava-nota');
+    nota.querySelector('use').setAttribute('href', '#i-sino');
+    nota.querySelector('span').textContent = 'Lá dentro, toque no sininho pra ser avisado às 12h do dia 06/10.';
+
+    document.querySelectorAll('[data-cta]').forEach(viraCanal);
+    document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // botões "Liberar meu acesso": rolam até o passe e já abrem o teclado no nome
+  document.querySelectorAll('[data-cta]').forEach(a => a.addEventListener('click', e => {
+    if (document.body.classList.contains('liberado')) return;
+    e.preventDefault();
+    document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => form.nome.focus({ preventScroll: true }), 650);
+  }));
+
+  // ---------- barra flutuante: some no topo, no passe e na chamada final ----------
+  const barra = document.getElementById('barra');
+  const visivel = new Map();
+  const obs = new IntersectionObserver(es => {
+    es.forEach(e => visivel.set(e.target, e.isIntersecting));
+    barra.classList.toggle('escondida', [...visivel.values()].some(Boolean));
+  }, { threshold: 0.1 });
+  ['cta-topo', 'acesso', 'cta-final'].forEach(id => obs.observe(document.getElementById(id)));
+</script>
+</body>
+</html>
