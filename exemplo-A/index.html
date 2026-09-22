@@ -230,6 +230,9 @@
   .passos .n { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 16px; background: var(--engradado); color: var(--sol); font: 400 26px/1 var(--placa); box-shadow: 0 4px 0 var(--engradado-escuro); }
   .passos h3 { font: 800 22px/1.1 var(--estreita); letter-spacing: .05em; text-transform: uppercase; }
   .passos p { max-width: 30ch; color: #3b2d00; }
+  .aviso-vendas { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 32px; padding: 12px 18px; border-radius: 999px; background: rgba(11, 29, 69, .08); font: 700 13.5px/1.35 var(--estreita); letter-spacing: .01em; color: #3b2d00; text-wrap: balance; }
+  .aviso-vendas svg { width: 16px; height: 16px; flex: none; color: var(--engradado-escuro); }
+  .aviso-vendas strong { color: var(--engradado); }
 
   /* ---------- palco ---------- */
   .palco { padding: 56px var(--lado) 60px; background: var(--ceu-fundo); }
@@ -325,10 +328,10 @@
     </div>
 
     <div class="cartao reveal" id="acesso">
-      <span class="etiqueta">10% OFF exclusivo</span>
+      <span class="etiqueta">Garanta no melhor preço</span>
 
       <div class="cartao-cabeca" id="cabeca-form">
-        <h2>Libere seu acesso ao Canal VIP</h2>
+        <h2>Libere seu acesso e garanta no melhor preço</h2>
         <p>Preencha seus dados e o botão do canal é liberado na hora.</p>
       </div>
       <form id="form-vip" novalidate>
@@ -389,6 +392,7 @@
       <li class="reveal"><span class="n" aria-hidden="true">2</span><h3>Entra no canal</h3><p>O botão do Canal VIP é liberado na hora. Lá dentro, ativa o sininho.</p></li>
       <li class="reveal"><span class="n" aria-hidden="true">3</span><h3>Compra com 10% OFF</h3><p>Terça, 06/10, ao meio-dia, o link da pré-venda com desconto sai no canal.</p></li>
     </ol>
+    <p class="aviso-vendas reveal"><svg aria-hidden="true"><use href="#i-trava"/></svg>Vendas exclusivas no site oficial da <strong>Bilheteria Digital</strong></p>
   </section>
 
   <section class="palco" aria-labelledby="t-vibe">
