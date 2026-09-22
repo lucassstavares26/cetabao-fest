@@ -168,6 +168,52 @@
   .btn-vip svg { width: 28px; height: 28px; flex: none; }
   .seguro { display: flex; gap: 8px; align-items: flex-start; margin-top: 14px; font-size: 13.5px; color: #4a5a80; line-height: 1.4; }
   .seguro svg { width: 14px; height: 16px; flex: none; margin-top: 2px; }
+  [hidden] { display: none !important; }
+  .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+  /* cadastro libera o botão do canal */
+  .btn-liberar {
+    width: 100%; min-height: 62px; margin-top: 6px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    border: 0; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(180deg, #ffd84a, #ffc61a 55%, #f0b000);
+    color: #0a1f4a; font: 800 clamp(20px, 5.4vw, 26px)/1 var(--ingresso); letter-spacing: .04em; text-transform: uppercase;
+    box-shadow: 0 10px 24px rgba(240, 176, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .45);
+    transition: transform .12s, filter .2s;
+  }
+  .btn-liberar:hover { filter: brightness(1.05); }
+  .btn-liberar:active { transform: scale(.98); }
+  .btn-liberar[disabled] { cursor: wait; }
+  .btn-liberar svg { width: 26px; height: 26px; flex: none; }
+  .girando { width: 22px; height: 22px; flex: none; border: 3px solid rgba(10, 31, 74, .25); border-top-color: currentColor; border-radius: 50%; animation: gira .8s linear infinite; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  .ok { display: grid; justify-items: center; gap: 8px; text-align: center; animation: surge .45s ease-out; }
+  .ok-icone { width: 62px; height: 62px; display: grid; place-items: center; border-radius: 50%; background: #1fbf46; color: #fff; box-shadow: 0 0 0 8px rgba(31, 191, 70, .15); }
+  .ok-icone svg { width: 32px; height: 32px; }
+  .ok h3 { font: 900 clamp(30px, 8vw, 40px)/.95 var(--ingresso); text-transform: uppercase; color: #0a1f4a; }
+  .ok p { font-size: 16px; color: #33466f; max-width: 30em; }
+  @keyframes surge { from { opacity: 0; transform: translateY(10px); } }
+  .trava { margin-top: 20px; padding-top: 18px; border-top: 3px dashed rgba(0, 0, 0, .14); text-align: center; }
+  .trava-rotulo { margin-bottom: 10px; font: 800 12px/1 var(--texto); letter-spacing: .16em; text-transform: uppercase; color: #8a93ab; }
+  .liberado .trava-rotulo { color: #1a9a3d; }
+  a.btn-vip { text-decoration: none; }
+  .btn-vip .ic-zap { display: none; }
+  .btn-vip[aria-disabled="true"] { background: #ece6d0; color: #978f74; border: 2px dashed #d3c9a6; box-shadow: none; cursor: not-allowed; }
+  .btn-vip[aria-disabled="true"]:hover { filter: none; }
+  .btn-vip.liberado .ic-trava { display: none; }
+  .btn-vip.liberado .ic-zap { display: block; }
+  .btn-vip.liberado { animation: destrava .6s ease-out, pulso-verde 2.2s .6s ease-out infinite; }
+  .btn-vip.treme { animation: treme .4s ease-in-out; }
+  .trava-nota { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 10px; font-size: 14px; color: #4a5a80; }
+  .trava-nota svg { width: 15px; height: 15px; flex: none; color: #c99700; }
+  .trava-nota .ic-sino, .liberado .trava-nota .ic-cadeado { display: none; }
+  .liberado .trava-nota .ic-sino { display: block; }
+  @keyframes destrava { 0% { transform: scale(.94); } 45% { transform: scale(1.04); } 100% { transform: scale(1); } }
+  @keyframes pulso-verde {
+    0% { box-shadow: 0 10px 24px rgba(31, 191, 70, .35), 0 0 0 0 rgba(31, 191, 70, .5); }
+    70%, 100% { box-shadow: 0 10px 24px rgba(31, 191, 70, .35), 0 0 0 16px rgba(31, 191, 70, 0); }
+  }
+  @keyframes treme { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
 
   /* ---------- benefícios: marcas de ferro ---------- */
   .beneficios h2 { font-size: clamp(32px, 8.6vw, 48px); color: var(--couro); margin: 10px 0 24px; }
@@ -249,7 +295,7 @@
     .experiencia { grid-template-columns: 1.1fr 1fr; align-items: center; }
     .experiencia img { height: auto; aspect-ratio: 1 / 1; }
   }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .barra { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .barra { transition: none; } .btn-vip.liberado, .btn-vip.treme, .girando, .ok { animation: none; } }
 </style>
 </head>
 <body>
@@ -262,7 +308,7 @@
     <p class="data">Sábado · 28 de novembro · Passos-MG</p>
     <h1>A pré-venda mais esperada de Passos <span class="sol">está chegando.</span></h1>
     <p class="mao">aqui é música, amizade e Cê Tá Bão!</p>
-    <a class="cta" href="#acesso">Quero meus 10% OFF
+    <a class="cta" href="#acesso"><span>Quero meus 10% OFF</span>
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v12M3 9l6 6 6-6"/></svg>
     </a>
   </div>
@@ -292,27 +338,53 @@
   <section class="couro faixa-ingresso" aria-labelledby="t-form">
    <div class="miolo">
     <div class="ingresso" id="acesso">
-     <div class="canhoto"><span>Canal VIP</span><span>Nº 0610 · 12H00</span></div>
+     <div class="canhoto"><span>Canal VIP</span><span id="canhoto-status">Nº 0610 · 12H00</span></div>
      <div class="corpo">
-      <h2 id="t-form">Garanta seu acesso</h2>
-      <p class="sub">Preencha seus dados e entre no nosso <strong>Canal VIP</strong> para receber o link da pré-venda e garantir <strong>10% de desconto</strong>.</p>
+      <div id="cabeca-form">
+        <h2 id="t-form">Garanta seu acesso</h2>
+        <p class="sub">Preencha seus dados para liberar o botão do nosso <strong>Canal VIP</strong>: é lá que sai o link da pré-venda com <strong>10% de desconto</strong>.</p>
+      </div>
       <form id="form-vip" novalidate>
         <div class="campo" id="c-nome">
           <label for="nome">Seu nome</label>
           <input id="nome" name="nome" type="text" placeholder="Como você se chama?" autocomplete="name" autocapitalize="words" enterkeyhint="next" required>
           <p class="msg">Digite seu nome para continuar.</p>
         </div>
+        <div class="campo" id="c-email">
+          <label for="email">Seu melhor e-mail</label>
+          <input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" required>
+          <p class="msg">Digite um e-mail válido.</p>
+        </div>
         <div class="campo" id="c-whats">
           <label for="whatsapp">WhatsApp com DDD</label>
           <input id="whatsapp" name="whatsapp" type="tel" placeholder="(35) 99999-9999" autocomplete="tel-national" inputmode="numeric" enterkeyhint="send" maxlength="15" required>
           <p class="msg">Digite um WhatsApp válido, com DDD.</p>
         </div>
-        <button class="btn-vip" type="submit">
-          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.4L3 29l6.8-1.8c1.9 1 4 1.6 6.2 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.6c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.1 1.1-3.9-.3-.4C5.8 20 5.3 18 5.3 16 5.3 10.1 10.1 5.4 16 5.4S26.7 10.1 26.7 16 21.9 26.6 16 26.6zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.7 5 .8.4 1.4.6 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
-          <span>Quero entrar no Canal VIP</span>
+        <input class="isca" type="text" name="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn-liberar" type="submit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 7.75-1.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <span>Liberar meu acesso</span>
         </button>
       </form>
-      <p class="seguro"><svg viewBox="0 0 14 16" aria-hidden="true"><path fill="currentColor" d="M11 7V5a4 4 0 0 0-8 0v2H2v9h10V7h-1zM5 5a2 2 0 0 1 4 0v2H5V5z"/></svg>Seus dados estão seguros. Usaremos apenas para enviar as informações da pré-venda.</p>
+      <div class="ok" id="ok" hidden>
+        <div class="ok-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Cadastro feito, <span id="ok-nome">você</span>!</h3>
+        <p>Seu acesso tá liberado. O link da pré-venda com 10% OFF sai no canal na terça, 06/10, ao meio-dia.</p>
+      </div>
+      <div class="trava">
+        <p class="trava-rotulo" id="trava-rotulo">Depois do cadastro</p>
+        <a class="btn-vip" id="btn-canal" role="link" aria-disabled="true">
+          <svg class="ic-trava" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+          <svg class="ic-zap" viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.4L3 29l6.8-1.8c1.9 1 4 1.6 6.2 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.6c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.1 1.1-3.9-.3-.4C5.8 20 5.3 18 5.3 16 5.3 10.1 10.1 5.4 16 5.4S26.7 10.1 26.7 16 21.9 26.6 16 26.6zm5.9-8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.7 5 .8.4 1.4.6 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+          <span>Quero entrar no Canal VIP</span>
+        </a>
+        <p class="trava-nota" id="trava-nota">
+          <svg class="ic-cadeado" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
+          <svg class="ic-sino" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2z"/></svg>
+          <span>Bloqueado até você se cadastrar</span>
+        </p>
+      </div>
+      <p class="seguro"><svg viewBox="0 0 14 16" aria-hidden="true"><path fill="currentColor" d="M11 7V5a4 4 0 0 0-8 0v2H2v9h10V7h-1zM5 5a2 2 0 0 1 4 0v2H5V5z"/></svg>Seus dados estão seguros. Usaremos apenas para enviar as informações da pré-venda por WhatsApp e e-mail.</p>
      </div>
     </div>
    </div>
@@ -398,47 +470,103 @@
   }
   atualizar(); setInterval(atualizar, 1000);
 
+  // ---------- cadastro: nome, e-mail e WhatsApp liberam o botão do canal ----------
   const form = document.getElementById('form-vip');
-  const inNome = form.nome, inWhats = form.whatsapp;
-  inWhats.addEventListener('input', () => {
-    const n = inWhats.value.replace(/\D/g, '').slice(0, 11);
+  const canal = document.getElementById('btn-canal');
+  const liberado = () => document.body.classList.contains('liberado');
+  const entradas = [
+    { el: form.nome, caixa: document.getElementById('c-nome'), ok: v => v.trim().length >= 2 },
+    { el: form.email, caixa: document.getElementById('c-email'), ok: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) },
+    { el: form.whatsapp, caixa: document.getElementById('c-whats'), ok: v => v.replace(/\D/g, '').length >= 10 }
+  ];
+  entradas.forEach((c, i) => {
+    c.el.addEventListener('input', () => c.caixa.classList.remove('erro'));
+    c.el.addEventListener('blur', () => { if (c.el.value.trim()) c.caixa.classList.toggle('erro', !c.ok(c.el.value)); });
+    if (i < entradas.length - 1) c.el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); entradas[i + 1].el.focus(); }
+    });
+  });
+  form.whatsapp.addEventListener('input', () => {
+    const n = form.whatsapp.value.replace(/\D/g, '').slice(0, 11);
     let v = n;
     if (n.length > 2) v = `(${n.slice(0, 2)}) ${n.slice(2)}`;
     if (n.length > 7) v = `(${n.slice(0, 2)}) ${n.slice(2, n.length - 4)}-${n.slice(-4)}`;
-    inWhats.value = v;
-    document.getElementById('c-whats').classList.remove('erro');
+    form.whatsapp.value = v;
   });
-  inNome.addEventListener('input', () => document.getElementById('c-nome').classList.remove('erro'));
-  inNome.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inWhats.focus(); } });
+
+  async function enviarLead(dados) {
+    if (!WEBHOOK_CADASTRO) { console.warn('WEBHOOK_CADASTRO vazio: o cadastro não foi salvo.', dados); return; }
+    try {
+      await Promise.race([
+        fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) }),
+        new Promise(r => setTimeout(r, 4000))
+      ]);
+    } catch (_) {}
+  }
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    const nome = inNome.value.trim(), numero = inWhats.value.replace(/\D/g, '');
-    const okNome = nome.length >= 2, okWhats = numero.length >= 10;
-    document.getElementById('c-nome').classList.toggle('erro', !okNome);
-    document.getElementById('c-whats').classList.toggle('erro', !okWhats);
-    if (!okNome) return inNome.focus();
-    if (!okWhats) return inWhats.focus();
-    const btn = form.querySelector('.btn-vip');
-    btn.disabled = true; btn.querySelector('span').textContent = 'Entrando...';
-    if (WEBHOOK_CADASTRO) {
+    let primeiroErro = null;
+    entradas.forEach(c => {
+      const valido = c.ok(c.el.value);
+      c.caixa.classList.toggle('erro', !valido);
+      if (!valido && !primeiroErro) primeiroErro = c.el;
+    });
+    if (primeiroErro) return primeiroErro.focus();
+    const btn = form.querySelector('.btn-liberar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="girando" aria-hidden="true"></i><span>Liberando...</span>';
+    const nome = form.nome.value.trim().replace(/\s+/g, ' ');
+    if (!form.empresa.value) {
       const p = new URLSearchParams(location.search);
-      try {
-        await Promise.race([
-          fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, keepalive: true,
-            body: JSON.stringify({ nome, whatsapp: '55' + numero, data: new Date().toISOString(), utm_source: p.get('utm_source') || '', utm_campaign: p.get('utm_campaign') || '' }) }),
-          new Promise(r => setTimeout(r, 2500))
-        ]);
-      } catch (_) {}
+      await enviarLead({
+        nome, email: form.email.value.trim().toLowerCase(), whatsapp: '55' + form.whatsapp.value.replace(/\D/g, ''),
+        origem: 'lp-modelo-03', pagina: location.href.split('#')[0], data: new Date().toISOString(),
+        utm_source: p.get('utm_source') || '', utm_medium: p.get('utm_medium') || '', utm_campaign: p.get('utm_campaign') || '',
+        utm_content: p.get('utm_content') || '', utm_term: p.get('utm_term') || ''
+      });
     }
-    location.href = LINK_CANAL;
+    liberar(nome.split(' ')[0]);
   });
+
+  // botão do canal trancado: treme e leva pro campo que falta
+  canal.addEventListener('click', e => {
+    if (liberado()) return;
+    e.preventDefault();
+    canal.classList.remove('treme'); void canal.offsetWidth; canal.classList.add('treme');
+    const vazio = entradas.find(c => !c.ok(c.el.value));
+    if (vazio) vazio.el.focus();
+  });
+
+  function liberar(primeiroNome) {
+    document.body.classList.add('liberado');
+    document.getElementById('cabeca-form').hidden = true;
+    form.hidden = true;
+    document.getElementById('ok-nome').textContent = primeiroNome;
+    document.getElementById('ok').hidden = false;
+    document.getElementById('canhoto-status').textContent = 'Acesso liberado ✓';
+    canal.href = LINK_CANAL;
+    canal.removeAttribute('aria-disabled'); canal.removeAttribute('role');
+    canal.classList.remove('treme'); canal.classList.add('liberado');
+    document.getElementById('trava-rotulo').textContent = 'Acesso liberado';
+    document.querySelector('#trava-nota span').textContent = 'Lá dentro, toque no sininho pra ser avisado às 12h do dia 06/10.';
+    // os outros botões da página passam a ir direto pro canal
+    document.querySelectorAll('a[href="#acesso"]').forEach(a => {
+      a.href = LINK_CANAL;
+      const rotulo = a.querySelector('span');
+      if (rotulo) rotulo.textContent = 'Entrar no Canal VIP';
+      const seta = a.querySelector('svg');
+      if (seta) seta.style.display = 'none';
+    });
+    document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 
   // links para o formulário rolam suave e já abrem o teclado no nome
   document.querySelectorAll('a[href="#acesso"]').forEach(a => a.addEventListener('click', e => {
+    if (liberado()) return;
     e.preventDefault();
     document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(() => inNome.focus({ preventScroll: true }), 600);
+    setTimeout(() => form.nome.focus({ preventScroll: true }), 600);
   }));
 
   // barra fixa: escondida no topo e quando o formulário está visível
