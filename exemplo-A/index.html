@@ -136,7 +136,7 @@
   .marca-topo { position: relative; z-index: 2; padding-top: 18px; background: linear-gradient(180deg, var(--ceu-alto), var(--ceu-foto)); }
   .marca-topo .logo { width: 170px; margin: 0 auto -14px; }
   .artistas { position: relative; background: var(--ceu-foto); }
-  .artistas img { width: 100%; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%); mask-image: linear-gradient(180deg, transparent 0, #000 16%); }
+  .artistas img { width: 100%; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 6%); mask-image: linear-gradient(180deg, transparent 0, #000 6%); }
   .artistas::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; background: linear-gradient(180deg, rgba(180, 18, 18, 0), var(--engradado)); }
 
   /* ---------- contagem + cadastro (engradado) ---------- */
@@ -241,8 +241,9 @@
   .nomes { padding-top: 2px; }
   .cabeca { font: 400 clamp(31px, 9.6vw, 44px)/1.02 var(--placa); color: #fff; text-wrap: balance; text-shadow: 0 3px 0 var(--engradado-escuro); }
   .mais { margin-top: 8px; font: 400 clamp(26px, 8vw, 36px)/1 var(--placa); color: #fff; text-shadow: 0 3px 0 var(--engradado-escuro); }
-  .demais { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 20px; }
-  .demais li { padding: 10px 14px 9px; border-radius: 999px; background: rgba(0, 0, 0, .2); border: 1px solid rgba(255, 224, 122, .3); font: 400 14px/1 var(--placa); color: var(--sol); }
+  .demais { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 9px; margin-top: 14px; padding-inline: 6px; }
+  .demais li { font: 400 clamp(11px, 3.3vw, 15px)/1.25 var(--placa); color: var(--sol); text-shadow: 0 2px 0 var(--engradado-escuro); }
+  .demais li:not(:last-child)::after { content: "/"; margin-left: 9px; color: rgba(255, 255, 255, .45); text-shadow: none; }
   .galera { width: 84%; margin: 0 auto; transform: rotate(-2deg); }
   .galera img { aspect-ratio: 4 / 5; object-fit: cover; border: 6px solid var(--sol); border-radius: 22px; box-shadow: 0 22px 50px rgba(0, 0, 0, .45); }
   .palco h3 { margin-top: 34px; font-size: clamp(25px, 7.4vw, 32px); color: #fff; }
@@ -307,7 +308,7 @@
     <img class="logo" src="img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420">
   </div>
   <figure class="artistas">
-    <img src="img/artistas.webp" alt="Henrique e Diego, Kamisa 10 e os artistas do Cê Tá Bão Fest" width="800" height="722" fetchpriority="high">
+    <img src="img/artistas.webp" alt="Henrique e Diego, Kamisa 10 e os artistas do Cê Tá Bão Fest" width="800" height="750" fetchpriority="high">
   </figure>
 
   <section class="porteira" aria-label="Atrações, cadastro e contagem">
