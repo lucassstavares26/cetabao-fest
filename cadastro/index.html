@@ -123,8 +123,9 @@
   .h1-placa::before { left: 9px; }
   .h1-placa::after { right: 9px; }
   .h1-c { font: 800 clamp(18px, 5.2vw, 22px)/1.1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; color: #fff; }
-  .lead { margin-top: 16px; font-size: 17px; color: var(--ceu-texto); }
-  .lead strong { color: #fff; font-weight: 700; }
+  .lead { margin-top: 16px; font-size: 17px; color: var(--ceu-texto); text-wrap: balance; }
+  /* nowrap: as informações em negrito nunca quebram no meio, caem inteiras na mesma linha */
+  .lead strong { color: #fff; font-weight: 700; white-space: nowrap; }
   .fatos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 20px; }
   .fatos div { display: grid; gap: 7px; padding: 13px 4px 12px; border-radius: 16px; background: var(--vidro); border: 1px solid var(--vidro-borda); }
   .fatos dt { font: 700 11.5px/1 var(--estreita); letter-spacing: .12em; text-transform: uppercase; color: var(--sol-claro); }
@@ -307,6 +308,7 @@
   <symbol id="i-email" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   <symbol id="i-sino" viewBox="0 0 24 24"><path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2z"/></symbol>
   <symbol id="i-agenda" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-hora" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5.3l3.4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-local" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></symbol>
   <symbol id="i-ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
@@ -440,6 +442,7 @@
       <img class="logo" src="img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420" loading="lazy" decoding="async">
       <div class="chips">
         <span class="chip"><svg><use href="#i-agenda"/></svg>Sáb · 28/11</span>
+        <span class="chip"><svg><use href="#i-hora"/></svg>16h</span>
         <span class="chip"><svg><use href="#i-local"/></svg>Passos-MG</span>
       </div>
     </div>
@@ -451,7 +454,7 @@
         <span class="h1-placa" aria-hidden="true">10% OFF</span>
         <span class="h1-c" aria-hidden="true">na abertura das vendas</span>
       </h2>
-      <p class="lead">A pré-venda do Cê Tá Bão Fest sai primeiro no nosso <strong>Canal VIP do WhatsApp</strong>. Quem estiver lá dentro compra com <strong>10% de desconto</strong>.</p>
+      <p class="lead">A pré-venda sai primeiro no <strong>Canal VIP do WhatsApp</strong>.<br>Quem tá lá dentro compra com <strong>10% de desconto</strong>.</p>
       <dl class="fatos">
         <div><dt>Vendas abrem</dt><dd>06/10</dd></div>
         <div><dt>Horário</dt><dd>12h00</dd></div>
