@@ -24,6 +24,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Pixel do Meta: PageView automático aqui; o evento Lead é disparado no
+     JS de cadastro, só quando é lead NOVO de verdade (não em duplicado). -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1400962194832152');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1400962194832152&ev=PageView&noscript=1"
+/></noscript>
 <style>
   :root {
     --ceu: #003c86;
@@ -610,8 +627,16 @@
       utm_content: p.get('utm_content') || '', utm_term: p.get('utm_term') || ''
     });
 
+    const jaEra = !!(resposta && resposta.duplicado);
+    // Lead só dispara em cadastro NOVO de verdade — nunca em duplicado. Disparar
+    // sempre que o botão é clicado inflaria a conversão pro Meta e piorava a
+    // otimização do anúncio, que é justamente o que o pixel deveria melhorar.
+    // typeof fbq === 'function': ad blocker é comum bloquear o pixel, e isso
+    // não pode quebrar o cadastro.
+    if (!jaEra && typeof fbq === 'function') fbq('track', 'Lead');
+
     lembrarCadastro(primeiro);
-    liberar(primeiro, { jaEra: !!(resposta && resposta.duplicado) });
+    liberar(primeiro, { jaEra });
   });
 
   // ---------- botão do canal: bloqueado até o cadastro ----------
