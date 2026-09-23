@@ -364,8 +364,8 @@
 
       <div class="ok" id="ok" hidden>
         <div class="ok-icone"><svg><use href="#i-ok"/></svg></div>
-        <h2>Cadastro feito, <span id="ok-nome">você</span>!</h2>
-        <p>Seu acesso tá liberado. O link da pré-venda com 10% OFF sai no canal na terça, 06/10, ao meio-dia.</p>
+        <h2><span id="ok-prefixo">Cadastro feito</span>, <span id="ok-nome">você</span>!</h2>
+        <p id="ok-texto">Seu acesso tá liberado. O link da pré-venda com 10% OFF sai no canal na terça, 06/10, ao meio-dia.</p>
       </div>
 
       <div class="trava">
@@ -539,14 +539,39 @@
     form.whatsapp.value = v;
   });
 
+  // Lê a resposta do painel (por isso não usa mais mode:'no-cors') pra saber se
+  // a pessoa já estava cadastrada. Se der qualquer problema — rede, CORS, demora
+  // — devolve null e a LP segue liberando o canal do mesmo jeito: melhor tratar
+  // como cadastro novo do que travar alguém na porta.
   async function enviarLead(dados) {
-    if (!WEBHOOK_CADASTRO) { console.warn('WEBHOOK_CADASTRO vazio: o cadastro não foi salvo.', dados); return; }
+    if (!WEBHOOK_CADASTRO) { console.warn('WEBHOOK_CADASTRO vazio: o cadastro não foi salvo.', dados); return null; }
     try {
-      await Promise.race([
-        fetch(WEBHOOK_CADASTRO, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) }),
-        new Promise(r => setTimeout(r, 4000))
+      const r = await Promise.race([
+        fetch(WEBHOOK_CADASTRO, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(dados) }),
+        new Promise(r => setTimeout(() => r(null), 5000))
       ]);
-    } catch (_) {}
+      if (!r || !r.ok) return null;
+      return await r.json().catch(() => null);
+    } catch (_) { return null; }
+  }
+
+  // ---------- memória do cadastro neste aparelho ----------
+  // Evita que quem já se cadastrou veja o formulário de novo ao voltar na LP.
+  // Se o localStorage não estiver disponível (aba anônima, por exemplo), a
+  // pessoa vê o formulário — e aí o servidor responde "duplicado" e a mensagem
+  // certa aparece mesmo assim.
+  const MEMORIA = 'cetabao_cadastro_v1';
+  const VALIDADE = 120 * 86400000; // 120 dias
+
+  function lembrarCadastro(primeiroNome) {
+    try { localStorage.setItem(MEMORIA, JSON.stringify({ nome: primeiroNome, em: Date.now() })); } catch (_) {}
+  }
+  function cadastroLembrado() {
+    try {
+      const guardado = JSON.parse(localStorage.getItem(MEMORIA) || 'null');
+      if (!guardado || !guardado.em || Date.now() - guardado.em > VALIDADE) return null;
+      return guardado;
+    } catch (_) { return null; }
   }
 
   form.addEventListener('submit', async e => {
@@ -564,20 +589,21 @@
     btn.innerHTML = '<i class="girando" aria-hidden="true"></i><span>Liberando...</span>';
 
     const nome = form.nome.value.trim().replace(/\s+/g, ' ');
-    // O campo-isca e o tempo de preenchimento vao junto: quem decide se e robo
-    // e o servidor, porque um script que chama a API direto passa por cima de
+    const primeiro = nome.split(' ')[0];
+    // O campo-isca e o tempo de preenchimento vão junto: quem decide se é robô
+    // é o servidor, porque um script que chama a API direto passa por cima de
     // qualquer checagem feita aqui no navegador.
-    {
-      const p = new URLSearchParams(location.search);
-      await enviarLead({
-        nome, email: form.email.value.trim().toLowerCase(), whatsapp: '55' + form.whatsapp.value.replace(/\D/g, ''),
-        empresa: form.empresa.value, ms_form: Date.now() - ABERTO_EM,
-        origem: ORIGEM, pagina: location.href.split('#')[0], data: new Date().toISOString(),
-        utm_source: p.get('utm_source') || '', utm_medium: p.get('utm_medium') || '', utm_campaign: p.get('utm_campaign') || '',
-        utm_content: p.get('utm_content') || '', utm_term: p.get('utm_term') || ''
-      });
-    }
-    liberar(nome.split(' ')[0]);
+    const p = new URLSearchParams(location.search);
+    const resposta = await enviarLead({
+      nome, email: form.email.value.trim().toLowerCase(), whatsapp: '55' + form.whatsapp.value.replace(/\D/g, ''),
+      empresa: form.empresa.value, ms_form: Date.now() - ABERTO_EM,
+      origem: ORIGEM, pagina: location.href.split('#')[0], data: new Date().toISOString(),
+      utm_source: p.get('utm_source') || '', utm_medium: p.get('utm_medium') || '', utm_campaign: p.get('utm_campaign') || '',
+      utm_content: p.get('utm_content') || '', utm_term: p.get('utm_term') || ''
+    });
+
+    lembrarCadastro(primeiro);
+    liberar(primeiro, { jaEra: !!(resposta && resposta.duplicado) });
   });
 
   // ---------- botão do canal: bloqueado até o cadastro ----------
@@ -597,11 +623,19 @@
     el.querySelector('span').textContent = 'Entrar no Canal VIP';
   }
 
-  function liberar(primeiroNome) {
+  // jaEra: a pessoa já estava na lista (voltou na LP ou mandou o mesmo e-mail).
+  // rolar: false quando o estado é montado no carregamento da página, pra não
+  // arrastar a tela sozinha antes de a pessoa ler qualquer coisa.
+  function liberar(primeiroNome, opcoes) {
+    const { jaEra = false, rolar = true } = opcoes || {};
     document.body.classList.add('liberado');
     document.getElementById('cabeca-form').hidden = true;
     form.hidden = true;
     document.getElementById('ok-nome').textContent = primeiroNome || 'você';
+    if (jaEra) {
+      document.getElementById('ok-prefixo').textContent = 'Seu cadastro já foi feito';
+      document.getElementById('ok-texto').textContent = 'Não precisa cadastrar de novo — seu acesso continua liberado. É só entrar no canal.';
+    }
     document.getElementById('ok').hidden = false;
 
     canal.removeAttribute('aria-disabled');
@@ -615,8 +649,12 @@
     nota.querySelector('span').textContent = 'Lá dentro, toque no sininho pra ser avisado às 12h do dia 06/10.';
 
     document.querySelectorAll('[data-cta]').forEach(viraCanal);
-    document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (rolar) document.getElementById('acesso').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
+
+  // Voltou na LP já cadastrado: nem mostra o formulário, só a mensagem e o canal.
+  const lembrete = cadastroLembrado();
+  if (lembrete) liberar(lembrete.nome, { jaEra: true, rolar: false });
 
   // botões "Quero meus 10% OFF": rolam até o cadastro e já abrem o teclado no nome
   document.querySelectorAll('[data-cta]').forEach(a => a.addEventListener('click', e => {
