@@ -518,6 +518,7 @@
 
   // ---------- cadastro ----------
   const form = document.getElementById('form-vip');
+  const ABERTO_EM = Date.now();
   const campos = [
     { el: form.nome, caixa: document.getElementById('c-nome'), ok: v => v.trim().length >= 2 },
     { el: form.email, caixa: document.getElementById('c-email'), ok: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) },
@@ -563,10 +564,14 @@
     btn.innerHTML = '<i class="girando" aria-hidden="true"></i><span>Liberando...</span>';
 
     const nome = form.nome.value.trim().replace(/\s+/g, ' ');
-    if (!form.empresa.value) {
+    // O campo-isca e o tempo de preenchimento vao junto: quem decide se e robo
+    // e o servidor, porque um script que chama a API direto passa por cima de
+    // qualquer checagem feita aqui no navegador.
+    {
       const p = new URLSearchParams(location.search);
       await enviarLead({
         nome, email: form.email.value.trim().toLowerCase(), whatsapp: '55' + form.whatsapp.value.replace(/\D/g, ''),
+        empresa: form.empresa.value, ms_form: Date.now() - ABERTO_EM,
         origem: ORIGEM, pagina: location.href.split('#')[0], data: new Date().toISOString(),
         utm_source: p.get('utm_source') || '', utm_medium: p.get('utm_medium') || '', utm_campaign: p.get('utm_campaign') || '',
         utm_content: p.get('utm_content') || '', utm_term: p.get('utm_term') || ''
