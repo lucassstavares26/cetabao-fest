@@ -79,31 +79,32 @@ fbq('track', 'PageView');
   .passo { margin-top: 26px; text-align: left; }
   .passo > p.titulo { font: 800 14px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; color: var(--tinta-suave); margin-bottom: 10px; }
 
-  .setores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .setores { display: grid; gap: 14px; }
   .setor {
-    position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
-    min-height: 132px; padding: 14px 14px 12px; border: 3px solid transparent; border-radius: 18px;
+    position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 12px;
+    width: 100%; padding: 16px 16px 15px; border: 3px solid transparent; border-radius: 18px;
     text-align: left; cursor: pointer; font: inherit; color: inherit;
     transition: transform .15s, box-shadow .15s, opacity .2s;
   }
-  .setor small { font: 800 11px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
-  .setor strong { font: 400 21px/1 var(--placa); }
-  .setor .preco { margin-top: auto; font: 400 19px/1 var(--placa); }
-  .setor .resta { font: 800 12px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; }
+  .setor small { grid-column: 1 / -1; font: 800 11px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
+  .setor strong { font: 400 25px/1 var(--placa); }
+  .setor .preco { font: 400 21px/1 var(--placa); white-space: nowrap; text-align: right; }
+  .setor .preco.em-breve { font: 800 14px/1.1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; }
+  .setor .desc { grid-column: 1 / -1; font: 700 15.5px/1.35 var(--estreita); letter-spacing: .02em; }
+  .setor .tipo { grid-column: 1 / -1; display: inline-flex; justify-self: start; padding: 5px 10px 4px; border-radius: 999px; background: rgba(0, 0, 0, .14); font: 800 12px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; }
+  .setor .resta { grid-column: 1 / -1; font: 800 12px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; }
   .setor-pista { background: linear-gradient(140deg, #ffe55c, var(--sol) 50%, #f0a800); color: #3b2300; box-shadow: 0 5px 0 var(--sol-sombra); }
   .setor-open { background: linear-gradient(140deg, #3d8bff, var(--open) 55%, var(--open-escuro)); color: #fff; box-shadow: 0 5px 0 #062466; }
-  .setor-premium { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; gap: 12px; background: linear-gradient(140deg, #f2434a, var(--brasa) 55%, var(--engradado)); color: #fff; box-shadow: 0 5px 0 var(--engradado-escuro); text-decoration: none; }
-  .setor-premium div { display: grid; gap: 3px; flex: 1; }
-  .setor-premium strong { font-size: 17px; }
-  .setor-premium span { font-size: 14px; line-height: 1.3; }
-  .setor-premium svg { width: 30px; height: 30px; flex: none; }
+  .setor-camarote { cursor: default; background: linear-gradient(140deg, #f2434a, var(--brasa) 55%, var(--engradado)); color: #fff; box-shadow: 0 5px 0 var(--engradado-escuro); }
+  .setor-camarote .btn { grid-column: 1 / -1; margin-top: 8px; min-height: 54px; font-size: 18px; }
   .setor[aria-pressed="true"] { border-color: var(--tinta); transform: translateY(-3px); }
   .setor[aria-pressed="true"]::after {
     content: "✓"; position: absolute; top: -10px; right: -8px; width: 30px; height: 30px; display: grid; place-items: center;
     border-radius: 50%; background: var(--verde); color: #fff; font: 900 15px/1 var(--texto); border: 3px solid #fff;
   }
-  .setores.escolhido .setor:not([aria-pressed="true"]):not(.setor-premium) { opacity: .5; }
+  .setores.escolhido .setor[data-setor]:not([aria-pressed="true"]) { opacity: .55; }
   .setor:disabled { cursor: not-allowed; opacity: .45; }
+  .aviso-pagar { margin-top: 12px; font: 700 15px/1.35 var(--estreita); letter-spacing: .02em; color: var(--tinta-suave); }
 
   .qtd { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--campo-fundo); border: 2px solid var(--campo-borda); }
   .qtd + .qtd { margin-top: 8px; }
@@ -242,22 +243,10 @@ fbq('track', 'PageView');
       <h2 id="t-compra">Escolha seu ingresso</h2>
       <p class="sub">Ingresso na hora, no seu e-mail e WhatsApp.</p>
 
-      <div class="estado" id="carregando"><span class="girando" style="display:inline-block;color:var(--ceu)"></span><p>Carregando ingressos…</p></div>
-      <div class="estado" id="fechado" hidden>
-        <h2 id="fechado-titulo">Vendas abrem em breve</h2>
-        <p id="fechado-texto">As vendas pelo site ainda não começaram. Acompanhe no Instagram pra não perder a abertura.</p>
-        <a class="btn btn-sol" id="fechado-btn" href="https://www.instagram.com/cetabaofest/" target="_blank" rel="noopener">Seguir @cetabaofest</a>
-      </div>
-      <div class="estado" id="falhou" hidden>
-        <h2>Não conseguimos carregar</h2>
-        <p>Confira sua internet e tente de novo.</p>
-        <button class="btn btn-sol" type="button" id="tentar">Tentar de novo</button>
-      </div>
-
-      <div id="loja" hidden>
+      <div id="loja">
         <div class="passo">
-          <p class="titulo">1 · Setor</p>
-          <div class="setores" id="setores" role="group" aria-label="Setor"></div>
+          <p class="titulo">1 · Ingresso</p>
+          <div class="setores" id="setores" role="group" aria-label="Ingresso"></div>
           <p class="campo erro" id="erro-setor" hidden><small>Escolha Pista VIP ou Open Bar.</small></p>
         </div>
 
@@ -269,7 +258,7 @@ fbq('track', 'PageView');
             <output id="q-inteira" aria-live="polite">1</output>
             <button type="button" data-qtd="inteira" data-d="1" aria-label="Mais uma inteira">+</button>
           </div>
-          <div class="qtd">
+          <div class="qtd" id="linha-meia">
             <div><b>Meia-entrada</b><span id="preco-meia"></span></div>
             <button type="button" data-qtd="meia" data-d="-1" aria-label="Menos uma meia">−</button>
             <output id="q-meia" aria-live="polite">0</output>
@@ -317,6 +306,7 @@ fbq('track', 'PageView');
             <p class="parcela" id="parcela"></p>
             <button class="btn btn-sol" type="submit" id="pagar"><svg><use href="#i-ticket"/></svg><span>Ir para o pagamento</span></button>
             <p class="seguro"><svg><use href="#i-cadeado"/></svg>Pagamento seguro pelo Mercado Pago</p>
+            <p class="aviso-pagar" id="aviso-pagar" hidden>As vendas pelo site abrem em breve.</p>
             <p class="erro-geral" id="erro-geral" role="alert" hidden></p>
           </div>
         </form>
@@ -360,28 +350,31 @@ fbq('track', 'PageView');
 (function () {
   /* ================= CONFIGURAÇÃO ================= */
   var API = 'https://cetabao-painel.vercel.app';
-  // Camarotes e mesas (Setor Premium) são vendidos pelo WhatsApp da produção.
-  // Com o número aqui (só dígitos, com 55), o cartão do Premium abre a conversa;
-  // vazio, ele leva pro Instagram.
-  var WHATSAPP_PREMIUM = '';
-  // PROVISÓRIO: enquanto a venda do site não abre, quem chega aqui compra na
-  // Bilheteria Digital (as vendas lá já estão abertas). Quando a venda do site
-  // abrir, isto não aparece mais; depois é só apagar o link (deixar '').
-  var LINK_VENDA_EXTERNA = 'https://www.bilheteriadigital.com/cetabaofest?c=153133';
+  // Camarotes e mesas (Setor Premium) são vendidos pelo WhatsApp da produção:
+  // número só com dígitos, com 55 na frente (ex.: 5535999998888).
+  var WHATSAPP_CAMAROTES = '';
+  // Setores vendidos no site. Preço, lote e estoque vêm do painel (/api/site/publico).
+  var SETORES = [
+    { id: 'pista', nome: 'Pista VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
+    { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: 'Só inteira', meia: false }
+  ];
   var PARCELAS = 3;
   var QTD_MAX = 10;
   var CHAVE_DADOS = 'cetabao_compra_dados_v1';
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
-  var estado = { setores: [], setor: null, inteira: 1, meia: 0, tentou: false, enviando: false };
+  var estado = {
+    setores: SETORES.map(function (s) { return Object.assign({ preco: null, restam: null }, s); }),
+    vendendo: false, setor: null, inteira: 1, meia: 0, tentou: false, enviando: false
+  };
 
   // ---------- dinheiro: sempre em centavos inteiros (regra igual à do servidor)
   var centavos = function (reais) { return Math.round(reais * 100); };
   var meiaCent = function (preco) { return Math.round(centavos(preco) / 2); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var setorAtual = function () { return estado.setores.filter(function (s) { return s.id === estado.setor; })[0] || null; };
-  var totalCent = function () { var s = setorAtual(); return s ? centavos(s.preco) * estado.inteira + meiaCent(s.preco) * estado.meia : 0; };
+  var totalCent = function () { var s = setorAtual(); return s && s.preco ? centavos(s.preco) * estado.inteira + meiaCent(s.preco) * estado.meia : 0; };
   var limite = function () { var s = setorAtual(); return Math.min(QTD_MAX, s && s.restam !== null ? s.restam : QTD_MAX); };
 
   // ---------- validação (mesmas regras do servidor)
@@ -413,35 +406,22 @@ fbq('track', 'PageView');
     return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
   }
 
-  // ---------- carregar preços / lote
-  function mostrar(qual) {
-    ['carregando', 'fechado', 'falhou', 'loja'].forEach(function (id) { $(id).hidden = id !== qual; });
-  }
+  // ---------- preços / lote / estoque do painel. As opções aparecem antes,
+  // sem preço; se o painel não responder, ficam assim e o pagamento não abre.
   function carregar() {
-    mostrar('carregando');
     fetch(API + '/api/site/publico', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
-        if (!cfg.aberto) { fechado(); return; }
-        estado.setores = cfg.setores || [];
-        if (cfg.lote) { $('lote').textContent = cfg.lote; $('lote').hidden = false; }
-        if (estado.setor && !setorAtual()) estado.setor = null;
+        estado.vendendo = !!cfg.vendendo;
+        (cfg.setores || []).forEach(function (c) {
+          estado.setores.forEach(function (s) { if (s.id === c.id) { s.preco = c.preco; s.restam = c.restam; } });
+        });
+        $('lote').hidden = !cfg.lote;
+        if (cfg.lote) $('lote').textContent = cfg.lote;
         montarSetores();
-        mostrar('loja');
         atualizar();
       })
-      .catch(function () { mostrar('falhou'); });
-  }
-  $('tentar').addEventListener('click', carregar);
-
-  function fechado() {
-    if (LINK_VENDA_EXTERNA) {
-      $('fechado-titulo').textContent = 'Vendas abertas!';
-      $('fechado-texto').textContent = 'Garanta seu ingresso agora no site oficial de vendas.';
-      $('fechado-btn').href = LINK_VENDA_EXTERNA;
-      $('fechado-btn').innerHTML = '<svg><use href="#i-ticket"/></svg><span>Comprar agora</span>';
-    }
-    mostrar('fechado');
+      .catch(function () { estado.vendendo = false; atualizar(); });
   }
 
   function montarSetores() {
@@ -455,27 +435,30 @@ fbq('track', 'PageView');
       b.dataset.setor = s.id;
       b.disabled = esgotado;
       b.setAttribute('aria-pressed', String(estado.setor === s.id));
-      var nome = s.nome.split(' ');
-      b.innerHTML = '<small>Ingresso</small><strong>' + nome[0] + '<br>' + nome.slice(1).join(' ') + '</strong>' +
-        '<span class="preco">' + (esgotado ? 'Esgotado' : moeda(centavos(s.preco))) + '</span>' +
+      b.innerHTML = '<small>Ingresso</small><strong>' + s.nome + '</strong>' +
+        (esgotado ? '<span class="preco">Esgotado</span>'
+          : s.preco ? '<span class="preco">' + moeda(centavos(s.preco)) + '</span>'
+          : '<span class="preco em-breve">Valor<br>em breve</span>') +
+        (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
+        '<span class="tipo">' + s.tipo + '</span>' +
         (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">últimos ' + s.restam + '</span>' : '');
       b.addEventListener('click', function () { escolher(s.id); });
       box.appendChild(b);
     });
-    var premium = document.createElement('a');
-    premium.className = 'setor setor-premium';
-    premium.target = '_blank';
-    premium.rel = 'noopener';
-    premium.href = WHATSAPP_PREMIUM
-      ? 'https://wa.me/' + WHATSAPP_PREMIUM + '?text=' + encodeURIComponent('Oi! Quero reservar camarote/mesa no Setor Premium do Cê Tá Bão Fest.')
+    var cam = document.createElement('div');
+    cam.className = 'setor setor-camarote';
+    var link = WHATSAPP_CAMAROTES
+      ? 'https://wa.me/' + WHATSAPP_CAMAROTES + '?text=' + encodeURIComponent('Oi! Quero reservar camarote/mesa no Cê Tá Bão Fest.')
       : 'https://www.instagram.com/cetabaofest/';
-    premium.innerHTML = '<svg aria-hidden="true"><use href="#i-zap"/></svg><div><strong>Setor Premium</strong><span>Camarotes e mesas: reserve direto com a produção ' +
-      (WHATSAPP_PREMIUM ? 'no WhatsApp' : 'pelo Instagram') + '.</span></div>';
-    box.appendChild(premium);
+    cam.innerHTML = '<small>Setor Premium</small><strong>Camarotes e Mesas</strong>' +
+      '<span class="desc">Reserva direto com a produção, pelo WhatsApp.</span>' +
+      '<a class="btn btn-zap" target="_blank" rel="noopener" href="' + link + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Chamar no WhatsApp</span></a>';
+    box.appendChild(cam);
   }
 
   function escolher(id) {
     estado.setor = id;
+    if (!setorAtual().meia) estado.meia = 0; // Open Bar é só inteira
     var max = limite();
     if (estado.inteira + estado.meia > max) { estado.meia = Math.min(estado.meia, max); estado.inteira = Math.max(0, max - estado.meia); }
     if (estado.inteira + estado.meia < 1) estado.inteira = 1;
@@ -500,8 +483,9 @@ fbq('track', 'PageView');
     document.querySelectorAll('.setor[data-setor]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.setor === estado.setor)); });
     $('passo-qtd').hidden = !s;
     if (s) {
-      $('preco-inteira').textContent = moeda(centavos(s.preco)) + ' cada';
-      $('preco-meia').textContent = moeda(meiaCent(s.preco)) + ' cada';
+      $('preco-inteira').textContent = s.preco ? moeda(centavos(s.preco)) + ' cada' : 'Valor em breve';
+      $('preco-meia').textContent = s.preco ? moeda(meiaCent(s.preco)) + ' cada' : 'Valor em breve';
+      $('linha-meia').hidden = !s.meia;
       $('q-inteira').textContent = estado.inteira;
       $('q-meia').textContent = estado.meia;
       var qtd = estado.inteira + estado.meia;
@@ -514,7 +498,9 @@ fbq('track', 'PageView');
       if (ult) $('ultimos').textContent = '🔥 ' + (s.restam === 1 ? 'Último ingresso' : 'Últimos ' + s.restam + ' ingressos') + ' deste lote';
     }
     var t = totalCent();
-    $('total').textContent = moeda(t);
+    $('total').textContent = s && !s.preco ? 'Em breve' : moeda(t);
+    $('aviso-pagar').hidden = estado.vendendo;
+    if (!estado.enviando) ocupado(false);
     $('parcela').textContent = t ? 'ou ' + PARCELAS + 'x de ' + moeda(Math.floor(t / PARCELAS)) + ' sem juros no cartão' : '';
     if (estado.tentou) validar();
   }
@@ -552,13 +538,15 @@ fbq('track', 'PageView');
   function erroGeral(texto) { $('erro-geral').textContent = texto; $('erro-geral').hidden = !texto; }
   function ocupado(sim) {
     estado.enviando = sim;
-    $('pagar').disabled = sim;
-    $('pagar').innerHTML = sim ? '<span class="girando"></span><span>Abrindo o pagamento…</span>' : '<svg><use href="#i-ticket"/></svg><span>Ir para o pagamento</span>';
+    $('pagar').disabled = sim || !estado.vendendo;
+    $('pagar').innerHTML = sim ? '<span class="girando"></span><span>Abrindo o pagamento…</span>'
+      : estado.vendendo ? '<svg><use href="#i-ticket"/></svg><span>Ir para o pagamento</span>'
+      : '<svg><use href="#i-cadeado"/></svg><span>Vendas em breve</span>';
   }
 
   $('form').addEventListener('submit', function (ev) {
     ev.preventDefault();
-    if (estado.enviando) return;
+    if (estado.enviando || !estado.vendendo) return;
     estado.tentou = true;
     erroGeral('');
     if (!validar()) {
@@ -619,6 +607,8 @@ fbq('track', 'PageView');
     })(performance.now());
   }
 
+  montarSetores();
+  atualizar();
   carregar();
 })();
 </script>
