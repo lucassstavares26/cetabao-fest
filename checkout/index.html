@@ -207,17 +207,21 @@ fbq('track', 'PageView');
 
   var $ = function (id) { return document.getElementById(id); };
 
-  // ---------- o que foi escolhido na página de compra (vem no endereço)
+  // ---------- o que foi escolhido na página de compra (vem no endereço).
+  // Pista e Open Bar podem vir juntos: pi = Pista inteira, pm = Pista meia, oi = Open Bar.
   var q = new URLSearchParams(location.search);
-  var setor = SETORES.filter(function (s) { return s.id === q.get('setor'); })[0] || null;
-  var inteira = parseInt(q.get('inteira'), 10) || 0;
-  var meia = parseInt(q.get('meia'), 10) || 0;
-  if (!setor || inteira < 0 || meia < 0 || inteira + meia < 1 || inteira + meia > QTD_MAX || (meia && !setor.meia)) {
+  var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
+  var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
+  var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
+  var valido = Object.keys(qtd).every(function (k) { return Number.isInteger(qtd[k]) && qtd[k] >= 0; });
+  if (!valido || totalQtd < 1 || totalQtd > QTD_MAX) {
     location.replace('/#compra'); // endereço mexido ou incompleto: volta pra escolher
     return;
   }
+  var qtdSetor = function (id) { return id === 'pista' ? qtd.pista_inteira + qtd.pista_meia : qtd.open_inteira; };
   var estado = {
-    preco: PRECO_PADRAO[setor.id] || null, lote: LOTE_PADRAO, restam: null,
+    preco: { pista: PRECO_PADRAO.pista || null, open: PRECO_PADRAO.open || null },
+    restam: { pista: null, open: null }, lote: LOTE_PADRAO,
     vendendo: false, chave: null, metodo: 'pix', tentou: false, enviando: false, brick: null, brickCriando: false
   };
 
@@ -225,25 +229,34 @@ fbq('track', 'PageView');
   var centavos = function (reais) { return Math.round(reais * 100); };
   var meiaCent = function (preco) { return Math.round(centavos(preco) / 2); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
-  var totalCent = function () { return estado.preco ? centavos(estado.preco) * inteira + meiaCent(estado.preco) * meia : 0; };
+  var semPreco = function () { return SETORES.some(function (s) { return qtdSetor(s.id) > 0 && !estado.preco[s.id]; }); };
+  function totalCent() {
+    var p = estado.preco.pista, o = estado.preco.open;
+    return (qtd.pista_inteira ? centavos(p || 0) * qtd.pista_inteira : 0) + (qtd.pista_meia ? meiaCent(p || 0) * qtd.pista_meia : 0) +
+      (qtd.open_inteira ? centavos(o || 0) * qtd.open_inteira : 0);
+  }
 
   function montarResumo() {
-    var linha = function (qtd, tipo, valor) {
-      return '<div class="item"><span><b>' + qtd + '× ' + setor.nome + ' — ' + tipo + '</b><small>' + (estado.lote || '') + '</small></span>' +
-        '<span>' + (estado.preco ? moeda(valor) : 'em breve') + '</span></div>';
+    var linha = function (n, nome, tipo, cent, temPreco) {
+      return '<div class="item"><span><b>' + n + '× ' + nome + ' — ' + tipo + '</b><small>' + (estado.lote || '') + '</small></span>' +
+        '<span>' + (temPreco ? moeda(cent) : 'em breve') + '</span></div>';
     };
-    $('itens').innerHTML = (inteira ? linha(inteira, 'Inteira', estado.preco ? centavos(estado.preco) * inteira : 0) : '') +
-      (meia ? linha(meia, 'Meia', estado.preco ? meiaCent(estado.preco) * meia : 0) : '');
+    var p = estado.preco.pista, o = estado.preco.open;
+    $('itens').innerHTML =
+      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', centavos(p || 0) * qtd.pista_inteira, !!p) : '') +
+      (qtd.pista_meia ? linha(qtd.pista_meia, 'Pista VIP', 'Meia', meiaCent(p || 0) * qtd.pista_meia, !!p) : '') +
+      (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', centavos(o || 0) * qtd.open_inteira, !!o) : '');
     var t = totalCent();
-    $('subtotal').textContent = estado.preco ? moeda(t) : 'em breve';
-    $('total').textContent = estado.preco ? moeda(t) : 'Em breve';
-    $('nota-meia').hidden = !meia;
-    var falta = estado.restam !== null && inteira + meia > estado.restam;
-    $('problema').hidden = !falta;
-    if (falta) $('problema').innerHTML = estado.restam === 0
-      ? setor.nome + ' esgotou. <a href="/#compra">Escolher outro ingresso</a>'
-      : 'Só ' + (estado.restam === 1 ? 'resta 1 ingresso' : 'restam ' + estado.restam + ' ingressos') + ' de ' + setor.nome + '. <a href="/#compra">Alterar a quantidade</a>';
-    estado.podePagar = estado.vendendo && !!estado.preco && !falta;
+    $('subtotal').textContent = semPreco() ? 'em breve' : moeda(t);
+    $('total').textContent = semPreco() ? 'Em breve' : moeda(t);
+    $('nota-meia').hidden = !qtd.pista_meia;
+    var faltas = SETORES.filter(function (s) { return estado.restam[s.id] !== null && qtdSetor(s.id) > estado.restam[s.id]; });
+    $('problema').hidden = !faltas.length;
+    if (faltas.length) $('problema').innerHTML = faltas.map(function (s) {
+      var r = estado.restam[s.id];
+      return r === 0 ? s.nome + ' esgotou.' : 'Só ' + (r === 1 ? 'resta 1 ingresso' : 'restam ' + r + ' ingressos') + ' de ' + s.nome + '.';
+    }).join(' ') + ' <a href="/#compra">Alterar o pedido</a>';
+    estado.podePagar = estado.vendendo && !semPreco() && !faltas.length;
     $('aviso-pagar').hidden = estado.vendendo;
     botao();
   }
@@ -252,9 +265,11 @@ fbq('track', 'PageView');
     return fetch(API + '/api/site/publico', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
-        var c = (cfg.setores || []).filter(function (x) { return x.id === setor.id; })[0];
-        estado.preco = (c && c.preco) || PRECO_PADRAO[setor.id] || null;
-        estado.restam = c ? c.restam : null;
+        (cfg.setores || []).forEach(function (c) {
+          if (!(c.id in estado.preco)) return;
+          estado.preco[c.id] = c.preco || PRECO_PADRAO[c.id] || null;
+          estado.restam[c.id] = c.restam;
+        });
         estado.lote = cfg.lote || LOTE_PADRAO;
         estado.vendendo = !!cfg.vendendo;
         estado.chave = cfg.mp_chave_publica || null;
@@ -415,15 +430,15 @@ fbq('track', 'PageView');
           headers: { 'content-type': 'text/plain;charset=UTF-8' },
           body: JSON.stringify({
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
-            setor: setor.id, qtd_inteira: inteira, qtd_meia: meia, valor_total: total / 100,
+            qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
             metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
       .then(function (res) {
         if (res.status === 200 && res.j.pedido) {
-          if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { value: res.j.valor, currency: 'BRL', num_items: inteira + meia });
-          try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); sessionStorage.removeItem('cetabao_escolha'); } catch (e) { /* tudo bem */ }
+          if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { value: res.j.valor, currency: 'BRL', num_items: totalQtd });
+          try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); sessionStorage.removeItem('cetabao_carrinho'); } catch (e) { /* tudo bem */ }
           location.href = '/pedido/' + res.j.pedido;
           return;
         }

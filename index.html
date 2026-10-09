@@ -100,9 +100,8 @@ fbq('track', 'PageView');
   .setor-topo {
     display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 12px;
     width: 100%; padding: 16px 16px 15px; border: 0; background: none;
-    text-align: left; font: inherit; color: inherit; cursor: pointer; touch-action: manipulation;
+    text-align: left; font: inherit; color: inherit;
   }
-  .setor-camarote .setor-topo { cursor: default; }
   .setor small { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font: 800 11px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; }
   .setor small .rot { opacity: .75; }
   .lote-tag { display: inline-block; padding: 4px 8px 3px; border-radius: 6px; background: var(--engradado); color: #fff; font: 800 11px/1 var(--estreita); letter-spacing: .1em; box-shadow: 0 2px 0 var(--engradado-escuro); }
@@ -120,10 +119,7 @@ fbq('track', 'PageView');
     content: "✓"; position: absolute; top: -10px; right: -8px; width: 30px; height: 30px; display: grid; place-items: center;
     border-radius: 50%; background: var(--verde); color: #fff; font: 900 15px/1 var(--texto); border: 3px solid #fff;
   }
-  .setor.aberto .abrir { visibility: hidden; }
-  .setores.escolhido .setor[data-setor]:not(.aberto) { opacity: .55; }
   .setor.esgotado { opacity: .45; }
-  .setor.esgotado .setor-topo { cursor: not-allowed; }
 
   /* quantidade dentro do cartão aberto */
   .setor-opcoes { display: grid; gap: 8px; padding: 0 12px 14px; }
@@ -224,13 +220,13 @@ fbq('track', 'PageView');
     <div class="cartao">
       <span class="etiqueta">Site oficial</span>
       <h2 id="t-compra">Escolha seu ingresso</h2>
-      <p class="sub">Toque no setor e escolha quantos.</p>
+      <p class="sub">Escolha quantos de cada — dá pra juntar Pista VIP e Open Bar.</p>
 
       <div class="setores" id="setores"></div>
 
       <div class="resumo" aria-live="polite">
         <p class="rot">Total</p>
-        <p class="linha" id="linha-resumo">Escolha um ingresso acima</p>
+        <p class="linha" id="linha-resumo">Escolha seus ingressos acima</p>
         <p class="valor" id="total">R$ 0,00</p>
         <p class="parcela" id="parcela"></p>
         <button class="btn btn-sol" type="button" id="continuar" disabled><svg><use href="#i-ticket"/></svg><span>Realizar pagamento</span></button>
@@ -290,21 +286,21 @@ fbq('track', 'PageView');
   var PRECO_PADRAO = { pista: 90, open: 195 };
   var LOTE_PADRAO = '2º Lote';
   var PARCELAS = 3;
-  var QTD_MAX = 10;
+  var QTD_MAX = 10; // por pedido, somando os setores
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
+  // Tudo começa zerado; a pessoa pode somar Pista e Open Bar no mesmo pedido.
   var estado = {
     setores: SETORES.map(function (s) { return Object.assign({ preco: PRECO_PADRAO[s.id] || null, restam: null }, s); }),
-    lote: LOTE_PADRAO, setor: null, inteira: 1, meia: 0
+    lote: LOTE_PADRAO,
+    q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0 }
   };
 
   // Escolha guardada na aba: quem volta do checkout encontra o que tinha escolhido.
   try {
-    var guardada = JSON.parse(sessionStorage.getItem('cetabao_escolha') || 'null');
-    if (guardada && SETORES.some(function (s) { return s.id === guardada.setor; })) {
-      estado.setor = guardada.setor; estado.inteira = guardada.inteira; estado.meia = guardada.meia;
-    }
+    var guardada = JSON.parse(sessionStorage.getItem('cetabao_carrinho') || 'null');
+    if (guardada) Object.keys(estado.q).forEach(function (k) { var v = parseInt(guardada[k], 10); if (v > 0) estado.q[k] = v; });
     // De onde a pessoa veio (anúncio, link): vai junto pro pedido.
     if (!sessionStorage.getItem('cetabao_origem')) sessionStorage.setItem('cetabao_origem', (location.search.slice(1) || document.referrer || '').slice(0, 120));
   } catch (e) { /* sem armazenamento: segue */ }
@@ -313,34 +309,49 @@ fbq('track', 'PageView');
   var centavos = function (reais) { return Math.round(reais * 100); };
   var meiaCent = function (preco) { return Math.round(centavos(preco) / 2); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
-  var setorAtual = function () { return estado.setores.filter(function (s) { return s.id === estado.setor; })[0] || null; };
-  var totalCent = function () { var s = setorAtual(); return s && s.preco ? centavos(s.preco) * estado.inteira + meiaCent(s.preco) * estado.meia : 0; };
-  var limite = function () { var s = setorAtual(); return Math.min(QTD_MAX, s && s.restam !== null ? s.restam : QTD_MAX); };
+  var setor = function (id) { return estado.setores.filter(function (s) { return s.id === id; })[0]; };
+  var qtdSetor = function (id) { return id === 'pista' ? estado.q.pista_inteira + estado.q.pista_meia : estado.q.open_inteira; };
+  var qtdTotal = function () { return estado.q.pista_inteira + estado.q.pista_meia + estado.q.open_inteira; };
+  var semPreco = function () { return SETORES.some(function (s) { return qtdSetor(s.id) > 0 && !setor(s.id).preco; }); };
+  function totalCent() {
+    var p = setor('pista').preco, o = setor('open').preco;
+    return (p ? centavos(p) * estado.q.pista_inteira + meiaCent(p) * estado.q.pista_meia : 0) + (o ? centavos(o) * estado.q.open_inteira : 0);
+  }
 
-  // ---------- preços / lote / estoque do painel. Os cartões aparecem antes,
-  // sem preço; se o painel não responder, ficam com "valor em breve".
+  // ---------- preços / lote / estoque do painel
   function carregar() {
     fetch(API + '/api/site/publico', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
         (cfg.setores || []).forEach(function (c) {
-          estado.setores.forEach(function (s) { if (s.id === c.id) { s.preco = c.preco || PRECO_PADRAO[s.id] || null; s.restam = c.restam; } });
+          var s = setor(c.id);
+          if (s) { s.preco = c.preco || PRECO_PADRAO[s.id] || null; s.restam = c.restam; }
         });
         estado.lote = cfg.lote || LOTE_PADRAO;
-        var s = setorAtual();
-        if (s && s.restam === 0) estado.setor = null;
-        ajustarAoLimite();
+        ajustarAoEstoque();
         montar();
       })
-      .catch(function () { /* fica com "valor em breve" */ });
+      .catch(function () { /* fica com o preço padrão */ });
   }
 
-  // ---------- cartões
-  function linhaQtd(tipo, titulo) {
-    return '<div class="opcao"><div><b>' + titulo + '</b><span data-preco="' + tipo + '"></span></div>' +
-      '<button type="button" data-qtd="' + tipo + '" data-d="-1" aria-label="Menos uma ' + titulo.toLowerCase() + '">−</button>' +
-      '<output data-valor="' + tipo + '" aria-live="polite"></output>' +
-      '<button type="button" data-qtd="' + tipo + '" data-d="1" aria-label="Mais uma ' + titulo.toLowerCase() + '">+</button></div>';
+  // Se o estoque de um setor caiu abaixo do que a pessoa tinha escolhido, corta.
+  function ajustarAoEstoque() {
+    estado.setores.forEach(function (s) {
+      if (s.restam === null) return;
+      while (qtdSetor(s.id) > s.restam) {
+        if (s.id === 'pista' && estado.q.pista_meia > 0) estado.q.pista_meia--;
+        else if (s.id === 'pista') estado.q.pista_inteira--;
+        else estado.q.open_inteira--;
+      }
+    });
+  }
+
+  // ---------- cartões (sempre abertos, com a quantidade dentro)
+  function linhaQtd(chave, titulo) {
+    return '<div class="opcao"><div><b>' + titulo + '</b><span data-preco="' + chave + '"></span></div>' +
+      '<button type="button" data-qtd="' + chave + '" data-d="-1" aria-label="Menos uma ' + titulo.toLowerCase() + '">−</button>' +
+      '<output data-valor="' + chave + '" aria-live="polite"></output>' +
+      '<button type="button" data-qtd="' + chave + '" data-d="1" aria-label="Mais uma ' + titulo.toLowerCase() + '">+</button></div>';
   }
 
   function montar() {
@@ -348,26 +359,25 @@ fbq('track', 'PageView');
     box.innerHTML = '';
     estado.setores.forEach(function (s) {
       var esgotado = s.restam === 0;
-      var aberto = estado.setor === s.id;
       var card = document.createElement('div');
-      card.className = 'setor setor-' + s.id + (aberto ? ' aberto' : '') + (esgotado ? ' esgotado' : '');
+      card.className = 'setor setor-' + s.id + (esgotado ? ' esgotado' : '');
       card.dataset.setor = s.id;
       card.innerHTML =
-        '<button type="button" class="setor-topo" aria-expanded="' + aberto + '"' + (esgotado ? ' disabled' : '') + '>' +
-          '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + '</small><strong>' + s.nome + '</strong>' +
+        '<div class="setor-topo">' +
+          '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + '</small>' +
+          '<strong>' + s.nome + '</strong>' +
           (esgotado ? '<span class="preco">Esgotado</span>'
             : s.preco ? '<span class="preco">' + moeda(centavos(s.preco)) + '</span>'
             : '<span class="preco em-breve">Valor<br>em breve</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
-          '<span class="rodape-card"><span class="tipo">' + s.tipo + '</span>' + (esgotado ? '' : '<span class="abrir">Escolher ›</span>') + '</span>' +
+          '<span class="rodape-card"><span class="tipo">' + s.tipo + '</span></span>' +
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
-        '</button>' +
-        (aberto
-          ? '<div class="setor-opcoes">' + linhaQtd('inteira', 'Inteira') + (s.meia ? linhaQtd('meia', 'Meia-entrada') : '') +
-            (s.meia ? '<p class="nota-meia"><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
-            '</div>'
-          : '');
-      card.querySelector('.setor-topo').addEventListener('click', function () { if (!esgotado) escolher(s.id); });
+        '</div>' +
+        (esgotado ? '' :
+          '<div class="setor-opcoes">' +
+            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + linhaQtd('pista_meia', 'Meia-entrada') : linhaQtd('open_inteira', 'Inteira')) +
+            (s.meia ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
+          '</div>');
       box.appendChild(card);
     });
 
@@ -387,61 +397,49 @@ fbq('track', 'PageView');
     atualizar();
   }
 
-  function escolher(id) {
-    if (estado.setor === id) return;
-    estado.setor = id;
-    estado.inteira = 1;
-    estado.meia = 0;
-    ajustarAoLimite();
-    montar();
-  }
-
-  function ajustarAoLimite() {
-    var s = setorAtual();
-    if (!s) return;
-    if (!s.meia) estado.meia = 0; // Open Bar é só inteira
-    var max = limite();
-    if (estado.inteira + estado.meia > max) { estado.meia = Math.min(estado.meia, max); estado.inteira = Math.max(0, max - estado.meia); }
-    if (estado.inteira + estado.meia < 1) estado.inteira = 1;
-  }
-
-  function mudarQtd(tipo, d) {
-    var outro = tipo === 'inteira' ? estado.meia : estado.inteira;
-    var novo = estado[tipo] + d;
-    if (novo < 0 || novo + outro < 1 || novo + outro > limite()) return;
-    estado[tipo] = novo;
+  function mudarQtd(chave, d) {
+    var id = chave.indexOf('pista') === 0 ? 'pista' : 'open';
+    var s = setor(id);
+    var novo = estado.q[chave] + d;
+    if (novo < 0) return;
+    if (d > 0 && (qtdTotal() >= QTD_MAX || (s.restam !== null && qtdSetor(id) >= s.restam))) return;
+    estado.q[chave] = novo;
     atualizar();
   }
 
   function atualizar() {
-    var s = setorAtual();
-    var qtd = estado.inteira + estado.meia;
-    $('setores').classList.toggle('escolhido', !!s);
-    if (s) {
-      document.querySelectorAll('[data-preco="inteira"]').forEach(function (e) { e.textContent = s.preco ? moeda(centavos(s.preco)) + ' cada' : 'Valor em breve'; });
-      document.querySelectorAll('[data-preco="meia"]').forEach(function (e) { e.textContent = s.preco ? moeda(meiaCent(s.preco)) + ' cada' : 'Valor em breve'; });
-      document.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado[e.dataset.valor]; });
-      document.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado[b.dataset.qtd] < 1 || qtd <= 1; });
-      document.querySelectorAll('[data-d="1"]').forEach(function (b) { b.disabled = qtd >= limite(); });
-      var partes = [];
-      if (estado.inteira) partes.push(estado.inteira + 'x inteira');
-      if (estado.meia) partes.push(estado.meia + 'x meia');
-      $('linha-resumo').textContent = s.nome + ' · ' + partes.join(' + ');
-      try { sessionStorage.setItem('cetabao_escolha', JSON.stringify({ setor: s.id, inteira: estado.inteira, meia: estado.meia })); } catch (e) { /* tudo bem */ }
-    } else {
-      $('linha-resumo').textContent = 'Escolha um ingresso acima';
-    }
+    var total = qtdTotal();
+    estado.setores.forEach(function (s) {
+      var card = document.querySelector('.setor[data-setor="' + s.id + '"]');
+      if (!card) return;
+      card.classList.toggle('aberto', qtdSetor(s.id) > 0); // com ingresso escolhido: borda + ✓
+      card.querySelectorAll('[data-preco]').forEach(function (e) {
+        var meia = e.dataset.preco === 'pista_meia';
+        e.textContent = s.preco ? moeda(meia ? meiaCent(s.preco) : centavos(s.preco)) + ' cada' : 'Valor em breve';
+      });
+      card.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado.q[e.dataset.valor]; });
+      card.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado.q[b.dataset.qtd] < 1; });
+      card.querySelectorAll('[data-d="1"]').forEach(function (b) { b.disabled = total >= QTD_MAX || (s.restam !== null && qtdSetor(s.id) >= s.restam); });
+      var nota = card.querySelector('[data-nota-meia]');
+      if (nota) nota.hidden = estado.q.pista_meia < 1;
+    });
+
+    var partes = [];
+    if (estado.q.pista_inteira) partes.push(estado.q.pista_inteira + 'x Pista VIP inteira');
+    if (estado.q.pista_meia) partes.push(estado.q.pista_meia + 'x Pista VIP meia');
+    if (estado.q.open_inteira) partes.push(estado.q.open_inteira + 'x Open Bar');
+    $('linha-resumo').textContent = partes.length ? partes.join(' · ') : 'Escolha seus ingressos acima';
     var t = totalCent();
-    $('total').textContent = s && !s.preco ? 'Em breve' : moeda(t);
-    $('parcela').textContent = t ? 'ou ' + PARCELAS + 'x de ' + moeda(Math.floor(t / PARCELAS)) + ' sem juros no cartão' : '';
-    $('continuar').disabled = !s;
+    $('total').textContent = total && semPreco() ? 'Em breve' : moeda(t);
+    $('parcela').textContent = t && !semPreco() ? 'ou ' + PARCELAS + 'x de ' + moeda(Math.floor(t / PARCELAS)) + ' sem juros no cartão' : '';
+    $('continuar').disabled = total < 1;
+    try { sessionStorage.setItem('cetabao_carrinho', JSON.stringify(estado.q)); } catch (e) { /* tudo bem */ }
   }
 
   // ---------- segunda parte: checkout (dados + pagamento)
   $('continuar').addEventListener('click', function () {
-    var s = setorAtual();
-    if (!s) return;
-    location.href = '/checkout/?setor=' + s.id + '&inteira=' + estado.inteira + '&meia=' + estado.meia;
+    if (qtdTotal() < 1) return;
+    location.href = '/checkout/?pi=' + estado.q.pista_inteira + '&pm=' + estado.q.pista_meia + '&oi=' + estado.q.open_inteira;
   });
 
   // ---------- barra fixa: aparece enquanto o cartão de compra não está na tela
@@ -467,7 +465,6 @@ fbq('track', 'PageView');
     })(performance.now());
   }
 
-  ajustarAoLimite();
   montar();
   carregar();
 })();
