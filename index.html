@@ -43,20 +43,20 @@ fbq('track', 'PageView');
 <noscript><img height="1" width="1" style="display:none" alt=""
   src="https://www.facebook.com/tr?id=1400962194832152&ev=PageView&noscript=1"></noscript>
 <style>
-  /* ---------- abertura ---------- */
-  .abre { padding: 22px var(--lado) 30px; background: var(--ceu); }
-  .abre h1 { font-size: clamp(30px, 9vw, 40px); color: #fff; }
-  .abre h1 span { display: block; color: var(--sol); }
-  .lote {
-    display: inline-block; margin-top: 14px; padding: 8px 16px 6px; border-radius: 8px; transform: rotate(-2deg);
-    font: 400 16px/1 var(--placa); color: var(--engradado); background: var(--sol); box-shadow: 0 4px 0 var(--sol-sombra);
+  /* ---------- topo: flyer + artistas (igual ao antigo cadastro) ---------- */
+  .artistas { position: relative; background: var(--ceu-foto, #004697); }
+  .artistas img { width: 100%; }
+  .artistas::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; background: linear-gradient(180deg, rgba(180, 18, 18, 0), var(--engradado)); }
+  .porteira {
+    padding: 6px var(--lado) 34px;
+    background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e);
   }
-  .selos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 18px; }
-  .selos div { display: grid; gap: 4px; padding: 12px 4px 11px; border-radius: 16px; background: var(--vidro); border: 1px solid var(--vidro-borda); }
-  .selos b { font: 400 17px/1 var(--placa); color: var(--sol); }
-  .selos span { font: 700 12px/1.15 var(--estreita); letter-spacing: .08em; text-transform: uppercase; color: var(--ceu-texto); }
-  .lineup { margin-top: 18px; font: 700 15px/1.45 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--ceu-texto); }
-  .lineup strong { color: #fff; }
+  .nomes { padding-top: 2px; }
+  .cabeca { font: 400 clamp(20px, 7.2vw, 32px)/1.05 var(--placa); color: #fff; text-wrap: balance; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  .mais { margin-top: 6px; font: 400 clamp(19px, 6.6vw, 30px)/1 var(--placa); color: #fff; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  .demais { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 9px; margin-top: 14px; padding-inline: 6px; }
+  .demais li { font: 400 clamp(11px, 3.3vw, 15px)/1.25 var(--placa); color: var(--sol); text-shadow: 0 2px 0 var(--engradado-escuro); }
+  .demais li:not(:last-child)::after { content: "/"; margin-left: 9px; color: rgba(255, 255, 255, .45); text-shadow: none; }
 
   /* ---------- mapa ---------- */
   .mapa { padding: 34px var(--lado) 36px; background: #000; }
@@ -163,39 +163,23 @@ fbq('track', 'PageView');
   <symbol id="i-local" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></symbol>
 </svg>
 
-<header class="topo">
-  <div class="varal" aria-hidden="true">
-    <svg viewBox="0 0 100 60" preserveAspectRatio="none"><path d="M0 8 Q50 84 100 8"/></svg>
-    <i style="--x:4.5%;--y:14.5px"></i>
-    <i style="--x:13.6%;--y:25.9px;--d:-.8s"></i>
-    <i style="--x:22.7%;--y:34.7px;--d:-1.9s"></i>
-    <i style="--x:31.8%;--y:41px;--d:-.4s"></i>
-    <i style="--x:40.9%;--y:44.7px;--d:-2.6s"></i>
-    <i style="--x:50%;--y:46px;--d:-1.2s"></i>
-    <i style="--x:59.1%;--y:44.7px;--d:-3s"></i>
-    <i style="--x:68.2%;--y:41px;--d:-.6s"></i>
-    <i style="--x:77.3%;--y:34.7px;--d:-2.2s"></i>
-    <i style="--x:86.4%;--y:25.9px;--d:-1.5s"></i>
-    <i style="--x:95.5%;--y:14.5px;--d:-2.9s"></i>
-  </div>
-  <img class="logo" src="/img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420" fetchpriority="high">
-  <div class="chips">
-    <span class="chip"><svg><use href="#i-agenda"/></svg>Sáb · 28/11</span>
-    <span class="chip"><svg><use href="#i-hora"/></svg>16h</span>
-    <span class="chip"><svg><use href="#i-local"/></svg>Passos-MG</span>
-  </div>
-</header>
-
 <main>
-  <section class="abre">
-    <h1>Ingressos <span>Cê Tá Bão Fest</span></h1>
-    <span class="lote" id="lote" hidden></span>
-    <div class="selos">
-      <div><b>Sem</b><span>taxa</span></div>
-      <div><b>Pix</b><span>ou cartão</span></div>
-      <div><b>3x</b><span>sem juros</span></div>
+  <figure class="artistas">
+    <img src="/img/topo-flyer.webp" alt="Cartaz do Cê Tá Bão Fest: Henrique e Diego, Kamisa 10 e as demais atrações" width="800" height="1052" fetchpriority="high">
+  </figure>
+
+  <section class="porteira" aria-label="Atrações">
+    <div class="nomes">
+      <h1 class="sr">Ingressos Cê Tá Bão Fest · Passos-MG · sábado, 28/11 — site oficial de vendas</h1>
+      <p class="cabeca">Henrique e Diego</p>
+      <p class="mais">+ Kamisa 10</p>
+      <ul class="demais">
+        <li>Luan e Rafael</li>
+        <li>DJ Sarah Leonel</li>
+        <li>DJ Dion Dion</li>
+        <li>Grupo Atitude Mais</li>
+      </ul>
     </div>
-    <p class="lineup"><strong>Henrique e Diego · Kamisa 10</strong><br>Luan e Rafael · DJ Sarah Leonel · DJ Dion Dion · Grupo Atitude Mais</p>
   </section>
 
   <section class="mapa" aria-labelledby="t-mapa">
@@ -319,7 +303,6 @@ fbq('track', 'PageView');
           estado.setores.forEach(function (s) { if (s.id === c.id) { s.preco = c.preco || PRECO_PADRAO[s.id] || null; s.restam = c.restam; } });
         });
         estado.lote = cfg.lote || LOTE_PADRAO;
-        mostrarLote();
         var s = setorAtual();
         if (s && s.restam === 0) estado.setor = null;
         ajustarAoLimite();
@@ -442,7 +425,7 @@ fbq('track', 'PageView');
     var visivel = false, passouTopo = false;
     var mostra = function () { $('barra').classList.toggle('escondida', visivel || !passouTopo); };
     new IntersectionObserver(function (e) { visivel = e[0].isIntersecting; mostra(); }, { threshold: 0.05 }).observe($('compra'));
-    new IntersectionObserver(function (e) { passouTopo = !e[0].isIntersecting; mostra(); }).observe(document.querySelector('.abre'));
+    new IntersectionObserver(function (e) { passouTopo = !e[0].isIntersecting; mostra(); }).observe(document.querySelector('.porteira'));
   }
 
   // ---------- faixa de patrocinadores (JS: no Safari do iPhone o @keyframes engasgava)
@@ -460,12 +443,6 @@ fbq('track', 'PageView');
     })(performance.now());
   }
 
-  function mostrarLote() {
-    $('lote').hidden = !estado.lote;
-    $('lote').textContent = estado.lote || '';
-  }
-
-  mostrarLote();
   ajustarAoLimite();
   montar();
   carregar();
