@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Quase lá · Cê Tá Bão Fest</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#003c86">
@@ -28,6 +28,9 @@ fbq('track', 'PageView');
 </script>
 <style>
   body { text-align: left; }
+  /* página nunca anda pro lado: nada pode ficar mais largo que a tela */
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .conteudo > *, form > *, #brick-cartao { min-width: 0; max-width: 100%; }
   .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
   .barra-topo img { width: 54px; }
   .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
@@ -308,14 +311,22 @@ fbq('track', 'PageView');
    * número do cartão é digitado num campo do próprio Mercado Pago e vira um
    * token de uso único; nosso servidor nunca vê o cartão.
    */
+  // O e-mail do comprador vai pronto pro brick, que aí não pede de novo.
+  // Sem e-mail válido o brick espera (senão ele mostraria o campo dele).
+  var emailDoBrick = function () { var v = campos.email.value.trim(); return emailValido(v) ? v : ''; };
   function prepararCartao() {
-    $('cartao-aviso').hidden = !!(estado.vendendo && estado.chave);
-    if (!estado.vendendo || !estado.chave || estado.brick || estado.brickCriando) return;
+    var liberado = estado.vendendo && estado.chave;
+    var email = emailDoBrick();
+    $('cartao-aviso').textContent = liberado ? 'Preencha seu e-mail lá em cima pra digitar o cartão.' : 'Os campos do cartão aparecem aqui quando as vendas pelo site abrirem.';
+    $('cartao-aviso').hidden = !!(liberado && email);
+    if (estado.brick && estado.brickEmail !== email) { try { estado.brick.unmount(); } catch (e) { /* já saiu */ } estado.brick = null; }
+    if (!liberado || !email || estado.brick || estado.brickCriando) return;
     estado.brickCriando = true;
+    estado.brickEmail = email;
     carregarSdk().then(function () {
       var mp = new window.MercadoPago(estado.chave, { locale: 'pt-BR' });
       return mp.bricks().create('cardPayment', 'brick-cartao', {
-        initialization: { amount: totalCent() / 100 },
+        initialization: { amount: totalCent() / 100, payer: { email: email } },
         customization: {
           paymentMethods: { minInstallments: 1, maxInstallments: PARCELAS },
           visual: { hidePaymentButton: true, style: { theme: 'default', customVariables: { baseColor: '#003c86' } } }
@@ -330,7 +341,11 @@ fbq('track', 'PageView');
       estado.brick = controlador;
     }).catch(function () {
       erroGeral('Não consegui carregar o pagamento com cartão. Tente de novo ou pague no Pix.');
-    }).then(function () { estado.brickCriando = false; });
+    }).then(function () {
+      estado.brickCriando = false;
+      // o e-mail mudou enquanto o brick carregava: monta de novo com o certo
+      if (estado.metodo === 'cartao' && estado.brickEmail !== emailDoBrick()) prepararCartao();
+    });
   }
   function carregarSdk() {
     if (window.MercadoPago) return Promise.resolve();
@@ -408,6 +423,7 @@ fbq('track', 'PageView');
   campos.nome.addEventListener('input', copiarNome);
   copiarNome();
   campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); });
+  campos.email.addEventListener('change', function () { if (estado.metodo === 'cartao') prepararCartao(); });
   Object.keys(campos).forEach(function (k) { campos[k].addEventListener('input', function () { guardar(); if (estado.tentou) validar(); }); });
 
   function validar() {
