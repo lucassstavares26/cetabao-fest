@@ -73,89 +73,62 @@ fbq('track', 'PageView');
     padding: 44px var(--lado) 48px;
     background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e);
   }
-  .compra .cartao { margin-top: 0; }
   .cartao h2 { font-size: clamp(23px, 6.6vw, 27px); color: var(--ceu); }
   .cartao .sub { margin-top: 6px; font-size: 15.5px; color: var(--tinta-suave); }
-  .passo { margin-top: 26px; text-align: left; }
-  .passo > p.titulo { font: 800 14px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; color: var(--tinta-suave); margin-bottom: 10px; }
 
-  .setores { display: grid; gap: 14px; }
-  .setor {
-    position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 12px;
-    width: 100%; padding: 16px 16px 15px; border: 3px solid transparent; border-radius: 18px;
-    text-align: left; cursor: pointer; font: inherit; color: inherit;
-    transition: transform .15s, box-shadow .15s, opacity .2s;
+  .setores { display: grid; gap: 14px; margin-top: 22px; text-align: left; }
+  .setor { position: relative; border: 3px solid transparent; border-radius: 18px; transition: transform .15s, opacity .2s, border-color .2s; }
+  .setor-pista { background: linear-gradient(140deg, #ffe55c, var(--sol) 50%, #f0a800); color: #3b2300; box-shadow: 0 5px 0 var(--sol-sombra); }
+  .setor-open { background: linear-gradient(140deg, #3d8bff, var(--open) 55%, var(--open-escuro)); color: #fff; box-shadow: 0 5px 0 #062466; }
+  .setor-camarote { background: linear-gradient(140deg, #f2434a, var(--brasa) 55%, var(--engradado)); color: #fff; box-shadow: 0 5px 0 var(--engradado-escuro); }
+  .setor-topo {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 12px;
+    width: 100%; padding: 16px 16px 15px; border: 0; background: none;
+    text-align: left; font: inherit; color: inherit; cursor: pointer; touch-action: manipulation;
   }
+  .setor-camarote .setor-topo { cursor: default; }
   .setor small { grid-column: 1 / -1; font: 800 11px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
-  .setor strong { font: 400 25px/1 var(--placa); }
+  .setor-topo strong { font: 400 25px/1 var(--placa); }
   .setor .preco { font: 400 21px/1 var(--placa); white-space: nowrap; text-align: right; }
   .setor .preco.em-breve { font: 800 14px/1.1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; }
   .setor .desc { grid-column: 1 / -1; font: 700 15.5px/1.35 var(--estreita); letter-spacing: .02em; }
-  .setor .tipo { grid-column: 1 / -1; display: inline-flex; justify-self: start; padding: 5px 10px 4px; border-radius: 999px; background: rgba(0, 0, 0, .14); font: 800 12px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; }
+  .setor .rodape-card { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .setor .tipo { display: inline-flex; padding: 5px 10px 4px; border-radius: 999px; background: rgba(0, 0, 0, .14); font: 800 12px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; }
+  .setor .abrir { font: 800 13px/1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
   .setor .resta { grid-column: 1 / -1; font: 800 12px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; }
-  .setor-pista { background: linear-gradient(140deg, #ffe55c, var(--sol) 50%, #f0a800); color: #3b2300; box-shadow: 0 5px 0 var(--sol-sombra); }
-  .setor-open { background: linear-gradient(140deg, #3d8bff, var(--open) 55%, var(--open-escuro)); color: #fff; box-shadow: 0 5px 0 #062466; }
-  .setor-camarote { cursor: default; background: linear-gradient(140deg, #f2434a, var(--brasa) 55%, var(--engradado)); color: #fff; box-shadow: 0 5px 0 var(--engradado-escuro); }
-  .setor-camarote .btn { grid-column: 1 / -1; margin-top: 8px; min-height: 54px; font-size: 18px; }
-  .setor[aria-pressed="true"] { border-color: var(--tinta); transform: translateY(-3px); }
-  .setor[aria-pressed="true"]::after {
+  .setor-camarote .btn { margin: 0 16px 16px; width: calc(100% - 32px); min-height: 54px; font-size: 18px; }
+  .setor.aberto { border-color: var(--tinta); transform: translateY(-2px); }
+  .setor.aberto::after {
     content: "✓"; position: absolute; top: -10px; right: -8px; width: 30px; height: 30px; display: grid; place-items: center;
     border-radius: 50%; background: var(--verde); color: #fff; font: 900 15px/1 var(--texto); border: 3px solid #fff;
   }
-  .setores.escolhido .setor[data-setor]:not([aria-pressed="true"]) { opacity: .55; }
-  .setor:disabled { cursor: not-allowed; opacity: .45; }
-  .aviso-pagar { margin-top: 12px; font: 700 15px/1.35 var(--estreita); letter-spacing: .02em; color: var(--tinta-suave); }
+  .setor.aberto .abrir { visibility: hidden; }
+  .setores.escolhido .setor[data-setor]:not(.aberto) { opacity: .55; }
+  .setor.esgotado { opacity: .45; }
+  .setor.esgotado .setor-topo { cursor: not-allowed; }
 
-  .qtd { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--campo-fundo); border: 2px solid var(--campo-borda); }
-  .qtd + .qtd { margin-top: 8px; }
-  .qtd div { flex: 1; }
-  .qtd b { display: block; font: 800 19px/1.1 var(--estreita); letter-spacing: .03em; text-transform: uppercase; }
-  .qtd span { font-size: 14.5px; color: var(--tinta-suave); }
-  .qtd button { width: 46px; height: 46px; border-radius: 14px; border: 0; background: var(--ceu); color: #fff; font: 700 26px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
-  .qtd button:disabled { opacity: .25; cursor: not-allowed; }
-  .qtd output { width: 30px; text-align: center; font: 400 26px/1 var(--placa); color: var(--ceu); }
-  .aviso-meia { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: #fff7d6; border: 2px solid #f3d36b; font-size: 14.5px; line-height: 1.4; color: #4a3500; }
-  .aviso-meia strong { color: var(--engradado); }
-  .ultimos { margin-top: 10px; font: 800 15px/1.2 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--brasa); }
+  /* quantidade dentro do cartão aberto */
+  .setor-opcoes { display: grid; gap: 8px; padding: 0 12px 14px; }
+  .opcao { display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 14px; border-radius: 14px; background: rgba(255, 255, 255, .94); color: var(--tinta); }
+  .opcao div { flex: 1; min-width: 0; }
+  .opcao b { display: block; font: 800 18px/1.1 var(--estreita); letter-spacing: .03em; text-transform: uppercase; }
+  .opcao span { font-size: 14px; color: var(--tinta-suave); }
+  .opcao button { width: 44px; height: 44px; flex: none; border-radius: 12px; border: 0; background: var(--ceu); color: #fff; font: 700 24px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
+  .opcao button:disabled { opacity: .22; cursor: not-allowed; }
+  .opcao output { width: 30px; text-align: center; font: 400 24px/1 var(--placa); color: var(--ceu); }
+  .nota-meia { padding: 2px 4px 0; font-size: 13.5px; line-height: 1.35; }
+  .nota-meia strong { color: var(--engradado); }
 
-  form { display: grid; gap: 12px; }
-  .campo { position: relative; }
-  .campo input {
-    width: 100%; height: 60px; padding: 22px 16px 6px 16px;
-    border: 2px solid var(--campo-borda); border-radius: 14px; background: var(--campo-fundo);
-    font: 600 17px/1.2 var(--texto); color: var(--tinta);
-    transition: border-color .15s, box-shadow .15s, background-color .15s;
-  }
-  .campo label {
-    position: absolute; left: 18px; top: 19px; pointer-events: none;
-    font: 500 17px/1.2 var(--texto); color: var(--campo-rotulo);
-    transition: top .15s, font-size .15s, color .15s, letter-spacing .15s;
-  }
-  .campo input:focus { outline: none; border-color: var(--ceu); background: #fff; box-shadow: 0 0 0 4px rgba(0, 60, 134, .14); }
-  .campo input:focus + label, .campo input:not(:placeholder-shown) + label { top: 9px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ceu); }
-  .campo small { display: none; margin: 6px 4px 0; font-size: 14px; font-weight: 600; color: var(--brasa); }
-  .campo.erro input { border-color: var(--brasa); background: #fff6f6; }
-  .campo.erro label { color: var(--brasa); }
-  .campo.erro small { display: block; }
-  .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-  .dica { margin: -4px 4px 0; font-size: 13.5px; color: var(--campo-rotulo); }
-
-  .aceite { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; line-height: 1.4; color: var(--tinta-suave); cursor: pointer; }
-  .aceite input { width: 22px; height: 22px; flex: none; margin-top: 1px; accent-color: var(--ceu); }
-  .aceite.erro { color: var(--brasa); font-weight: 600; }
-
-  .total { margin-top: 22px; padding-top: 18px; border-top: 2px dashed #e1e6f0; }
-  .total p:first-child { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--campo-rotulo); }
-  .total .valor { margin-top: 6px; font: 400 36px/1 var(--placa); color: var(--ceu); }
-  .total .parcela { margin-top: 4px; font-size: 14.5px; color: var(--tinta-suave); }
-  .total .btn { margin-top: 16px; }
+  /* total + botão */
+  .resumo { margin-top: 24px; padding-top: 18px; border-top: 2px dashed #e1e6f0; }
+  .resumo .rot { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--campo-rotulo); }
+  .resumo .linha { margin-top: 6px; font: 700 15px/1.3 var(--estreita); letter-spacing: .03em; color: var(--tinta-suave); }
+  .resumo .valor { margin-top: 6px; font: 400 38px/1 var(--placa); color: var(--ceu); }
+  .resumo .parcela { margin-top: 4px; font-size: 14.5px; color: var(--tinta-suave); }
+  .resumo .btn { margin-top: 16px; }
+  .resumo .btn:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
   .seguro { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 12px; font-size: 13.5px; color: var(--tinta-suave); }
   .seguro svg { width: 15px; height: 15px; color: var(--verde); }
-  .erro-geral { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
-
-  .estado { padding: 26px 8px 8px; color: var(--tinta-suave); }
-  .estado h2 { margin-bottom: 8px; }
-  .estado .btn { margin-top: 16px; }
 
   /* ---------- quando/onde ---------- */
   .ficha { display: grid; gap: 10px; padding: 34px var(--lado) 36px; background: var(--ceu-fundo); }
@@ -241,75 +214,17 @@ fbq('track', 'PageView');
     <div class="cartao">
       <span class="etiqueta">Site oficial</span>
       <h2 id="t-compra">Escolha seu ingresso</h2>
-      <p class="sub">Ingresso na hora, no seu e-mail e WhatsApp.</p>
+      <p class="sub">Toque no setor e escolha quantos.</p>
 
-      <div id="loja">
-        <div class="passo">
-          <p class="titulo">1 · Ingresso</p>
-          <div class="setores" id="setores" role="group" aria-label="Ingresso"></div>
-          <p class="campo erro" id="erro-setor" hidden><small>Escolha Pista VIP ou Open Bar.</small></p>
-        </div>
+      <div class="setores" id="setores"></div>
 
-        <div class="passo" id="passo-qtd" hidden>
-          <p class="titulo">2 · Quantidade</p>
-          <div class="qtd">
-            <div><b>Inteira</b><span id="preco-inteira"></span></div>
-            <button type="button" data-qtd="inteira" data-d="-1" aria-label="Menos uma inteira">−</button>
-            <output id="q-inteira" aria-live="polite">1</output>
-            <button type="button" data-qtd="inteira" data-d="1" aria-label="Mais uma inteira">+</button>
-          </div>
-          <div class="qtd" id="linha-meia">
-            <div><b>Meia-entrada</b><span id="preco-meia"></span></div>
-            <button type="button" data-qtd="meia" data-d="-1" aria-label="Menos uma meia">−</button>
-            <output id="q-meia" aria-live="polite">0</output>
-            <button type="button" data-qtd="meia" data-d="1" aria-label="Mais uma meia">+</button>
-          </div>
-          <p class="aviso-meia" id="aviso-meia" hidden>
-            <strong>Meia-entrada:</strong> estudantes, pessoas com 60 anos ou mais, pessoas com deficiência (e acompanhante, quando necessário) e jovens de 15 a 29 anos de baixa renda (ID Jovem).
-            <strong>Na entrada é obrigatório mostrar o documento.</strong>
-          </p>
-          <p class="ultimos" id="ultimos" hidden></p>
-        </div>
-
-        <form class="passo" id="form" novalidate>
-          <p class="titulo">3 · Seus dados</p>
-          <div class="campo" id="c-nome">
-            <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder=" " maxlength="80">
-            <label for="nome">Nome completo</label>
-            <small>Digite seu nome completo.</small>
-          </div>
-          <div class="campo" id="c-cpf">
-            <input id="cpf" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="next" placeholder=" " maxlength="14">
-            <label for="cpf">CPF</label>
-            <small>CPF inválido — confira os números.</small>
-          </div>
-          <div class="campo" id="c-email">
-            <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder=" " maxlength="254">
-            <label for="email">E-mail</label>
-            <small>Digite um e-mail válido.</small>
-          </div>
-          <div class="campo" id="c-whats">
-            <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="done" placeholder=" " maxlength="16">
-            <label for="whatsapp">WhatsApp com DDD</label>
-            <small>Digite um WhatsApp válido, com DDD.</small>
-          </div>
-          <p class="dica">Os ingressos chegam no e-mail e no WhatsApp.</p>
-          <input class="isca" type="text" name="empresa" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="aceite" id="c-aceite">
-            <input type="checkbox" id="aceite">
-            <span>Entendi que cada QR Code vale <strong>uma entrada</strong>, que meia-entrada exige documento na portaria e que posso pedir reembolso em até 7 dias após a compra.</span>
-          </label>
-
-          <div class="total">
-            <p>Total</p>
-            <p class="valor" id="total">R$ 0,00</p>
-            <p class="parcela" id="parcela"></p>
-            <button class="btn btn-sol" type="submit" id="pagar"><svg><use href="#i-ticket"/></svg><span>Ir para o pagamento</span></button>
-            <p class="seguro"><svg><use href="#i-cadeado"/></svg>Pagamento seguro pelo Mercado Pago</p>
-            <p class="aviso-pagar" id="aviso-pagar" hidden>As vendas pelo site abrem em breve.</p>
-            <p class="erro-geral" id="erro-geral" role="alert" hidden></p>
-          </div>
-        </form>
+      <div class="resumo" aria-live="polite">
+        <p class="rot">Total</p>
+        <p class="linha" id="linha-resumo">Escolha um ingresso acima</p>
+        <p class="valor" id="total">R$ 0,00</p>
+        <p class="parcela" id="parcela"></p>
+        <button class="btn btn-sol" type="button" id="continuar" disabled><svg><use href="#i-ticket"/></svg><span>Realizar pagamento</span></button>
+        <p class="seguro"><svg><use href="#i-cadeado"/></svg>Pix ou cartão em até 3x sem juros · Mercado Pago</p>
       </div>
     </div>
   </section>
@@ -354,20 +269,30 @@ fbq('track', 'PageView');
   // número só com dígitos, com 55 na frente (ex.: 5535999998888).
   var WHATSAPP_CAMAROTES = '';
   // Setores vendidos no site. Preço, lote e estoque vêm do painel (/api/site/publico).
+  // A mesma lista existe em checkout/index.html — mudou aqui, muda lá.
   var SETORES = [
     { id: 'pista', nome: 'Pista VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
     { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: 'Só inteira', meia: false }
   ];
   var PARCELAS = 3;
   var QTD_MAX = 10;
-  var CHAVE_DADOS = 'cetabao_compra_dados_v1';
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
   var estado = {
     setores: SETORES.map(function (s) { return Object.assign({ preco: null, restam: null }, s); }),
-    vendendo: false, setor: null, inteira: 1, meia: 0, tentou: false, enviando: false
+    setor: null, inteira: 1, meia: 0
   };
+
+  // Escolha guardada na aba: quem volta do checkout encontra o que tinha escolhido.
+  try {
+    var guardada = JSON.parse(sessionStorage.getItem('cetabao_escolha') || 'null');
+    if (guardada && SETORES.some(function (s) { return s.id === guardada.setor; })) {
+      estado.setor = guardada.setor; estado.inteira = guardada.inteira; estado.meia = guardada.meia;
+    }
+    // De onde a pessoa veio (anúncio, link): vai junto pro pedido.
+    if (!sessionStorage.getItem('cetabao_origem')) sessionStorage.setItem('cetabao_origem', (location.search.slice(1) || document.referrer || '').slice(0, 120));
+  } catch (e) { /* sem armazenamento: segue */ }
 
   // ---------- dinheiro: sempre em centavos inteiros (regra igual à do servidor)
   var centavos = function (reais) { return Math.round(reais * 100); };
@@ -377,212 +302,133 @@ fbq('track', 'PageView');
   var totalCent = function () { var s = setorAtual(); return s && s.preco ? centavos(s.preco) * estado.inteira + meiaCent(s.preco) * estado.meia : 0; };
   var limite = function () { var s = setorAtual(); return Math.min(QTD_MAX, s && s.restam !== null ? s.restam : QTD_MAX); };
 
-  // ---------- validação (mesmas regras do servidor)
-  var digitos = function (v) { return String(v || '').replace(/\D/g, ''); };
-  function cpfValido(v) {
-    var c = digitos(v);
-    if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
-    var dv = function (ate) { var s = 0; for (var i = 0; i < ate; i++) s += Number(c[i]) * (ate + 1 - i); var r = (s * 10) % 11; return r === 10 ? 0 : r; };
-    return dv(9) === Number(c[9]) && dv(10) === Number(c[10]);
-  }
-  var nomeValido = function (v) { var n = String(v || '').trim(); return n.length >= 2 && /\p{L}/u.test(n) && !/https?:|:\/\/|www\.|[<>]/i.test(n); };
-  var emailValido = function (v) { return /^[^\s@,;<>"']+@[^\s@,;<>"'.]+(\.[^\s@,;<>"'.]+)+$/.test(String(v || '').trim()); };
-  var whatsValido = function (v) { var d = digitos(v); if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2); return d.length === 10 || d.length === 11; };
-
-  function mascaraCpf(v) {
-    var d = digitos(v).slice(0, 11);
-    if (d.length <= 3) return d;
-    if (d.length <= 6) return d.slice(0, 3) + '.' + d.slice(3);
-    if (d.length <= 9) return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6);
-    return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6, 9) + '-' + d.slice(9);
-  }
-  function mascaraFone(v) {
-    var d = digitos(v);
-    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
-    d = d.slice(0, 11);
-    if (d.length <= 2) return d.length ? '(' + d : '';
-    if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
-    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
-    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
-  }
-
-  // ---------- preços / lote / estoque do painel. As opções aparecem antes,
-  // sem preço; se o painel não responder, ficam assim e o pagamento não abre.
+  // ---------- preços / lote / estoque do painel. Os cartões aparecem antes,
+  // sem preço; se o painel não responder, ficam com "valor em breve".
   function carregar() {
     fetch(API + '/api/site/publico', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
-        estado.vendendo = !!cfg.vendendo;
         (cfg.setores || []).forEach(function (c) {
           estado.setores.forEach(function (s) { if (s.id === c.id) { s.preco = c.preco; s.restam = c.restam; } });
         });
         $('lote').hidden = !cfg.lote;
         if (cfg.lote) $('lote').textContent = cfg.lote;
-        montarSetores();
-        atualizar();
+        var s = setorAtual();
+        if (s && s.restam === 0) estado.setor = null;
+        ajustarAoLimite();
+        montar();
       })
-      .catch(function () { estado.vendendo = false; atualizar(); });
+      .catch(function () { /* fica com "valor em breve" */ });
   }
 
-  function montarSetores() {
+  // ---------- cartões
+  function linhaQtd(tipo, titulo) {
+    return '<div class="opcao"><div><b>' + titulo + '</b><span data-preco="' + tipo + '"></span></div>' +
+      '<button type="button" data-qtd="' + tipo + '" data-d="-1" aria-label="Menos uma ' + titulo.toLowerCase() + '">−</button>' +
+      '<output data-valor="' + tipo + '" aria-live="polite"></output>' +
+      '<button type="button" data-qtd="' + tipo + '" data-d="1" aria-label="Mais uma ' + titulo.toLowerCase() + '">+</button></div>';
+  }
+
+  function montar() {
     var box = $('setores');
     box.innerHTML = '';
     estado.setores.forEach(function (s) {
       var esgotado = s.restam === 0;
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'setor setor-' + s.id;
-      b.dataset.setor = s.id;
-      b.disabled = esgotado;
-      b.setAttribute('aria-pressed', String(estado.setor === s.id));
-      b.innerHTML = '<small>Ingresso</small><strong>' + s.nome + '</strong>' +
-        (esgotado ? '<span class="preco">Esgotado</span>'
-          : s.preco ? '<span class="preco">' + moeda(centavos(s.preco)) + '</span>'
-          : '<span class="preco em-breve">Valor<br>em breve</span>') +
-        (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
-        '<span class="tipo">' + s.tipo + '</span>' +
-        (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">últimos ' + s.restam + '</span>' : '');
-      b.addEventListener('click', function () { escolher(s.id); });
-      box.appendChild(b);
+      var aberto = estado.setor === s.id;
+      var card = document.createElement('div');
+      card.className = 'setor setor-' + s.id + (aberto ? ' aberto' : '') + (esgotado ? ' esgotado' : '');
+      card.dataset.setor = s.id;
+      card.innerHTML =
+        '<button type="button" class="setor-topo" aria-expanded="' + aberto + '"' + (esgotado ? ' disabled' : '') + '>' +
+          '<small>Ingresso</small><strong>' + s.nome + '</strong>' +
+          (esgotado ? '<span class="preco">Esgotado</span>'
+            : s.preco ? '<span class="preco">' + moeda(centavos(s.preco)) + '</span>'
+            : '<span class="preco em-breve">Valor<br>em breve</span>') +
+          (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
+          '<span class="rodape-card"><span class="tipo">' + s.tipo + '</span>' + (esgotado ? '' : '<span class="abrir">Escolher ›</span>') + '</span>' +
+          (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
+        '</button>' +
+        (aberto
+          ? '<div class="setor-opcoes">' + linhaQtd('inteira', 'Inteira') + (s.meia ? linhaQtd('meia', 'Meia-entrada') : '') +
+            (s.meia ? '<p class="nota-meia"><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
+            '</div>'
+          : '');
+      card.querySelector('.setor-topo').addEventListener('click', function () { if (!esgotado) escolher(s.id); });
+      box.appendChild(card);
     });
+
     var cam = document.createElement('div');
     cam.className = 'setor setor-camarote';
     var link = WHATSAPP_CAMAROTES
       ? 'https://wa.me/' + WHATSAPP_CAMAROTES + '?text=' + encodeURIComponent('Oi! Quero reservar camarote/mesa no Cê Tá Bão Fest.')
       : 'https://www.instagram.com/cetabaofest/';
-    cam.innerHTML = '<small>Setor Premium</small><strong>Camarotes e Mesas</strong>' +
-      '<span class="desc">Reserva direto com a produção, pelo WhatsApp.</span>' +
+    cam.innerHTML = '<div class="setor-topo"><small>Setor Premium</small><strong>Camarotes e Mesas</strong>' +
+      '<span class="desc">Reserva direto com a produção, pelo WhatsApp.</span></div>' +
       '<a class="btn btn-zap" target="_blank" rel="noopener" href="' + link + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Chamar no WhatsApp</span></a>';
     box.appendChild(cam);
-  }
 
-  function escolher(id) {
-    estado.setor = id;
-    if (!setorAtual().meia) estado.meia = 0; // Open Bar é só inteira
-    var max = limite();
-    if (estado.inteira + estado.meia > max) { estado.meia = Math.min(estado.meia, max); estado.inteira = Math.max(0, max - estado.meia); }
-    if (estado.inteira + estado.meia < 1) estado.inteira = 1;
-    $('erro-setor').hidden = true;
+    box.querySelectorAll('[data-qtd]').forEach(function (b) {
+      b.addEventListener('click', function () { mudarQtd(b.dataset.qtd, Number(b.dataset.d)); });
+    });
     atualizar();
   }
 
-  document.querySelectorAll('[data-qtd]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      var tipo = b.dataset.qtd, d = Number(b.dataset.d);
-      var outro = tipo === 'inteira' ? estado.meia : estado.inteira;
-      var novo = estado[tipo] + d;
-      if (novo < 0 || novo + outro < 1 || novo + outro > limite()) return;
-      estado[tipo] = novo;
-      atualizar();
-    });
-  });
+  function escolher(id) {
+    if (estado.setor === id) return;
+    estado.setor = id;
+    estado.inteira = 1;
+    estado.meia = 0;
+    ajustarAoLimite();
+    montar();
+  }
+
+  function ajustarAoLimite() {
+    var s = setorAtual();
+    if (!s) return;
+    if (!s.meia) estado.meia = 0; // Open Bar é só inteira
+    var max = limite();
+    if (estado.inteira + estado.meia > max) { estado.meia = Math.min(estado.meia, max); estado.inteira = Math.max(0, max - estado.meia); }
+    if (estado.inteira + estado.meia < 1) estado.inteira = 1;
+  }
+
+  function mudarQtd(tipo, d) {
+    var outro = tipo === 'inteira' ? estado.meia : estado.inteira;
+    var novo = estado[tipo] + d;
+    if (novo < 0 || novo + outro < 1 || novo + outro > limite()) return;
+    estado[tipo] = novo;
+    atualizar();
+  }
 
   function atualizar() {
     var s = setorAtual();
+    var qtd = estado.inteira + estado.meia;
     $('setores').classList.toggle('escolhido', !!s);
-    document.querySelectorAll('.setor[data-setor]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.setor === estado.setor)); });
-    $('passo-qtd').hidden = !s;
     if (s) {
-      $('preco-inteira').textContent = s.preco ? moeda(centavos(s.preco)) + ' cada' : 'Valor em breve';
-      $('preco-meia').textContent = s.preco ? moeda(meiaCent(s.preco)) + ' cada' : 'Valor em breve';
-      $('linha-meia').hidden = !s.meia;
-      $('q-inteira').textContent = estado.inteira;
-      $('q-meia').textContent = estado.meia;
-      var qtd = estado.inteira + estado.meia;
-      document.querySelector('[data-qtd="inteira"][data-d="-1"]').disabled = estado.inteira < 1 || qtd <= 1;
-      document.querySelector('[data-qtd="meia"][data-d="-1"]').disabled = estado.meia < 1 || qtd <= 1;
+      document.querySelectorAll('[data-preco="inteira"]').forEach(function (e) { e.textContent = s.preco ? moeda(centavos(s.preco)) + ' cada' : 'Valor em breve'; });
+      document.querySelectorAll('[data-preco="meia"]').forEach(function (e) { e.textContent = s.preco ? moeda(meiaCent(s.preco)) + ' cada' : 'Valor em breve'; });
+      document.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado[e.dataset.valor]; });
+      document.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado[b.dataset.qtd] < 1 || qtd <= 1; });
       document.querySelectorAll('[data-d="1"]').forEach(function (b) { b.disabled = qtd >= limite(); });
-      $('aviso-meia').hidden = estado.meia < 1;
-      var ult = s.restam !== null && s.restam <= 20;
-      $('ultimos').hidden = !ult;
-      if (ult) $('ultimos').textContent = '🔥 ' + (s.restam === 1 ? 'Último ingresso' : 'Últimos ' + s.restam + ' ingressos') + ' deste lote';
+      var partes = [];
+      if (estado.inteira) partes.push(estado.inteira + 'x inteira');
+      if (estado.meia) partes.push(estado.meia + 'x meia');
+      $('linha-resumo').textContent = s.nome + ' · ' + partes.join(' + ');
+      try { sessionStorage.setItem('cetabao_escolha', JSON.stringify({ setor: s.id, inteira: estado.inteira, meia: estado.meia })); } catch (e) { /* tudo bem */ }
+    } else {
+      $('linha-resumo').textContent = 'Escolha um ingresso acima';
     }
     var t = totalCent();
     $('total').textContent = s && !s.preco ? 'Em breve' : moeda(t);
-    $('aviso-pagar').hidden = estado.vendendo;
-    if (!estado.enviando) ocupado(false);
     $('parcela').textContent = t ? 'ou ' + PARCELAS + 'x de ' + moeda(Math.floor(t / PARCELAS)) + ' sem juros no cartão' : '';
-    if (estado.tentou) validar();
+    $('continuar').disabled = !s;
   }
 
-  // ---------- dados do comprador
-  var campos = { nome: $('nome'), cpf: $('cpf'), email: $('email'), whatsapp: $('whatsapp') };
-  try {
-    var salvo = JSON.parse(localStorage.getItem(CHAVE_DADOS) || 'null');
-    if (salvo) Object.keys(campos).forEach(function (k) { if (salvo[k]) campos[k].value = salvo[k]; });
-  } catch (e) { /* sem armazenamento: segue */ }
-  function guardar() {
-    try {
-      var d = {}; Object.keys(campos).forEach(function (k) { d[k] = campos[k].value; });
-      localStorage.setItem(CHAVE_DADOS, JSON.stringify(d));
-    } catch (e) { /* tudo bem */ }
-  }
-  campos.cpf.addEventListener('input', function () { campos.cpf.value = mascaraCpf(campos.cpf.value); });
-  campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); });
-  Object.keys(campos).forEach(function (k) { campos[k].addEventListener('input', function () { guardar(); if (estado.tentou) validar(); }); });
-  $('aceite').addEventListener('change', function () { if (estado.tentou) validar(); });
-
-  function validar() {
-    var ok = true;
-    var marca = function (id, valido) { $(id).classList.toggle('erro', !valido); if (!valido) ok = false; };
-    marca('c-nome', nomeValido(campos.nome.value));
-    marca('c-cpf', cpfValido(campos.cpf.value));
-    marca('c-email', emailValido(campos.email.value));
-    marca('c-whats', whatsValido(campos.whatsapp.value));
-    marca('c-aceite', $('aceite').checked);
-    if (!estado.setor) { $('erro-setor').hidden = false; ok = false; }
-    return ok;
-  }
-
-  // ---------- pagar
-  function erroGeral(texto) { $('erro-geral').textContent = texto; $('erro-geral').hidden = !texto; }
-  function ocupado(sim) {
-    estado.enviando = sim;
-    $('pagar').disabled = sim || !estado.vendendo;
-    $('pagar').innerHTML = sim ? '<span class="girando"></span><span>Abrindo o pagamento…</span>'
-      : estado.vendendo ? '<svg><use href="#i-ticket"/></svg><span>Ir para o pagamento</span>'
-      : '<svg><use href="#i-cadeado"/></svg><span>Vendas em breve</span>';
-  }
-
-  $('form').addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    if (estado.enviando || !estado.vendendo) return;
-    estado.tentou = true;
-    erroGeral('');
-    if (!validar()) {
-      var primeiro = !estado.setor ? $('setores') : document.querySelector('.campo.erro input, .aceite.erro input');
-      if (primeiro) { primeiro.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (primeiro.focus) primeiro.focus({ preventScroll: true }); }
-      return;
-    }
-    var total = totalCent();
-    ocupado(true);
-    fetch(API + '/api/comprar', {
-      method: 'POST',
-      headers: { 'content-type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify({
-        nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
-        setor: estado.setor, qtd_inteira: estado.inteira, qtd_meia: estado.meia, valor_total: total / 100,
-        aceite: $('aceite').checked, empresa: $('empresa').value,
-        origem: (location.search.slice(1) || document.referrer || '').slice(0, 120)
-      })
-    })
-      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
-      .then(function (res) {
-        if (res.status === 200 && res.j.url) {
-          if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { value: res.j.valor, currency: 'BRL', num_items: estado.inteira + estado.meia });
-          try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); } catch (e) { /* tudo bem */ }
-          location.href = res.j.url;
-          return;
-        }
-        ocupado(false);
-        erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
-        if (res.status === 409) carregar(); // virou o lote, esgotou ou fechou: atualiza a tela
-      })
-      .catch(function () { ocupado(false); erroGeral('Sem conexão. Confira a internet e tente de novo.'); });
+  // ---------- segunda parte: checkout (dados + pagamento)
+  $('continuar').addEventListener('click', function () {
+    var s = setorAtual();
+    if (!s) return;
+    location.href = '/checkout/?setor=' + s.id + '&inteira=' + estado.inteira + '&meia=' + estado.meia;
   });
-
-  // Voltou do Mercado Pago pelo botão "voltar" do navegador: destrava o botão.
-  window.addEventListener('pageshow', function (e) { if (e.persisted) ocupado(false); });
 
   // ---------- barra fixa: aparece enquanto o cartão de compra não está na tela
   if ('IntersectionObserver' in window) {
@@ -607,8 +453,8 @@ fbq('track', 'PageView');
     })(performance.now());
   }
 
-  montarSetores();
-  atualizar();
+  ajustarAoLimite();
+  montar();
   carregar();
 })();
 </script>
