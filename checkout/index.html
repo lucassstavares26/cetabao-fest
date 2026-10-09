@@ -74,6 +74,12 @@ fbq('track', 'PageView');
   .dica { margin-top: -8px; font-size: 13px; color: var(--tinta-suave); }
   .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
+  .titulares { display: grid; gap: 12px; padding: 16px 14px; border-radius: 14px; background: var(--campo-fundo); border: 1.5px solid #dbe3f2; }
+  .titulares .explica { margin-top: -2px; font-size: 13.5px; color: var(--tinta-suave); }
+  .titular .tag { display: inline-block; margin-left: 6px; vertical-align: 1px; padding: 3px 7px 2px; border-radius: 5px; font: 800 11px/1 var(--estreita); letter-spacing: .08em; color: #fff; }
+  .titular .tag.pista { background: #b8860b; }
+  .titular .tag.open { background: var(--open); }
+  .titular .tag.meia { background: var(--brasa); }
   .metodos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .metodo { padding: 14px 14px 12px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff; text-align: left; cursor: pointer; font: inherit; color: var(--tinta); touch-action: manipulation; }
   .metodo b { display: block; font: 800 16px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; }
@@ -154,6 +160,12 @@ fbq('track', 'PageView');
         <small>Digite um e-mail válido.</small>
       </div>
       <input class="isca" type="text" name="empresa" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="titulares" id="titulares" aria-labelledby="t-titulares">
+        <span class="rot" id="t-titulares">Nome em cada ingresso</span>
+        <p class="explica">Cada ingresso sai com o nome de quem vai usar, pra não ter confusão na entrada. Depois é só repassar.</p>
+        <div id="lista-titulares" style="display:grid;gap:12px"></div>
+      </div>
 
       <div>
         <span class="rot">Como você quer pagar</span>
@@ -359,6 +371,26 @@ fbq('track', 'PageView');
     return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
   }
 
+  // ---------- nome em cada ingresso (ingresso nominal). Mesma ordem em que o
+  // servidor numera: Pista inteira, Pista meia, Open Bar. O 1º já vem com o
+  // nome de quem está pagando (e acompanha enquanto a pessoa não mexer nele).
+  var ingressosDoPedido = [];
+  for (var a = 0; a < qtd.pista_inteira; a++) ingressosDoPedido.push({ setor: 'pista', nome: 'Pista VIP', meia: false });
+  for (var b = 0; b < qtd.pista_meia; b++) ingressosDoPedido.push({ setor: 'pista', nome: 'Pista VIP', meia: true });
+  for (var c = 0; c < qtd.open_inteira; c++) ingressosDoPedido.push({ setor: 'open', nome: 'Open Bar', meia: false });
+  var primeiroMexido = false;
+  $('lista-titulares').innerHTML = ingressosDoPedido.map(function (ing, i) {
+    return '<div class="campo titular" id="c-tit-' + i + '">' +
+      '<label class="rot" for="tit-' + i + '">Ingresso ' + (i + 1) +
+        '<span class="tag ' + ing.setor + '">' + ing.nome + '</span>' + (ing.meia ? '<span class="tag meia">Meia</span>' : '') + '</label>' +
+      '<input id="tit-' + i + '" type="text" autocomplete="off" autocapitalize="words" placeholder="' + (i === 0 ? 'Seu nome ou de quem vai usar' : 'Nome completo de quem vai usar') + '" maxlength="80">' +
+      '<small>Digite o nome completo de quem vai usar este ingresso.</small></div>';
+  }).join('');
+  var titulares = ingressosDoPedido.map(function (_, i) { return $('tit-' + i); });
+  titulares.forEach(function (el, i) {
+    el.addEventListener('input', function () { if (i === 0) primeiroMexido = true; if (estado.tentou) validar(); });
+  });
+
   // ---------- dados do comprador (guardados neste aparelho pra não redigitar)
   var campos = { nome: $('nome'), cpf: $('cpf'), email: $('email'), whatsapp: $('whatsapp') };
   try {
@@ -372,6 +404,9 @@ fbq('track', 'PageView');
     } catch (e) { /* tudo bem */ }
   }
   campos.cpf.addEventListener('input', function () { campos.cpf.value = mascaraCpf(campos.cpf.value); });
+  var copiarNome = function () { if (!primeiroMexido && titulares[0]) titulares[0].value = campos.nome.value; };
+  campos.nome.addEventListener('input', copiarNome);
+  copiarNome();
   campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); });
   Object.keys(campos).forEach(function (k) { campos[k].addEventListener('input', function () { guardar(); if (estado.tentou) validar(); }); });
 
@@ -382,6 +417,7 @@ fbq('track', 'PageView');
     marca('c-whats', whatsValido(campos.whatsapp.value));
     marca('c-cpf', cpfValido(campos.cpf.value));
     marca('c-email', emailValido(campos.email.value));
+    titulares.forEach(function (el, i) { marca('c-tit-' + i, nomeValido(el.value)); });
     return ok;
   }
 
@@ -431,6 +467,7 @@ fbq('track', 'PageView');
           body: JSON.stringify({
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
             qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
+            titulares: titulares.map(function (el) { return el.value.trim(); }),
             metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
