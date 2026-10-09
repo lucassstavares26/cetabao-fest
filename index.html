@@ -58,6 +58,22 @@ fbq('track', 'PageView');
   .demais li { font: 400 clamp(11px, 3.3vw, 15px)/1.25 var(--placa); color: var(--sol); text-shadow: 0 2px 0 var(--engradado-escuro); }
   .demais li:not(:last-child)::after { content: "/"; margin-left: 9px; color: rgba(255, 255, 255, .45); text-shadow: none; }
 
+  /* ---------- placa "+ de 10 horas de festa | Palco 360°" na emenda vermelho/preto ---------- */
+  .destaque { padding: 0 var(--lado); background: linear-gradient(180deg, #9c0e0e 50%, #000 50%); }
+  .placa-festa {
+    position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
+    padding: 18px 16px 15px; border-radius: 16px; transform: rotate(-1.5deg);
+    background: repeating-linear-gradient(90deg, transparent 0 15px, rgba(0, 0, 0, .04) 15px 17px), var(--sol);
+    color: var(--engradado); box-shadow: 0 6px 0 var(--sol-sombra), 0 18px 34px rgba(0, 0, 0, .45);
+  }
+  .placa-festa::before, .placa-festa::after { content: ""; position: absolute; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--sol-sombra); box-shadow: inset 0 1px 1px rgba(0, 0, 0, .35); }
+  .placa-festa::before { left: 9px; }
+  .placa-festa::after { right: 9px; }
+  .placa-festa div { display: grid; justify-items: center; gap: 5px; }
+  .placa-festa b { font: 400 clamp(21px, 6.6vw, 28px)/1 var(--placa); white-space: nowrap; }
+  .placa-festa span { font: 800 14px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; color: var(--engradado-escuro); }
+  .placa-festa i { width: 3px; align-self: stretch; border-radius: 2px; background: var(--engradado); opacity: .35; }
+
   /* ---------- mapa ---------- */
   .mapa { padding: 34px var(--lado) 36px; background: #000; }
   .mapa .rotulo { color: var(--sol-claro); }
@@ -181,6 +197,14 @@ fbq('track', 'PageView');
       </ul>
     </div>
   </section>
+
+  <div class="destaque">
+    <div class="placa-festa" role="note" aria-label="Mais de 10 horas de festa, palco 360 graus">
+      <div><b>+10 horas</b><span>de festa</span></div>
+      <i aria-hidden="true"></i>
+      <div><b>360°</b><span>Palco</span></div>
+    </div>
+  </div>
 
   <section class="mapa" aria-labelledby="t-mapa">
     <p class="rotulo">Antes de escolher</p>
