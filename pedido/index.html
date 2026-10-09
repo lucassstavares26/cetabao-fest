@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
+<script src="/ingresso-cartao.js"></script>
 <!-- Sem Pixel no carregamento: o endereço desta página é o link secreto dos
      ingressos, e o Pixel manda a URL pro Meta. Ele só carrega na hora do
      Purchase, com o endereço já limpo (ver pago()). -->
@@ -32,34 +33,15 @@
   .pix-tempo b { color: var(--brasa); font-variant-numeric: tabular-nums; }
   .passos-pix { margin: 12px 0 0 18px; text-align: left; font-size: 15px; color: var(--tinta-suave); }
   .espera { display: inline-block; width: 44px; height: 44px; margin-bottom: 12px; border: 5px solid #dbe4f5; border-top-color: var(--ceu); border-radius: 50%; animation: gira .9s linear infinite; }
-  .ingresso {
-    position: relative; padding: 20px 18px 18px; border-radius: 22px; background: #fff; color: var(--tinta);
-    box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .3); break-inside: avoid;
-  }
-  .ingresso::before, .ingresso::after { content: ""; position: absolute; top: 96px; width: 22px; height: 22px; border-radius: 50%; background: var(--ceu); }
-  .ingresso::before { left: -11px; }
-  .ingresso::after { right: -11px; }
-  .ingresso .faixa-setor { display: inline-block; padding: 7px 14px 5px; border-radius: 8px; font: 400 17px/1 var(--placa); }
-  .ingresso.pista .faixa-setor { background: var(--sol); color: #3b2300; }
-  .ingresso.open .faixa-setor { background: var(--open); color: #fff; }
-  .ingresso .num { margin-top: 10px; font: 800 13px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; color: var(--campo-rotulo); }
-  .ingresso .meia-tag { display: inline-block; margin-left: 6px; padding: 3px 8px; border-radius: 6px; background: var(--brasa); color: #fff; font: 800 12px/1 var(--estreita); letter-spacing: .1em; }
-  .ingresso .picote { margin: 16px -18px 0; border-top: 2px dashed #dbe2ef; }
-  .ingresso img { width: 240px; height: 240px; margin: 16px auto 0; image-rendering: pixelated; }
-  .ingresso .codigo { margin-top: 8px; font: 700 17px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .18em; color: var(--tinta); }
-  .ingresso .titular { margin-top: 6px; font-size: 15px; color: var(--tinta-suave); }
-  .ingresso.invalido img { opacity: .15; }
-  .ingresso .selo { margin-top: 10px; font: 800 16px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; }
+  .ing-item { display: grid; gap: 12px; }
   .instrucoes { padding: 16px 16px; border-radius: 18px; background: var(--vidro); border: 1px solid var(--vidro-borda); font-size: 15px; color: var(--ceu-texto); text-align: left; }
   .instrucoes strong { color: #fff; }
   .instrucoes li { margin-left: 18px; }
   .instrucoes li + li { margin-top: 6px; }
   @media print {
-    html, body { background: #fff !important; box-shadow: none; }
-    .topo, .instrucoes, .nao-imprime, .rodape { display: none !important; }
-    .ingresso { box-shadow: none; border: 2px solid #ccd; margin-bottom: 18px; }
-    .ingresso::before, .ingresso::after { display: none; }
-    h1, .resumo { color: #000; }
+    .topo, .instrucoes, .rodape, h1 { display: none !important; }
+    .resumo { margin: 0 0 12px; color: #4a5b85; text-align: center; font-size: 13px; }
+    #ingressos { display: block !important; }
   }
 </style>
 </head>
@@ -127,7 +109,8 @@
     </div>
     <ul class="instrucoes">
       <li>Na entrada, mostre o <strong>QR Code de cada pessoa</strong> — pode ser na tela do celular.</li>
-      <li>Cada QR vale <strong>uma entrada só</strong>. Não poste nem compartilhe a imagem.</li>
+      <li>Cada QR vale <strong>uma entrada só</strong>. Não poste a imagem nas redes.</li>
+      <li>Comprou pra outra pessoa? Toque em <strong>Enviar pelo WhatsApp</strong> embaixo do ingresso dela e escolha o contato.</li>
       <li id="instr-meia" hidden><strong>Meia-entrada:</strong> leve o documento que comprova o direito.</li>
     </ul>
     <div id="ingressos" style="display:grid;gap:22px"></div>
@@ -148,7 +131,6 @@
   var token = (location.pathname.split('/')[2] || new URLSearchParams(location.search).get('t') || lerSessao() || '').toUpperCase();
   function lerSessao() { try { return sessionStorage.getItem('cetabao_pedido_token'); } catch (e) { return null; } }
   var inicio = Date.now();
-  var esc = function (t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
 
   function mostrar(qual) {
@@ -212,17 +194,10 @@
     if (pixRelogio) clearInterval(pixRelogio);
     $('titulo').innerHTML = 'Seus <span>ingressos</span>';
     $('instr-meia').hidden = !p.meia;
+    // Cada ingresso com o botão de mandar só ele pro WhatsApp de quem vai usar.
     $('ingressos').innerHTML = p.ingressos.map(function (i) {
-      var invalido = i.cancelado || i.usado;
-      return '<article class="ingresso ' + i.setor + (invalido ? ' invalido' : '') + '">' +
-        '<span class="faixa-setor">' + esc(i.rotulo.split(' — ')[0]) + '</span>' +
-        '<p class="num">Ingresso ' + i.numero + ' de ' + p.ingressos.length + (i.meia ? '<span class="meia-tag">MEIA</span>' : '') + '</p>' +
-        '<div class="picote"></div>' +
-        '<img src="' + esc(i.qr) + '" width="240" height="240" alt="QR Code do ingresso ' + i.numero + '">' +
-        '<p class="codigo">' + esc(i.codigo) + '</p>' +
-        '<p class="titular">' + esc(i.nome) + '</p>' +
-        (i.cancelado ? '<p class="selo" style="color:var(--brasa)">Cancelado</p>' : i.usado ? '<p class="selo" style="color:var(--verde)">Já utilizado na entrada</p>' : '') +
-        '</article>';
+      return '<div class="ing-item">' + CetabaoIngresso.html(i, 'Ingresso ' + i.numero + ' de ' + p.ingressos.length) +
+        (i.cancelado || i.usado ? '' : CetabaoIngresso.botaoWhats(i)) + '</div>';
     }).join('');
     mostrar('pago');
     registrarCompra(p);

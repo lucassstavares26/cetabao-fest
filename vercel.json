@@ -20,6 +20,10 @@
     {
       "source": "/pedido/:token",
       "destination": "/pedido/index.html"
+    },
+    {
+      "source": "/ingresso/:codigo",
+      "destination": "/ingresso/index.html"
     }
   ]
 }
