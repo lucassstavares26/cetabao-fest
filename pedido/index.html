@@ -26,6 +26,11 @@
   .cartao p { margin-top: 8px; color: var(--tinta-suave); }
   .cartao .btn { margin-top: 16px; }
   .ok-icone { width: 64px; height: 64px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--verde); color: #fff; font: 900 32px/1 var(--texto); box-shadow: 0 0 0 8px rgba(30, 158, 77, .15); }
+  .pix-qr { width: 240px; height: 240px; margin: 16px auto 0; image-rendering: pixelated; }
+  .pix-codigo { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: var(--campo-fundo); border: 1.5px dashed #c9d6ee; font: 500 12.5px/1.35 ui-monospace, Menlo, Consolas, monospace; color: var(--tinta); word-break: break-all; max-height: 74px; overflow: hidden; text-align: left; }
+  .pix-tempo { margin-top: 12px; font-size: 15px; color: var(--tinta-suave); }
+  .pix-tempo b { color: var(--brasa); font-variant-numeric: tabular-nums; }
+  .passos-pix { margin: 12px 0 0 18px; text-align: left; font-size: 15px; color: var(--tinta-suave); }
   .espera { display: inline-block; width: 44px; height: 44px; margin-bottom: 12px; border: 5px solid #dbe4f5; border-top-color: var(--ceu); border-radius: 50%; animation: gira .9s linear infinite; }
   .ingresso {
     position: relative; padding: 20px 18px 18px; border-radius: 22px; background: #fff; color: var(--tinta);
@@ -71,6 +76,20 @@
   </div>
 
   <div class="cartao" id="carregando"><span class="espera" aria-hidden="true"></span><p>Carregando seu pedido…</p></div>
+
+  <div class="cartao" id="pix" hidden>
+    <h2>Pague com Pix</h2>
+    <ol class="passos-pix">
+      <li>Abra o app do seu banco e escolha <strong>Pix</strong>.</li>
+      <li>Leia o QR Code ou use o <strong>Pix copia e cola</strong>.</li>
+      <li>Pronto: os ingressos aparecem aqui na hora.</li>
+    </ol>
+    <img class="pix-qr" id="pix-qr" width="240" height="240" alt="QR Code do Pix">
+    <p class="pix-codigo" id="pix-codigo"></p>
+    <button class="btn btn-sol" type="button" id="pix-copiar">Copiar código Pix</button>
+    <p class="pix-tempo">O Pix vence em <b id="pix-tempo">30:00</b></p>
+    <p>Esta página atualiza sozinha. Os ingressos também chegam no seu WhatsApp e e-mail.</p>
+  </div>
 
   <div class="cartao" id="pendente" hidden>
     <span class="espera" aria-hidden="true"></span>
@@ -133,7 +152,7 @@
   var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
 
   function mostrar(qual) {
-    ['carregando', 'pendente', 'expirou', 'divergente', 'cancelado', 'nao-achou', 'pago'].forEach(function (id) { $(id).hidden = id !== qual; });
+    ['carregando', 'pix', 'pendente', 'expirou', 'divergente', 'cancelado', 'nao-achou', 'pago'].forEach(function (id) { $(id).hidden = id !== qual; });
   }
 
   function consultar() {
@@ -147,6 +166,15 @@
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado') { mostrar('cancelado'); return; }
         if (p.expirou) { mostrar('expirou'); return; }
+        if (p.pix) {
+          mostrarPix(p.pix);
+          if (Date.now() - inicio < 40 * 60000) setTimeout(consultar, 4000);
+          return;
+        }
+        if (p.mp_status === 'in_process' || p.mp_status === 'pending') {
+          $('pendente-titulo').textContent = 'Pagamento em análise';
+          $('pendente-texto').textContent = 'O Mercado Pago está conferindo o pagamento do cartão — costuma levar poucos minutos. Assim que aprovar, os ingressos aparecem aqui e chegam no seu WhatsApp e e-mail.';
+        }
         if (p.mp_status === 'rejected') {
           $('pendente-titulo').textContent = 'Pagamento recusado';
           $('pendente-texto').textContent = 'O cartão foi recusado. Volte pro pagamento e tente outro cartão ou Pix — o pedido fica reservado por alguns minutos.';
@@ -157,7 +185,31 @@
       .catch(function () { if (Date.now() - inicio < 40 * 60000) setTimeout(consultar, 5000); });
   }
 
+  // ---------- Pix: QR + copia e cola + relógio até vencer
+  var pixMontado = false, pixRelogio = null;
+  function mostrarPix(pix) {
+    mostrar('pix');
+    if (pixMontado) return;
+    pixMontado = true;
+    $('pix-qr').src = pix.qr;
+    $('pix-codigo').textContent = pix.copia_cola;
+    $('pix-copiar').addEventListener('click', function () {
+      var feito = function () { $('pix-copiar').textContent = 'Código copiado ✓'; setTimeout(function () { $('pix-copiar').textContent = 'Copiar código Pix'; }, 2500); };
+      if (navigator.clipboard) navigator.clipboard.writeText(pix.copia_cola).then(feito, function () { window.prompt('Copie o código Pix:', pix.copia_cola); });
+      else window.prompt('Copie o código Pix:', pix.copia_cola);
+    });
+    var fim = new Date(pix.expira_em).getTime();
+    var tique = function () {
+      var s = Math.max(0, Math.round((fim - Date.now()) / 1000));
+      $('pix-tempo').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+      if (!s) { clearInterval(pixRelogio); mostrar('expirou'); }
+    };
+    tique();
+    pixRelogio = setInterval(tique, 1000);
+  }
+
   function pago(p) {
+    if (pixRelogio) clearInterval(pixRelogio);
     $('titulo').innerHTML = 'Seus <span>ingressos</span>';
     $('instr-meia').hidden = !p.meia;
     $('ingressos').innerHTML = p.ingressos.map(function (i) {

@@ -87,7 +87,9 @@ fbq('track', 'PageView');
     text-align: left; font: inherit; color: inherit; cursor: pointer; touch-action: manipulation;
   }
   .setor-camarote .setor-topo { cursor: default; }
-  .setor small { grid-column: 1 / -1; font: 800 11px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; opacity: .75; }
+  .setor small { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font: 800 11px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; }
+  .setor small .rot { opacity: .75; }
+  .lote-tag { display: inline-block; padding: 4px 8px 3px; border-radius: 6px; background: var(--engradado); color: #fff; font: 800 11px/1 var(--estreita); letter-spacing: .1em; box-shadow: 0 2px 0 var(--engradado-escuro); }
   .setor-topo strong { font: 400 25px/1 var(--placa); }
   .setor .preco { font: 400 21px/1 var(--placa); white-space: nowrap; text-align: right; }
   .setor .preco.em-breve { font: 800 14px/1.1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; }
@@ -274,14 +276,19 @@ fbq('track', 'PageView');
     { id: 'pista', nome: 'Pista VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
     { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: 'Só inteira', meia: false }
   ];
+  // Preço e lote mostrados enquanto o painel ainda não tem a venda do site
+  // configurada (antes de rodar o supabase-site.sql). Depois disso vale o que
+  // estiver no painel (aba "Vendas do site") — é ele que cobra.
+  var PRECO_PADRAO = { pista: 90, open: 195 };
+  var LOTE_PADRAO = '2º Lote';
   var PARCELAS = 3;
   var QTD_MAX = 10;
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
   var estado = {
-    setores: SETORES.map(function (s) { return Object.assign({ preco: null, restam: null }, s); }),
-    setor: null, inteira: 1, meia: 0
+    setores: SETORES.map(function (s) { return Object.assign({ preco: PRECO_PADRAO[s.id] || null, restam: null }, s); }),
+    lote: LOTE_PADRAO, setor: null, inteira: 1, meia: 0
   };
 
   // Escolha guardada na aba: quem volta do checkout encontra o que tinha escolhido.
@@ -309,10 +316,10 @@ fbq('track', 'PageView');
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
         (cfg.setores || []).forEach(function (c) {
-          estado.setores.forEach(function (s) { if (s.id === c.id) { s.preco = c.preco; s.restam = c.restam; } });
+          estado.setores.forEach(function (s) { if (s.id === c.id) { s.preco = c.preco || PRECO_PADRAO[s.id] || null; s.restam = c.restam; } });
         });
-        $('lote').hidden = !cfg.lote;
-        if (cfg.lote) $('lote').textContent = cfg.lote;
+        estado.lote = cfg.lote || LOTE_PADRAO;
+        mostrarLote();
         var s = setorAtual();
         if (s && s.restam === 0) estado.setor = null;
         ajustarAoLimite();
@@ -340,7 +347,7 @@ fbq('track', 'PageView');
       card.dataset.setor = s.id;
       card.innerHTML =
         '<button type="button" class="setor-topo" aria-expanded="' + aberto + '"' + (esgotado ? ' disabled' : '') + '>' +
-          '<small>Ingresso</small><strong>' + s.nome + '</strong>' +
+          '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + '</small><strong>' + s.nome + '</strong>' +
           (esgotado ? '<span class="preco">Esgotado</span>'
             : s.preco ? '<span class="preco">' + moeda(centavos(s.preco)) + '</span>'
             : '<span class="preco em-breve">Valor<br>em breve</span>') +
@@ -362,7 +369,7 @@ fbq('track', 'PageView');
     var link = WHATSAPP_CAMAROTES
       ? 'https://wa.me/' + WHATSAPP_CAMAROTES + '?text=' + encodeURIComponent('Oi! Quero reservar camarote/mesa no Cê Tá Bão Fest.')
       : 'https://www.instagram.com/cetabaofest/';
-    cam.innerHTML = '<div class="setor-topo"><small>Setor Premium</small><strong>Camarotes e Mesas</strong>' +
+    cam.innerHTML = '<div class="setor-topo"><small><span class="rot">Setor Premium</span></small><strong>Camarotes e Mesas</strong>' +
       '<span class="desc">Reserva direto com a produção, pelo WhatsApp.</span></div>' +
       '<a class="btn btn-zap" target="_blank" rel="noopener" href="' + link + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Chamar no WhatsApp</span></a>';
     box.appendChild(cam);
@@ -453,6 +460,12 @@ fbq('track', 'PageView');
     })(performance.now());
   }
 
+  function mostrarLote() {
+    $('lote').hidden = !estado.lote;
+    $('lote').textContent = estado.lote || '';
+  }
+
+  mostrarLote();
   ajustarAoLimite();
   montar();
   carregar();

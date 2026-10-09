@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Finalizar compra · Cê Tá Bão Fest</title>
+<title>Quase lá · Cê Tá Bão Fest</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#003c86">
 <meta name="format-detection" content="telephone=no">
@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://cetabao-painel.vercel.app">
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
-<!-- Pixel do Meta: PageView aqui; InitiateCheckout só quando o servidor abre o pagamento de verdade. -->
+<!-- Pixel do Meta: PageView aqui; InitiateCheckout só quando o servidor aceita o pagamento. -->
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -27,132 +27,163 @@ fbq('init', '1400962194832152');
 fbq('track', 'PageView');
 </script>
 <style>
-  .conteudo { padding: 18px var(--lado) 40px; display: grid; gap: 22px; }
-  .voltar { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--ceu-texto); font: 700 15px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; }
-  h1 { font-size: clamp(28px, 8.4vw, 36px); }
-  h1 span { color: var(--sol); }
-  .etapas { display: flex; justify-content: center; gap: 8px; margin-top: 10px; font: 800 13px/1 var(--estreita); letter-spacing: .12em; text-transform: uppercase; color: var(--ceu-texto); }
-  .etapas b { color: var(--sol); }
-  .cartao { text-align: left; }
-  .cartao h2 { font-size: 21px; color: var(--ceu); }
+  body { text-align: left; }
+  .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
+  .barra-topo img { width: 54px; }
+  .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
+  .barra-topo a { margin-left: auto; color: var(--ceu-texto); font: 700 14px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; }
+  .conteudo { padding: 22px var(--lado) 40px; display: grid; gap: 18px; }
+  h1 { font-size: clamp(30px, 9vw, 38px); }
+  .lead { margin-top: 6px; color: var(--ceu-texto); font-size: 15.5px; }
 
-  /* resumo do pedido */
-  .pedido { display: grid; gap: 4px; margin-top: 14px; }
-  .pedido .setor-nome { display: inline-block; justify-self: start; padding: 7px 14px 5px; border-radius: 8px; font: 400 17px/1 var(--placa); }
-  .pedido .setor-nome.pista { background: var(--sol); color: #3b2300; }
-  .pedido .setor-nome.open { background: var(--open); color: #fff; }
-  .pedido .desc { margin-top: 4px; font: 700 14.5px/1.35 var(--estreita); color: var(--tinta-suave); }
-  .itens { list-style: none; margin-top: 10px; display: grid; gap: 6px; }
-  .itens li { display: flex; justify-content: space-between; gap: 10px; font-size: 16px; }
-  .itens li span:last-child { font-weight: 700; white-space: nowrap; }
-  .alterar { margin-top: 10px; font: 700 14px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--ceu); }
+  .bloco { padding: 20px 18px; border-radius: 20px; background: #fff; color: var(--tinta); box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .28); }
+
+  /* resumo */
+  .evento { font: 400 20px/1.1 var(--placa); color: var(--ceu); }
+  .evento-info { margin-top: 4px; font-size: 14px; color: var(--tinta-suave); }
+  .divisor { display: flex; align-items: center; gap: 10px; margin: 14px 0; color: var(--ceu); }
+  .divisor::before, .divisor::after { content: ""; flex: 1; border-top: 1.5px solid #c9d6ee; }
+  .item { display: flex; justify-content: space-between; gap: 10px; }
+  .item + .item { margin-top: 10px; }
+  .item b { font-weight: 600; }
+  .item small { display: block; font-size: 13px; color: var(--tinta-suave); }
+  .item span:last-child { white-space: nowrap; }
+  .contas { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e3e8f3; display: grid; gap: 6px; font-size: 15px; color: var(--tinta-suave); }
+  .contas div { display: flex; justify-content: space-between; }
+  .sem-taxa { color: var(--open); font-weight: 700; }
+  .total-linha { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; }
+  .total-linha span { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; }
+  .total-linha b { font: 400 30px/1 var(--placa); color: var(--ceu); }
+  .alterar { display: inline-block; margin-top: 12px; font: 700 14px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--ceu); }
+  .nota-meia { margin-top: 10px; font-size: 13.5px; color: #8a5a00; }
   .problema { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
 
-  form { display: grid; gap: 12px; margin-top: 14px; }
-  .campo { position: relative; }
+  /* dados */
+  .rot { display: block; margin-bottom: 7px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
+  form { display: grid; gap: 16px; }
   .campo input {
-    width: 100%; height: 60px; padding: 22px 16px 6px 16px;
-    border: 2px solid var(--campo-borda); border-radius: 14px; background: var(--campo-fundo);
-    font: 600 17px/1.2 var(--texto); color: var(--tinta);
-    transition: border-color .15s, box-shadow .15s, background-color .15s;
+    width: 100%; height: 54px; padding: 0 14px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff;
+    font: 500 17px/1.2 var(--texto); color: var(--tinta); transition: border-color .15s, box-shadow .15s;
   }
-  .campo label {
-    position: absolute; left: 18px; top: 19px; pointer-events: none;
-    font: 500 17px/1.2 var(--texto); color: var(--campo-rotulo);
-    transition: top .15s, font-size .15s, color .15s, letter-spacing .15s;
-  }
-  .campo input:focus { outline: none; border-color: var(--ceu); background: #fff; box-shadow: 0 0 0 4px rgba(0, 60, 134, .14); }
-  .campo input:focus + label, .campo input:not(:placeholder-shown) + label { top: 9px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ceu); }
-  .campo small { display: none; margin: 6px 4px 0; font-size: 14px; font-weight: 600; color: var(--brasa); }
+  .campo input::placeholder { color: #9aa6c2; }
+  .campo input:focus { outline: none; border-color: var(--ceu); box-shadow: 0 0 0 4px rgba(0, 60, 134, .12); }
+  .campo small { display: none; margin-top: 6px; font-size: 13.5px; font-weight: 600; color: var(--brasa); }
   .campo.erro input { border-color: var(--brasa); background: #fff6f6; }
-  .campo.erro label { color: var(--brasa); }
   .campo.erro small { display: block; }
+  .dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dica { margin-top: -8px; font-size: 13px; color: var(--tinta-suave); }
   .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-  .dica { margin: -4px 4px 0; font-size: 13.5px; color: var(--campo-rotulo); }
-  .aceite { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; line-height: 1.4; color: var(--tinta-suave); cursor: pointer; }
-  .aceite input { width: 22px; height: 22px; flex: none; margin-top: 1px; accent-color: var(--ceu); }
-  .aceite.erro { color: var(--brasa); font-weight: 600; }
 
-  .total { margin-top: 10px; padding-top: 18px; border-top: 2px dashed #e1e6f0; text-align: center; }
-  .total .rot { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--campo-rotulo); }
-  .total .valor { margin-top: 6px; font: 400 36px/1 var(--placa); color: var(--ceu); }
-  .total .parcela { margin-top: 4px; font-size: 14.5px; color: var(--tinta-suave); }
-  .total .btn { margin-top: 16px; }
-  .total .btn:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
-  .aviso-pagar { margin-top: 12px; font: 700 15px/1.35 var(--estreita); letter-spacing: .02em; color: var(--tinta-suave); }
-  .seguro { display: flex; justify-content: center; align-items: center; gap: 7px; margin-top: 12px; font-size: 13.5px; color: var(--tinta-suave); }
-  .seguro svg { width: 15px; height: 15px; color: var(--verde); }
-  .erro-geral { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; text-align: left; }
+  .metodos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .metodo { padding: 14px 14px 12px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff; text-align: left; cursor: pointer; font: inherit; color: var(--tinta); touch-action: manipulation; }
+  .metodo b { display: block; font: 800 16px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; }
+  .metodo span { display: block; margin-top: 6px; font-size: 13px; color: var(--tinta-suave); }
+  .metodo[aria-pressed="true"] { border-color: var(--ceu); background: #e8eefb; box-shadow: 0 0 0 3px rgba(0, 60, 134, .12); }
+  #area-cartao { min-height: 20px; }
+  .cartao-aviso { padding: 12px 14px; border-radius: 12px; background: var(--campo-fundo); font-size: 14px; color: var(--tinta-suave); }
+
+  .pagar { margin-top: 4px; }
+  .pagar:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+  .erro-geral { padding: 12px 14px; border-radius: 12px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
+  .aviso-pagar { font: 700 15px/1.35 var(--estreita); color: var(--tinta-suave); text-align: center; }
+
+  .seguranca { padding: 14px 16px; border: 1.5px solid #dbe3f2; border-radius: 12px; background: var(--campo-fundo); font-size: 13.5px; color: var(--tinta-suave); }
+  .seguranca p.titulo { display: flex; align-items: center; gap: 8px; font: 800 14px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--tinta); }
+  .seguranca svg { width: 16px; height: 16px; color: var(--ceu); }
+  .seguranca ul { list-style: none; margin-top: 10px; display: grid; gap: 6px; }
+  .seguranca li::before { content: "✓ "; color: var(--ceu); font-weight: 800; }
+  .seguranca .letras { margin-top: 10px; padding-top: 10px; border-top: 1px solid #dbe3f2; font-size: 12.5px; line-height: 1.45; }
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8.5V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.5a2.5 2.5 0 0 0 0 5V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4.5a2.5 2.5 0 0 0 0-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 5v14" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2.2"/></symbol>
   <symbol id="i-cadeado" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></symbol>
 </svg>
 
-<header class="topo">
-  <img class="logo" src="/img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420" style="width:120px;margin-top:12px">
+<header class="barra-topo">
+  <img src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+  <span>Compra oficial</span>
+  <a href="/#compra">‹ Alterar</a>
 </header>
 
 <main class="conteudo">
-  <a class="voltar" href="/#compra">‹ Voltar e alterar</a>
   <div>
-    <h1>Finalizar <span>compra</span></h1>
-    <p class="etapas"><span>1 · Ingresso ✓</span><b>2 · Seus dados</b><span>3 · Pagamento</span></p>
+    <h1>Quase lá</h1>
+    <p class="lead">Só o essencial pra emitir seu ingresso. Sem cadastro, sem senha.</p>
   </div>
 
-  <section class="cartao" aria-labelledby="t-pedido">
-    <h2 id="t-pedido">Seu pedido</h2>
-    <div class="pedido" id="pedido"></div>
+  <section class="bloco" aria-label="Seu pedido">
+    <p class="evento">Cê Tá Bão Fest</p>
+    <p class="evento-info">Sábado, 28 de novembro · 16h<br>Parque de Exposições · Passos-MG</p>
+    <p class="divisor" aria-hidden="true">✦</p>
+    <div id="itens"></div>
+    <div class="contas">
+      <div><span>Subtotal</span><span id="subtotal">—</span></div>
+      <div><span>Taxa de serviço</span><span class="sem-taxa">SEM TAXA</span></div>
+    </div>
+    <div class="total-linha"><span>Total</span><b id="total">—</b></div>
+    <p class="nota-meia" id="nota-meia" hidden>Meia-entrada: documento obrigatório na entrada.</p>
     <p class="problema" id="problema" hidden></p>
+    <a class="alterar" href="/#compra">Alterar pedido</a>
   </section>
 
-  <section class="cartao" aria-labelledby="t-dados">
-    <h2 id="t-dados">Seus dados</h2>
+  <section class="bloco" aria-label="Seus dados e pagamento">
     <form id="form" novalidate>
       <div class="campo" id="c-nome">
-        <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder=" " maxlength="80">
-        <label for="nome">Nome completo</label>
+        <label class="rot" for="nome">Nome completo</label>
+        <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Como está no seu documento" maxlength="80">
         <small>Digite seu nome completo.</small>
       </div>
-      <div class="campo" id="c-cpf">
-        <input id="cpf" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="next" placeholder=" " maxlength="14">
-        <label for="cpf">CPF</label>
-        <small>CPF inválido — confira os números.</small>
+      <div class="dupla">
+        <div class="campo" id="c-whats">
+          <label class="rot" for="whatsapp">WhatsApp</label>
+          <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="next" placeholder="(35) 99999-9999" maxlength="16">
+          <small>WhatsApp com DDD.</small>
+        </div>
+        <div class="campo" id="c-cpf">
+          <label class="rot" for="cpf">CPF</label>
+          <input id="cpf" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="next" placeholder="000.000.000-00" maxlength="14">
+          <small>CPF inválido.</small>
+        </div>
       </div>
+      <p class="dica">É por aqui que o ingresso chega.</p>
       <div class="campo" id="c-email">
-        <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder=" " maxlength="254">
-        <label for="email">E-mail</label>
+        <label class="rot" for="email">E-mail</label>
+        <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="voce@email.com" maxlength="254">
         <small>Digite um e-mail válido.</small>
       </div>
-      <div class="campo" id="c-whats">
-        <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="done" placeholder=" " maxlength="16">
-        <label for="whatsapp">WhatsApp com DDD</label>
-        <small>Digite um WhatsApp válido, com DDD.</small>
-      </div>
-      <p class="dica">Os ingressos chegam no e-mail e no WhatsApp.</p>
       <input class="isca" type="text" name="empresa" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <label class="aceite" id="c-aceite">
-        <input type="checkbox" id="aceite">
-        <span>Entendi que cada QR Code vale <strong>uma entrada</strong>, que meia-entrada exige documento na portaria e que posso pedir reembolso em até 7 dias após a compra.</span>
-      </label>
 
-      <div class="total">
-        <p class="rot">Total</p>
-        <p class="valor" id="total">—</p>
-        <p class="parcela" id="parcela"></p>
-        <button class="btn btn-sol" type="submit" id="pagar" disabled><svg><use href="#i-cadeado"/></svg><span>Vendas em breve</span></button>
-        <p class="aviso-pagar" id="aviso-pagar" hidden>As vendas pelo site abrem em breve.</p>
-        <p class="seguro"><svg><use href="#i-cadeado"/></svg>Pagamento seguro pelo Mercado Pago</p>
-        <p class="erro-geral" id="erro-geral" role="alert" hidden></p>
+      <div>
+        <span class="rot">Como você quer pagar</span>
+        <div class="metodos" role="group" aria-label="Forma de pagamento">
+          <button type="button" class="metodo" data-metodo="pix" aria-pressed="true"><b>Pix</b><span>Liberado na hora</span></button>
+          <button type="button" class="metodo" data-metodo="cartao" aria-pressed="false"><b>Cartão</b><span>Até 3x sem juros</span></button>
+        </div>
+      </div>
+      <div id="area-cartao" hidden>
+        <div id="brick-cartao"></div>
+        <p class="cartao-aviso" id="cartao-aviso" hidden>Os campos do cartão aparecem aqui quando as vendas pelo site abrirem.</p>
+      </div>
+
+      <button class="btn btn-sol pagar" type="submit" id="pagar" disabled>Vendas em breve</button>
+      <p class="aviso-pagar" id="aviso-pagar" hidden>As vendas pelo site abrem em breve.</p>
+      <p class="erro-geral" id="erro-geral" role="alert" hidden></p>
+
+      <div class="seguranca">
+        <p class="titulo"><svg aria-hidden="true"><use href="#i-cadeado"/></svg>Compra 100% segura</p>
+        <ul>
+          <li>Conexão criptografada de ponta a ponta</li>
+          <li>Pagamento processado pelo Mercado Pago</li>
+        </ul>
+        <p class="letras">Seus dados são usados só pra emitir e enviar o ingresso. Ao pagar, você concorda que cada QR Code vale uma entrada, que meia-entrada exige documento na portaria e que pode pedir reembolso em até 7 dias após a compra.</p>
       </div>
     </form>
   </section>
 </main>
 
-<footer class="rodape" style="padding-bottom:30px">
+<footer class="rodape" style="padding-bottom:30px;text-align:center">
   <p>Cê Tá Bão Fest · Sábado, 28/11 · 16h · Parque de Exposições · Passos-MG</p>
 </footer>
 
@@ -162,9 +193,13 @@ fbq('track', 'PageView');
   var API = 'https://cetabao-painel.vercel.app';
   // Mesma lista da página de compra (index.html) — mudou lá, muda aqui.
   var SETORES = [
-    { id: 'pista', nome: 'Pista VIP', desc: '', meia: true },
-    { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', meia: false }
+    { id: 'pista', nome: 'Pista VIP', meia: true },
+    { id: 'open', nome: 'Open Bar', meia: false }
   ];
+  // Preço e lote mostrados enquanto o painel ainda não tem a venda do site
+  // configurada. Depois disso vale o que estiver no painel — é ele que cobra.
+  var PRECO_PADRAO = { pista: 90, open: 195 };
+  var LOTE_PADRAO = '2º Lote';
   var PARCELAS = 3;
   var QTD_MAX = 10;
   var CHAVE_DADOS = 'cetabao_compra_dados_v1';
@@ -181,7 +216,10 @@ fbq('track', 'PageView');
     location.replace('/#compra'); // endereço mexido ou incompleto: volta pra escolher
     return;
   }
-  var estado = { preco: null, restam: null, vendendo: false, tentou: false, enviando: false };
+  var estado = {
+    preco: PRECO_PADRAO[setor.id] || null, lote: LOTE_PADRAO, restam: null,
+    vendendo: false, chave: null, metodo: 'pix', tentou: false, enviando: false, brick: null, brickCriando: false
+  };
 
   // ---------- dinheiro: sempre em centavos inteiros (regra igual à do servidor)
   var centavos = function (reais) { return Math.round(reais * 100); };
@@ -189,18 +227,17 @@ fbq('track', 'PageView');
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var totalCent = function () { return estado.preco ? centavos(estado.preco) * inteira + meiaCent(estado.preco) * meia : 0; };
 
-  function montarPedido() {
-    var linhas = '';
-    if (inteira) linhas += '<li><span>' + inteira + 'x Inteira</span><span>' + (estado.preco ? moeda(centavos(estado.preco) * inteira) : 'em breve') + '</span></li>';
-    if (meia) linhas += '<li><span>' + meia + 'x Meia-entrada</span><span>' + (estado.preco ? moeda(meiaCent(estado.preco) * meia) : 'em breve') + '</span></li>';
-    $('pedido').innerHTML = '<span class="setor-nome ' + setor.id + '">' + setor.nome + '</span>' +
-      (setor.desc ? '<p class="desc">' + setor.desc + '</p>' : '') +
-      '<ul class="itens">' + linhas + '</ul>' +
-      (meia ? '<p class="desc">Meia-entrada: documento obrigatório na entrada.</p>' : '') +
-      '<a class="alterar" href="/#compra">Alterar</a>';
+  function montarResumo() {
+    var linha = function (qtd, tipo, valor) {
+      return '<div class="item"><span><b>' + qtd + '× ' + setor.nome + ' — ' + tipo + '</b><small>' + (estado.lote || '') + '</small></span>' +
+        '<span>' + (estado.preco ? moeda(valor) : 'em breve') + '</span></div>';
+    };
+    $('itens').innerHTML = (inteira ? linha(inteira, 'Inteira', estado.preco ? centavos(estado.preco) * inteira : 0) : '') +
+      (meia ? linha(meia, 'Meia', estado.preco ? meiaCent(estado.preco) * meia : 0) : '');
     var t = totalCent();
+    $('subtotal').textContent = estado.preco ? moeda(t) : 'em breve';
     $('total').textContent = estado.preco ? moeda(t) : 'Em breve';
-    $('parcela').textContent = t ? 'ou ' + PARCELAS + 'x de ' + moeda(Math.floor(t / PARCELAS)) + ' sem juros no cartão' : '';
+    $('nota-meia').hidden = !meia;
     var falta = estado.restam !== null && inteira + meia > estado.restam;
     $('problema').hidden = !falta;
     if (falta) $('problema').innerHTML = estado.restam === 0
@@ -208,7 +245,7 @@ fbq('track', 'PageView');
       : 'Só ' + (estado.restam === 1 ? 'resta 1 ingresso' : 'restam ' + estado.restam + ' ingressos') + ' de ' + setor.nome + '. <a href="/#compra">Alterar a quantidade</a>';
     estado.podePagar = estado.vendendo && !!estado.preco && !falta;
     $('aviso-pagar').hidden = estado.vendendo;
-    if (!estado.enviando) ocupado(false);
+    botao();
   }
 
   function carregar() {
@@ -216,12 +253,66 @@ fbq('track', 'PageView');
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
         var c = (cfg.setores || []).filter(function (x) { return x.id === setor.id; })[0];
-        estado.preco = c ? c.preco : null;
+        estado.preco = (c && c.preco) || PRECO_PADRAO[setor.id] || null;
         estado.restam = c ? c.restam : null;
+        estado.lote = cfg.lote || LOTE_PADRAO;
         estado.vendendo = !!cfg.vendendo;
-        montarPedido();
+        estado.chave = cfg.mp_chave_publica || null;
+        montarResumo();
+        if (estado.metodo === 'cartao') prepararCartao();
       })
-      .catch(function () { estado.vendendo = false; montarPedido(); });
+      .catch(function () { estado.vendendo = false; montarResumo(); });
+  }
+
+  // ---------- forma de pagamento
+  document.querySelectorAll('.metodo').forEach(function (b) {
+    b.addEventListener('click', function () {
+      estado.metodo = b.dataset.metodo;
+      document.querySelectorAll('.metodo').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      $('area-cartao').hidden = estado.metodo !== 'cartao';
+      if (estado.metodo === 'cartao') prepararCartao();
+      erroGeral('');
+      botao();
+    });
+  });
+
+  /**
+   * Campos do cartão = "brick" do Mercado Pago, dentro da nossa página. O
+   * número do cartão é digitado num campo do próprio Mercado Pago e vira um
+   * token de uso único; nosso servidor nunca vê o cartão.
+   */
+  function prepararCartao() {
+    $('cartao-aviso').hidden = !!(estado.vendendo && estado.chave);
+    if (!estado.vendendo || !estado.chave || estado.brick || estado.brickCriando) return;
+    estado.brickCriando = true;
+    carregarSdk().then(function () {
+      var mp = new window.MercadoPago(estado.chave, { locale: 'pt-BR' });
+      return mp.bricks().create('cardPayment', 'brick-cartao', {
+        initialization: { amount: totalCent() / 100 },
+        customization: {
+          paymentMethods: { minInstallments: 1, maxInstallments: PARCELAS },
+          visual: { hidePaymentButton: true, style: { theme: 'default', customVariables: { baseColor: '#003c86' } } }
+        },
+        callbacks: {
+          onReady: function () {},
+          onSubmit: function () { return Promise.resolve(); },
+          onError: function (e) { console.warn('Brick do cartão:', e && e.message); }
+        }
+      });
+    }).then(function (controlador) {
+      estado.brick = controlador;
+    }).catch(function () {
+      erroGeral('Não consegui carregar o pagamento com cartão. Tente de novo ou pague no Pix.');
+    }).then(function () { estado.brickCriando = false; });
+  }
+  function carregarSdk() {
+    if (window.MercadoPago) return Promise.resolve();
+    return new Promise(function (ok, falhou) {
+      var s = document.createElement('script');
+      s.src = 'https://sdk.mercadopago.com/js/v2';
+      s.onload = ok; s.onerror = falhou;
+      document.head.appendChild(s);
+    });
   }
 
   // ---------- validação (mesmas regras do servidor)
@@ -268,27 +359,39 @@ fbq('track', 'PageView');
   campos.cpf.addEventListener('input', function () { campos.cpf.value = mascaraCpf(campos.cpf.value); });
   campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); });
   Object.keys(campos).forEach(function (k) { campos[k].addEventListener('input', function () { guardar(); if (estado.tentou) validar(); }); });
-  $('aceite').addEventListener('change', function () { if (estado.tentou) validar(); });
 
   function validar() {
     var ok = true;
     var marca = function (id, valido) { $(id).classList.toggle('erro', !valido); if (!valido) ok = false; };
     marca('c-nome', nomeValido(campos.nome.value));
+    marca('c-whats', whatsValido(campos.whatsapp.value));
     marca('c-cpf', cpfValido(campos.cpf.value));
     marca('c-email', emailValido(campos.email.value));
-    marca('c-whats', whatsValido(campos.whatsapp.value));
-    marca('c-aceite', $('aceite').checked);
     return ok;
   }
 
   // ---------- pagar
   function erroGeral(texto) { $('erro-geral').textContent = texto; $('erro-geral').hidden = !texto; }
-  function ocupado(sim) {
-    estado.enviando = sim;
-    $('pagar').disabled = sim || !estado.podePagar;
-    $('pagar').innerHTML = sim ? '<span class="girando"></span><span>Abrindo o pagamento…</span>'
-      : estado.vendendo ? '<svg><use href="#i-ticket"/></svg><span>Ir para o pagamento</span>'
-      : '<svg><use href="#i-cadeado"/></svg><span>Vendas em breve</span>';
+  function botao() {
+    var b = $('pagar');
+    b.disabled = estado.enviando || !estado.podePagar;
+    if (estado.enviando) { b.innerHTML = '<span class="girando"></span><span>' + (estado.metodo === 'pix' ? 'Gerando o Pix…' : 'Processando o cartão…') + '</span>'; return; }
+    if (!estado.vendendo) { b.textContent = 'Vendas em breve'; return; }
+    b.textContent = 'Pagar ' + moeda(totalCent()) + (estado.metodo === 'pix' ? ' no Pix' : ' no cartão');
+  }
+  function ocupado(sim) { estado.enviando = sim; botao(); }
+
+  function erroCartao(texto) { var e = new Error(texto); e.doCartao = true; return e; }
+
+  function dadosDoCartao() {
+    if (!estado.brick) return Promise.reject(erroCartao('O cartão ainda está carregando. Espere um instante.'));
+    return estado.brick.getFormData().then(function (d) {
+      if (!d || !d.token) throw erroCartao('Confira os dados do cartão.');
+      return {
+        token: d.token, payment_method_id: d.payment_method_id, issuer_id: d.issuer_id,
+        installments: Number(d.installments) || 1, identification: d.payer && d.payer.identification
+      };
+    }, function () { throw erroCartao('Confira os dados do cartão.'); });
   }
 
   $('form').addEventListener('submit', function (ev) {
@@ -297,7 +400,7 @@ fbq('track', 'PageView');
     estado.tentou = true;
     erroGeral('');
     if (!validar()) {
-      var primeiro = document.querySelector('.campo.erro input, .aceite.erro input');
+      var primeiro = document.querySelector('.campo.erro input');
       if (primeiro) { primeiro.scrollIntoView({ behavior: 'smooth', block: 'center' }); primeiro.focus({ preventScroll: true }); }
       return;
     }
@@ -305,34 +408,35 @@ fbq('track', 'PageView');
     var origem = '';
     try { origem = sessionStorage.getItem('cetabao_origem') || ''; } catch (e) { /* tudo bem */ }
     ocupado(true);
-    fetch(API + '/api/comprar', {
-      method: 'POST',
-      headers: { 'content-type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify({
-        nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
-        setor: setor.id, qtd_inteira: inteira, qtd_meia: meia, valor_total: total / 100,
-        aceite: $('aceite').checked, empresa: $('empresa').value, origem: origem
+    (estado.metodo === 'cartao' ? dadosDoCartao() : Promise.resolve(null))
+      .then(function (cartao) {
+        return fetch(API + '/api/comprar', {
+          method: 'POST',
+          headers: { 'content-type': 'text/plain;charset=UTF-8' },
+          body: JSON.stringify({
+            nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
+            setor: setor.id, qtd_inteira: inteira, qtd_meia: meia, valor_total: total / 100,
+            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem
+          })
+        }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
-    })
-      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
       .then(function (res) {
-        if (res.status === 200 && res.j.url) {
+        if (res.status === 200 && res.j.pedido) {
           if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { value: res.j.valor, currency: 'BRL', num_items: inteira + meia });
-          try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); } catch (e) { /* tudo bem */ }
-          location.href = res.j.url;
+          try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); sessionStorage.removeItem('cetabao_escolha'); } catch (e) { /* tudo bem */ }
+          location.href = '/pedido/' + res.j.pedido;
           return;
         }
         ocupado(false);
         erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
         if (res.status === 409) carregar(); // virou o lote, esgotou ou fechou: atualiza o resumo
       })
-      .catch(function () { ocupado(false); erroGeral('Sem conexão. Confira a internet e tente de novo.'); });
+      .catch(function (e) { ocupado(false); erroGeral(e && e.doCartao ? e.message : 'Sem conexão. Confira a internet e tente de novo.'); });
   });
 
-  // Voltou do Mercado Pago pelo botão "voltar" do navegador: destrava o botão.
   window.addEventListener('pageshow', function (e) { if (e.persisted) ocupado(false); });
 
-  montarPedido();
+  montarResumo();
   carregar();
 })();
 </script>
