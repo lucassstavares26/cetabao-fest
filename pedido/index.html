@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seus ingressos · Cê Tá Bão Fest</title>
+<!-- Página pessoal (link secreto do comprador): fora do Google. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#003c86">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<!-- Sem Pixel no carregamento: o endereço desta página é o link secreto dos
+     ingressos, e o Pixel manda a URL pro Meta. Ele só carrega na hora do
+     Purchase, com o endereço já limpo (ver pago()). -->
+<style>
+  .conteudo { padding: 22px var(--lado) 40px; display: grid; gap: 18px; }
+  h1 { font-size: clamp(28px, 8.4vw, 36px); }
+  h1 span { color: var(--sol); }
+  .resumo { margin-top: -6px; color: var(--ceu-texto); font-size: 15px; }
+  .cartao { text-align: center; }
+  .cartao h2 { font-size: clamp(21px, 6vw, 25px); color: var(--ceu); }
+  .cartao p { margin-top: 8px; color: var(--tinta-suave); }
+  .cartao .btn { margin-top: 16px; }
+  .ok-icone { width: 64px; height: 64px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--verde); color: #fff; font: 900 32px/1 var(--texto); box-shadow: 0 0 0 8px rgba(30, 158, 77, .15); }
+  .espera { display: inline-block; width: 44px; height: 44px; margin-bottom: 12px; border: 5px solid #dbe4f5; border-top-color: var(--ceu); border-radius: 50%; animation: gira .9s linear infinite; }
+  .ingresso {
+    position: relative; padding: 20px 18px 18px; border-radius: 22px; background: #fff; color: var(--tinta);
+    box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .3); break-inside: avoid;
+  }
+  .ingresso::before, .ingresso::after { content: ""; position: absolute; top: 96px; width: 22px; height: 22px; border-radius: 50%; background: var(--ceu); }
+  .ingresso::before { left: -11px; }
+  .ingresso::after { right: -11px; }
+  .ingresso .faixa-setor { display: inline-block; padding: 7px 14px 5px; border-radius: 8px; font: 400 17px/1 var(--placa); }
+  .ingresso.pista .faixa-setor { background: var(--sol); color: #3b2300; }
+  .ingresso.open .faixa-setor { background: var(--open); color: #fff; }
+  .ingresso .num { margin-top: 10px; font: 800 13px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; color: var(--campo-rotulo); }
+  .ingresso .meia-tag { display: inline-block; margin-left: 6px; padding: 3px 8px; border-radius: 6px; background: var(--brasa); color: #fff; font: 800 12px/1 var(--estreita); letter-spacing: .1em; }
+  .ingresso .picote { margin: 16px -18px 0; border-top: 2px dashed #dbe2ef; }
+  .ingresso img { width: 240px; height: 240px; margin: 16px auto 0; image-rendering: pixelated; }
+  .ingresso .codigo { margin-top: 8px; font: 700 17px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .18em; color: var(--tinta); }
+  .ingresso .titular { margin-top: 6px; font-size: 15px; color: var(--tinta-suave); }
+  .ingresso.invalido img { opacity: .15; }
+  .ingresso .selo { margin-top: 10px; font: 800 16px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; }
+  .instrucoes { padding: 16px 16px; border-radius: 18px; background: var(--vidro); border: 1px solid var(--vidro-borda); font-size: 15px; color: var(--ceu-texto); text-align: left; }
+  .instrucoes strong { color: #fff; }
+  .instrucoes li { margin-left: 18px; }
+  .instrucoes li + li { margin-top: 6px; }
+  @media print {
+    html, body { background: #fff !important; box-shadow: none; }
+    .topo, .instrucoes, .nao-imprime, .rodape { display: none !important; }
+    .ingresso { box-shadow: none; border: 2px solid #ccd; margin-bottom: 18px; }
+    .ingresso::before, .ingresso::after { display: none; }
+    h1, .resumo { color: #000; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <img class="logo" src="/img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420" style="width:130px;margin-top:12px">
+</header>
+
+<main class="conteudo">
+  <div>
+    <h1 id="titulo">Seu <span>pedido</span></h1>
+    <p class="resumo" id="resumo"></p>
+  </div>
+
+  <div class="cartao" id="carregando"><span class="espera" aria-hidden="true"></span><p>Carregando seu pedido…</p></div>
+
+  <div class="cartao" id="pendente" hidden>
+    <span class="espera" aria-hidden="true"></span>
+    <h2 id="pendente-titulo">Esperando a confirmação do pagamento</h2>
+    <p id="pendente-texto">Se você pagou com Pix, costuma cair em segundos. Esta página atualiza sozinha e os ingressos aparecem aqui — e chegam no seu e-mail e WhatsApp.</p>
+  </div>
+
+  <div class="cartao" id="expirou" hidden>
+    <h2>O prazo pra pagar acabou</h2>
+    <p>Os ingressos desse pedido voltaram pra venda. Se quiser, é só fazer um pedido novo.</p>
+    <a class="btn btn-sol" href="/">Comprar de novo</a>
+  </div>
+
+  <div class="cartao" id="divergente" hidden>
+    <h2>Recebemos seu pagamento e estamos conferindo</h2>
+    <p>Em breve a equipe do evento fala com você pelo WhatsApp. Guarde o código do pedido: <strong id="cod-div"></strong>.</p>
+  </div>
+
+  <div class="cartao" id="cancelado" hidden>
+    <h2>Este pedido foi cancelado</h2>
+    <p>Os ingressos dele não valem mais na entrada. Dúvidas: fale com a gente no Instagram <a href="https://www.instagram.com/cetabaofest/">@cetabaofest</a>.</p>
+  </div>
+
+  <div class="cartao" id="nao-achou" hidden>
+    <h2>Pedido não encontrado</h2>
+    <p>Confira se o link está completo — ele chegou no seu e-mail e no WhatsApp.</p>
+    <a class="btn btn-sol" href="/">Ir para os ingressos</a>
+  </div>
+
+  <div id="pago" hidden style="display:grid;gap:18px">
+    <div class="cartao nao-imprime">
+      <div class="ok-icone" aria-hidden="true">✓</div>
+      <h2>Pagamento aprovado!</h2>
+      <p>Seus ingressos estão aqui embaixo e também foram pro seu e-mail e WhatsApp.</p>
+    </div>
+    <ul class="instrucoes">
+      <li>Na entrada, mostre o <strong>QR Code de cada pessoa</strong> — pode ser na tela do celular.</li>
+      <li>Cada QR vale <strong>uma entrada só</strong>. Não poste nem compartilhe a imagem.</li>
+      <li id="instr-meia" hidden><strong>Meia-entrada:</strong> leve o documento que comprova o direito.</li>
+    </ul>
+    <div id="ingressos" style="display:grid;gap:22px"></div>
+    <button class="btn btn-linha nao-imprime" type="button" onclick="window.print()">Salvar em PDF / imprimir</button>
+  </div>
+</main>
+
+<footer class="rodape" style="padding-bottom:30px">
+  <p>Cê Tá Bão Fest · Sábado, 28/11 · 16h · Parque de Exposições · Passos-MG</p>
+</footer>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var $ = function (id) { return document.getElementById(id); };
+  // /pedido/<token> (pela regra do vercel.json), /pedido/?t=<token>, ou — depois
+  // do Purchase, que limpa o endereço — o token guardado nesta aba.
+  var token = (location.pathname.split('/')[2] || new URLSearchParams(location.search).get('t') || lerSessao() || '').toUpperCase();
+  function lerSessao() { try { return sessionStorage.getItem('cetabao_pedido_token'); } catch (e) { return null; } }
+  var inicio = Date.now();
+  var esc = function (t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+
+  function mostrar(qual) {
+    ['carregando', 'pendente', 'expirou', 'divergente', 'cancelado', 'nao-achou', 'pago'].forEach(function (id) { $(id).hidden = id !== qual; });
+  }
+
+  function consultar() {
+    if (!/^[A-Z2-9]{24}$/.test(token)) { mostrar('nao-achou'); return; }
+    fetch(API + '/api/pedido/' + token, { cache: 'no-store' })
+      .then(function (r) { if (r.status === 404) return { naoAchou: true }; if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (p) {
+        if (p.naoAchou) { mostrar('nao-achou'); return; }
+        $('resumo').textContent = 'Pedido ' + p.codigo + ' · ' + p.descricao + ' · ' + moeda(p.valor);
+        if (p.status === 'pago') return pago(p);
+        if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
+        if (p.status === 'cancelado') { mostrar('cancelado'); return; }
+        if (p.expirou) { mostrar('expirou'); return; }
+        if (p.mp_status === 'rejected') {
+          $('pendente-titulo').textContent = 'Pagamento recusado';
+          $('pendente-texto').textContent = 'O cartão foi recusado. Volte pro pagamento e tente outro cartão ou Pix — o pedido fica reservado por alguns minutos.';
+        }
+        mostrar('pendente');
+        if (Date.now() - inicio < 40 * 60000) setTimeout(consultar, 5000);
+      })
+      .catch(function () { if (Date.now() - inicio < 40 * 60000) setTimeout(consultar, 5000); });
+  }
+
+  function pago(p) {
+    $('titulo').innerHTML = 'Seus <span>ingressos</span>';
+    $('instr-meia').hidden = !p.meia;
+    $('ingressos').innerHTML = p.ingressos.map(function (i) {
+      var invalido = i.cancelado || i.usado;
+      return '<article class="ingresso ' + i.setor + (invalido ? ' invalido' : '') + '">' +
+        '<span class="faixa-setor">' + esc(i.rotulo.split(' — ')[0]) + '</span>' +
+        '<p class="num">Ingresso ' + i.numero + ' de ' + p.ingressos.length + (i.meia ? '<span class="meia-tag">MEIA</span>' : '') + '</p>' +
+        '<div class="picote"></div>' +
+        '<img src="' + esc(i.qr) + '" width="240" height="240" alt="QR Code do ingresso ' + i.numero + '">' +
+        '<p class="codigo">' + esc(i.codigo) + '</p>' +
+        '<p class="titular">' + esc(i.nome) + '</p>' +
+        (i.cancelado ? '<p class="selo" style="color:var(--brasa)">Cancelado</p>' : i.usado ? '<p class="selo" style="color:var(--verde)">Já utilizado na entrada</p>' : '') +
+        '</article>';
+    }).join('');
+    mostrar('pago');
+    registrarCompra(p);
+  }
+
+  /**
+   * Purchase do Pixel: só no navegador que fez a compra (o checkout guardou o
+   * token aqui) e uma vez só — abrir o link do e-mail em outro aparelho, ou
+   * recarregar, não conta de novo. Antes de carregar o Pixel, tira o token do
+   * endereço (o Pixel manda a URL pro Meta); a aba lembra o token pra recarregar.
+   */
+  function registrarCompra(p) {
+    try {
+      var chave = 'cetabao_purchase_' + p.codigo;
+      if (localStorage.getItem('cetabao_ultimo_pedido') !== token || localStorage.getItem(chave)) return;
+      localStorage.setItem(chave, '1');
+      sessionStorage.setItem('cetabao_pedido_token', token);
+      history.replaceState(null, '', '/pedido/');
+    } catch (e) { return; }
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1400962194832152');
+    fbq('track', 'Purchase', { value: p.valor, currency: 'BRL', num_items: p.qtd }, { eventID: p.codigo });
+  }
+
+  consultar();
+})();
+</script>
+</body>
+</html>

@@ -1,5 +1,10 @@
 {
   "redirects": [
-    { "source": "/cadastro", "destination": "/cadastro/", "permanent": true }
+    { "source": "/:path*", "has": [{ "type": "host", "value": "cetabaofest.com.br" }], "destination": "https://www.cetabaofest.com.br/:path*", "permanent": true },
+    { "source": "/cadastro", "destination": "/", "permanent": false },
+    { "source": "/cadastro/:path*", "destination": "/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/pedido/:token", "destination": "/pedido/index.html" }
   ]
 }

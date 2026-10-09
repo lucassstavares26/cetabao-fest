@@ -1,0 +1,120 @@
+/* Cê Tá Bão Fest — base visual compartilhada (compra e página do pedido).
+   Mesmas cores e fontes do cartaz: céu azul, sol amarelo, engradado vermelho. */
+:root {
+  --ceu: #003c86;
+  --ceu-alto: #0b52ad;
+  --ceu-fundo: #002560;
+  --ceu-noite: #001a47;
+  --faixa: #2164a6;
+  --sol: #ffc61a;
+  --sol-claro: #ffe07a;
+  --sol-sombra: #a67c00;
+  --brasa: #e3262d;
+  --engradado: #b41212;
+  --engradado-escuro: #7d0b0b;
+  --open: #1557d6;
+  --open-escuro: #0a3796;
+  --tinta: #0b1d45;
+  --tinta-suave: #4a5b85;
+  --campo-borda: #d5dcec;
+  --campo-fundo: #f5f7fc;
+  --campo-rotulo: #7d8aa8;
+  --ceu-texto: #d6e2fb;
+  --verde: #1e9e4d;
+  --verde-escuro: #157a3b;
+  --vidro: rgba(255, 255, 255, .08);
+  --vidro-borda: rgba(255, 255, 255, .16);
+  --placa: 'Bungee', 'Arial Black', Impact, sans-serif;
+  --estreita: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --texto: 'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --lado: 20px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+html { background: var(--ceu-noite); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  max-width: 480px; margin-inline: auto; min-height: 100vh;
+  background: var(--ceu); color: #fff;
+  font: 400 16.5px/1.55 var(--texto); text-align: center;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+  overflow-x: clip; box-shadow: 0 0 80px rgba(0, 0, 0, .4);
+}
+img { display: block; max-width: 100%; height: auto; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+h1, h2, h3 { font-family: var(--placa); font-weight: 400; line-height: 1.06; text-wrap: balance; }
+p { text-wrap: pretty; }
+.rotulo { font: 800 13px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--sol); outline-offset: 3px; }
+
+/* ---------- botões ---------- */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; min-height: 60px; padding: 16px 20px; border: 0; border-radius: 16px;
+  font: 800 20px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; touch-action: manipulation;
+  transition: transform .15s, box-shadow .15s, opacity .2s;
+}
+.btn svg { width: 24px; height: 24px; flex: none; }
+.btn-sol { background: var(--sol); color: var(--engradado); box-shadow: 0 5px 0 var(--sol-sombra), 0 14px 28px rgba(0, 0, 0, .2); }
+.btn-sol:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--sol-sombra), 0 8px 16px rgba(0, 0, 0, .2); }
+.btn-zap { background: var(--verde); color: #fff; box-shadow: 0 5px 0 var(--verde-escuro), 0 14px 28px rgba(0, 0, 0, .2); }
+.btn-zap:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--verde-escuro), 0 8px 16px rgba(0, 0, 0, .2); }
+.btn-linha { background: transparent; color: #fff; border: 2px solid var(--vidro-borda); min-height: 52px; font-size: 17px; }
+.btn:disabled { cursor: progress; opacity: .8; }
+.girando { width: 20px; height: 20px; flex: none; border: 3px solid rgba(180, 18, 18, .25); border-top-color: currentColor; border-radius: 50%; animation: gira .8s linear infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+
+/* ---------- topo: varal + logo ---------- */
+.topo { background: linear-gradient(180deg, var(--ceu-alto), var(--ceu) 78%); padding-bottom: 6px; }
+.varal { position: relative; height: 60px; }
+.varal svg { position: absolute; inset: 0; width: 100%; height: 60px; overflow: visible; }
+.varal path { fill: none; stroke: #0d1628; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.varal i {
+  position: absolute; left: var(--x); top: var(--y);
+  width: 13px; height: 17px; margin: 3px 0 0 -6.5px;
+  border-radius: 50% 50% 46% 46% / 42% 42% 58% 58%;
+  background: radial-gradient(circle at 50% 62%, #fffbe6 0 18%, #ffd95a 45%, #f3a800 100%);
+  box-shadow: 0 0 12px 4px rgba(255, 200, 40, .55), 0 0 34px 10px rgba(255, 170, 0, .2);
+  animation: brilho 3.4s ease-in-out infinite; animation-delay: var(--d, 0s);
+}
+.varal i::before { content: ""; position: absolute; top: -5px; left: 50%; width: 7px; height: 6px; margin-left: -3.5px; background: #16181d; border-radius: 1px 1px 2px 2px; }
+@keyframes brilho { 0%, 100% { opacity: 1; } 50% { opacity: .8; } }
+.logo { width: 170px; margin: -6px auto 0; filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .45)); }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; padding-inline: var(--lado); }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px;
+  border-radius: 999px; background: var(--vidro); border: 1px solid var(--vidro-borda);
+  font: 700 14px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; color: #fff;
+}
+.chip svg { width: 15px; height: 15px; color: var(--sol); }
+
+/* ---------- cartão branco ---------- */
+.cartao {
+  position: relative; padding: 32px 18px 22px;
+  border-radius: 24px; background: #fff; color: var(--tinta);
+  box-shadow: 0 8px 0 var(--engradado-escuro), 0 26px 50px rgba(0, 0, 0, .3);
+  scroll-margin-top: 14px;
+}
+.etiqueta {
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+  white-space: nowrap; padding: 9px 14px 7px; border-radius: 8px;
+  font: 400 14px/1 var(--placa); color: var(--engradado); background: var(--sol);
+  box-shadow: 0 3px 0 var(--sol-sombra);
+}
+
+/* ---------- patrocinadores + rodapé ---------- */
+.patro { position: relative; overflow: hidden; background: var(--faixa); padding: 14px 0; }
+.patro-trilha { display: flex; align-items: center; width: max-content; gap: 36px; }
+.patro-trilha img { flex: none; height: 30px; width: auto; }
+.patro-trilha img.grande { height: 46px; }
+.rodape { padding: 26px var(--lado) calc(96px + env(safe-area-inset-bottom, 0px)); background: var(--ceu-fundo); color: #9fb2da; font-size: 14px; }
+.redes { display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; }
+.redes a { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--vidro); color: #fff; }
+.redes svg { width: 20px; height: 20px; }
+
+@media (min-width: 1000px) { html { zoom: 1.2; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
