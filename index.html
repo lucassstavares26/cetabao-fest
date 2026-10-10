@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ingressos · Cê Tá Bão Fest · 28/11 · Passos-MG</title>
-<meta name="description" content="Site oficial de ingressos do Cê Tá Bão Fest — sábado, 28/11, em Passos-MG. Pista VIP e Open Bar, sem taxa, no Pix ou em até 3x sem juros no cartão.">
+<meta name="description" content="Site oficial de ingressos do Cê Tá Bão Fest — sábado, 28/11, em Passos-MG. Pista VIP e Open Bar, sem taxa no Pix ou no cartão à vista — ou em até 3x no cartão.">
 <link rel="canonical" href="https://www.cetabaofest.com.br/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.cetabaofest.com.br/">
 <meta property="og:title" content="Ingressos · Cê Tá Bão Fest · Passos-MG">
-<meta property="og:description" content="Sábado, 28/11. Pista VIP e Open Bar — sem taxa, Pix ou 3x sem juros.">
+<meta property="og:description" content="Sábado, 28/11. Pista VIP e Open Bar — sem taxa no Pix ou no cartão à vista.">
 <meta property="og:image" content="https://www.cetabaofest.com.br/img/topo-flyer.webp">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="1052">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ingressos · Cê Tá Bão Fest · Passos-MG">
-<meta name="twitter:description" content="Sábado, 28/11. Pista VIP e Open Bar — sem taxa, Pix ou 3x sem juros.">
+<meta name="twitter:description" content="Sábado, 28/11. Pista VIP e Open Bar — sem taxa no Pix ou no cartão à vista.">
 <meta name="twitter:image" content="https://www.cetabaofest.com.br/img/topo-flyer.webp">
 <meta name="theme-color" content="#003c86">
 <meta name="format-detection" content="telephone=no">
@@ -244,7 +244,7 @@ fbq('track', 'PageView');
         <p class="valor" id="total">R$ 0,00</p>
         <p class="parcela" id="parcela"></p>
         <button class="btn btn-sol" type="button" id="continuar" disabled><svg><use href="#i-ticket"/></svg><span>Realizar pagamento</span></button>
-        <p class="seguro"><svg><use href="#i-cadeado"/></svg>Pix ou cartão em até 3x sem juros · Mercado Pago</p>
+        <p class="seguro"><svg><use href="#i-cadeado"/></svg>Sem taxa no Pix ou no cartão à vista · até 3x no cartão · Mercado Pago</p>
       </div>
     </div>
   </section>
@@ -473,7 +473,7 @@ fbq('track', 'PageView');
     $('linha-resumo').textContent = partes.length ? partes.join(' · ') : 'Escolha seus ingressos acima';
     var t = totalCent();
     $('total').textContent = total && semPreco() ? 'Em breve' : moeda(t);
-    $('parcela').textContent = t && !semPreco() ? 'ou ' + PARCELAS + 'x de ' + moeda(Math.floor(t / PARCELAS)) + ' sem juros no cartão' : '';
+    $('parcela').textContent = t && !semPreco() ? 'no Pix ou no cartão à vista · ou em até ' + PARCELAS + 'x no cartão' : '';
     $('continuar').disabled = total < 1;
     try { sessionStorage.setItem('cetabao_carrinho', JSON.stringify(estado.q)); } catch (e) { /* tudo bem */ }
   }
