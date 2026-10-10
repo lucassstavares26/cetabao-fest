@@ -28,7 +28,7 @@
 
   /** Abre o WhatsApp com a mensagem pronta; a pessoa só escolhe o contato. */
   function linkWhats(i) {
-    var texto = '🎟️ Seu ingresso do *Cê Tá Bão Fest* — ' + i.rotulo.replace(' — ', ' (') + ')\n' +
+    var texto = '🎟️ Seu ingresso do *Cê Tá Bão Fest* — ' + (i.rotulo.indexOf(' — ') > 0 ? i.rotulo.replace(' — ', ' (') + ')' : i.rotulo) + '\n' +
       'Nome: ' + i.nome + '\n\n' +
       'Abra o link e mostre o QR Code na entrada:\n' + SITE + '/ingresso/' + i.codigo + '\n\n' +
       '📅 ' + EVENTO.data + '\n📍 ' + EVENTO.local;

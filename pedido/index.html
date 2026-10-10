@@ -104,8 +104,8 @@
   <div id="pago" hidden style="display:grid;gap:18px">
     <div class="cartao nao-imprime">
       <div class="ok-icone" aria-hidden="true">✓</div>
-      <h2>Pagamento aprovado!</h2>
-      <p>Seus ingressos estão aqui embaixo e também foram pro seu e-mail e WhatsApp.</p>
+      <h2 id="pago-titulo">Pagamento aprovado!</h2>
+      <p id="pago-texto">Seus ingressos estão aqui embaixo e também foram pro seu e-mail e WhatsApp.</p>
     </div>
     <ul class="instrucoes">
       <li>Na entrada, mostre o <strong>QR Code de cada pessoa</strong> — pode ser na tela do celular.</li>
@@ -143,7 +143,7 @@
       .then(function (r) { if (r.status === 404) return { naoAchou: true }; if (!r.ok) throw new Error(); return r.json(); })
       .then(function (p) {
         if (p.naoAchou) { mostrar('nao-achou'); return; }
-        $('resumo').textContent = 'Pedido ' + p.codigo + ' · ' + p.descricao + ' · ' + moeda(p.valor);
+        $('resumo').textContent = (p.reserva ? '' : 'Pedido ') + p.codigo + ' · ' + p.descricao + (p.valor == null ? '' : ' · ' + moeda(p.valor));
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado') { mostrar('cancelado'); return; }
@@ -193,6 +193,11 @@
   function pago(p) {
     if (pixRelogio) clearInterval(pixRelogio);
     $('titulo').innerHTML = 'Seus <span>ingressos</span>';
+    // Camarote/mesa emitido no painel: não teve pagamento pelo site.
+    if (p.reserva) {
+      $('pago-titulo').textContent = 'Reserva confirmada!';
+      $('pago-texto').textContent = 'Aqui estão os ingressos de todo mundo. Mande o de cada pessoa pelo botão "Enviar pelo WhatsApp" embaixo dele.';
+    }
     $('instr-meia').hidden = !p.meia;
     // Cada ingresso com o botão de mandar só ele pro WhatsApp de quem vai usar.
     $('ingressos').innerHTML = p.ingressos.map(function (i) {

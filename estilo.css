@@ -136,6 +136,8 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .ing-setor { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 11px 16px; border-bottom: 4px solid var(--engradado); }
 .ingresso.pista .ing-setor { background: var(--sol); color: #3b2300; }
 .ingresso.open .ing-setor { background: var(--open); color: #fff; }
+.ingresso.camarote .ing-setor { background: var(--engradado); color: #fff; border-bottom-color: var(--sol); }
+.ingresso.mesa .ing-setor { background: var(--verde); color: #fff; }
 .ing-setor .faixa-setor { font: 400 20px/1 var(--placa); }
 .ing-setor .meia-tag { padding: 4px 8px 3px; border-radius: 6px; background: var(--brasa); color: #fff; font: 800 12px/1 var(--estreita); letter-spacing: .1em; }
 .ing-setor .num { margin-left: auto; font: 800 13px/1 var(--estreita); letter-spacing: .12em; text-transform: uppercase; opacity: .8; }
