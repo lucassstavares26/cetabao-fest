@@ -475,6 +475,7 @@ fbq('track', 'PageView');
     var total = totalCent();
     var origem = '';
     try { origem = sessionStorage.getItem('cetabao_origem') || ''; } catch (e) { /* tudo bem */ }
+    if (q.get('origem')) origem = q.get('origem').slice(0, 120); // link do e-mail/WhatsApp de recuperação
     ocupado(true);
     (estado.metodo === 'cartao' ? dadosDoCartao() : Promise.resolve(null))
       .then(function (cartao) {
