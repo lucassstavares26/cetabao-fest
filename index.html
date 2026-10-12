@@ -181,7 +181,16 @@ fbq('track', 'PageView');
     transform: translateX(-50%); transition: transform .25s ease;
   }
   .barra.escondida { transform: translate(-50%, 115%); }
-  .barra .btn { min-height: 54px; font-size: 18px; }
+  .barra { display: flex; align-items: center; gap: 12px; }
+  .barra-total { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; color: #fff; white-space: nowrap; }
+  .barra-total span { font: 700 16px/1 var(--estreita); letter-spacing: .04em; color: var(--ceu-texto); }
+  .barra-total b { font: 400 clamp(20px, 6vw, 25px)/1 var(--placa); color: var(--sol); }
+  .barra-btn {
+    flex: none; min-height: 52px; padding: 0 22px; border: 0; border-radius: 999px; cursor: pointer; touch-action: manipulation;
+    background: var(--sol); color: var(--engradado); font: 800 18px/1 var(--estreita); letter-spacing: .03em;
+    box-shadow: 0 4px 0 var(--sol-sombra), 0 10px 22px rgba(0, 0, 0, .25); transition: transform .15s, box-shadow .15s;
+  }
+  .barra-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--sol-sombra); }
 </style>
 <script src="/suporte.js" defer></script>
 <script src="/acesso.js" data-pagina="compra" defer></script>
@@ -311,7 +320,8 @@ fbq('track', 'PageView');
 </footer>
 
 <div class="barra escondida" id="barra">
-  <a class="btn btn-sol" href="#compra"><svg><use href="#i-ticket"/></svg><span>Comprar ingresso</span></a>
+  <p class="barra-total" aria-live="polite"><span>Total</span><b id="barra-total">R$ 0,00</b></p>
+  <button class="barra-btn" type="button" id="barra-comprar">Comprar ingressos</button>
 </div>
 
 <script>
@@ -478,23 +488,32 @@ fbq('track', 'PageView');
     $('linha-resumo').textContent = partes.length ? partes.join(' · ') : 'Escolha seus ingressos acima';
     var t = totalCent();
     $('total').textContent = total && semPreco() ? 'Em breve' : moeda(t);
+    $('barra-total').textContent = $('total').textContent;
     $('parcela').textContent = t && !semPreco() ? 'no Pix ou no cartão à vista · ou em até ' + PARCELAS + 'x no cartão' : '';
     $('continuar').disabled = total < 1;
     try { sessionStorage.setItem('cetabao_carrinho', JSON.stringify(estado.q)); } catch (e) { /* tudo bem */ }
   }
 
   // ---------- segunda parte: checkout (dados + pagamento)
-  $('continuar').addEventListener('click', function () {
+  function irProCheckout() {
     if (qtdTotal() < 1) return;
     location.href = '/checkout/?pi=' + estado.q.pista_inteira + '&pm=' + estado.q.pista_meia + '&oi=' + estado.q.open_inteira;
+  }
+  $('continuar').addEventListener('click', irProCheckout);
+  $('barra-comprar').addEventListener('click', function () {
+    if (qtdTotal() < 1) { $('setores').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    irProCheckout();
   });
 
-  // ---------- barra fixa: aparece enquanto o cartão de compra não está na tela
+  // ---------- barra fixa (Total + Comprar ingressos): fica na tela o tempo todo, pra
+  // ninguém precisar rolar até o fim pra pagar. Some só quando o total do próprio
+  // cartão de compra está visível (não repetir o mesmo botão duas vezes).
+  // Enquanto ela aparece, o botão flutuante de suporte sai (estilo.css).
   if ('IntersectionObserver' in window) {
-    var visivel = false, passouTopo = false;
-    var mostra = function () { $('barra').classList.toggle('escondida', visivel || !passouTopo); };
-    new IntersectionObserver(function (e) { visivel = e[0].isIntersecting; mostra(); }, { threshold: 0.05 }).observe($('compra'));
-    new IntersectionObserver(function (e) { passouTopo = !e[0].isIntersecting; mostra(); }).observe(document.querySelector('.porteira'));
+    new IntersectionObserver(function (e) { $('barra').classList.toggle('escondida', e[0].isIntersecting); }, { threshold: 0.4 })
+      .observe(document.querySelector('.resumo'));
+  } else {
+    $('barra').classList.remove('escondida');
   }
 
   // ---------- faixa de patrocinadores (JS: no Safari do iPhone o @keyframes engasgava)

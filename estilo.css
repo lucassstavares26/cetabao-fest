@@ -172,7 +172,8 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .suporte-flutuante svg { width: 22px; height: 22px; flex: none; }
 .suporte-flutuante:active { transform: translateY(3px); }
 /* Página de compra: sobe quando a barra de pagamento aparece no rodapé. */
-.barra:not(.escondida) ~ .suporte-flutuante { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+/* Com a barra de Total + Comprar na tela, o botão de suporte sai (pedido do Lucas, 12/10). */
+.barra:not(.escondida) ~ .suporte-flutuante { opacity: 0; pointer-events: none; transform: translateY(12px); }
 .suporte-inline {
   display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px 16px; border-radius: 14px;
   border: 2px solid #25d366; color: #128c4a; background: #fff; text-decoration: none; font: 800 16px/1 var(--estreita); letter-spacing: .05em; text-transform: uppercase;
