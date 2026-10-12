@@ -103,8 +103,9 @@ fbq('track', 'PageView');
   .seguranca li::before { content: "✓ "; color: var(--ceu); font-weight: 800; }
   .seguranca .letras { margin-top: 10px; padding-top: 10px; border-top: 1px solid #dbe3f2; font-size: 12.5px; line-height: 1.45; }
 </style>
+<script src="/suporte.js" defer></script>
 </head>
-<body>
+<body data-suporte-msg="Oi! Estou com uma dúvida pra finalizar minha compra no site do Cê Tá Bão Fest.">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-cadeado" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10.5" rx="2.5" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></symbol>
@@ -195,6 +196,7 @@ fbq('track', 'PageView');
         </ul>
         <p class="letras">Seus dados são usados só pra emitir e enviar o ingresso. Ao pagar, você concorda que cada QR Code vale uma entrada, que meia-entrada exige documento na portaria e que pode pedir reembolso em até 7 dias após a compra.</p>
       </div>
+      <div id="suporte-inline"></div>
     </form>
   </section>
 </main>

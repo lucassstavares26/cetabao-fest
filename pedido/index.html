@@ -44,8 +44,9 @@
     #ingressos { display: block !important; }
   }
 </style>
+<script src="/suporte.js" defer></script>
 </head>
-<body>
+<body data-suporte-msg="Oi! Tenho uma dúvida sobre meu pedido no site do Cê Tá Bão Fest.">
 
 <header class="topo">
   <img class="logo" src="/img/logo.webp" alt="Cê Tá Bão Fest · Passos-MG" width="400" height="420" style="width:130px;margin-top:12px">
@@ -92,7 +93,7 @@
 
   <div class="cartao" id="cancelado" hidden>
     <h2>Este pedido foi cancelado</h2>
-    <p>Os ingressos dele não valem mais na entrada. Dúvidas: fale com a gente no Instagram <a href="https://www.instagram.com/cetabaofest/">@cetabaofest</a>.</p>
+    <p>Os ingressos dele não valem mais na entrada. Dúvidas: fale com o nosso suporte no <a href="https://wa.me/553531690079" target="_blank" rel="noopener">WhatsApp (35) 3169-0079</a>.</p>
   </div>
 
   <div class="cartao" id="nao-achou" hidden>
@@ -143,6 +144,7 @@
       .then(function (r) { if (r.status === 404) return { naoAchou: true }; if (!r.ok) throw new Error(); return r.json(); })
       .then(function (p) {
         if (p.naoAchou) { mostrar('nao-achou'); return; }
+        if (window.CetabaoSuporte) CetabaoSuporte.mensagem('Oi! Tenho uma dúvida sobre meu pedido ' + p.codigo + ' do Cê Tá Bão Fest.');
         $('resumo').textContent = (p.reserva ? '' : 'Pedido ') + p.codigo + ' · ' + p.descricao + (p.valor == null ? '' : ' · ' + moeda(p.valor));
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
