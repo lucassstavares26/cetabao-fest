@@ -515,5 +515,23 @@ fbq('track', 'PageView');
   carregar();
 })();
 </script>
+<script>
+/* Atalho pros ingressos sem deixar "#compra" no endereço (pedido do Lucas,
+   12/10): o link compartilhado fica só www.cetabaofest.com.br. */
+(function () {
+  var ir = function (suave) { var c = document.getElementById('compra'); if (c) c.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' }); };
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#compra"]');
+    if (!a) return;
+    e.preventDefault();
+    ir(true);
+  });
+  // Voltou do checkout ("Alterar pedido" leva pra /#compra): rola e limpa o endereço.
+  if (location.hash === '#compra') {
+    history.replaceState(null, '', location.pathname + location.search);
+    requestAnimationFrame(function () { ir(false); });
+  }
+})();
+</script>
 </body>
 </html>
