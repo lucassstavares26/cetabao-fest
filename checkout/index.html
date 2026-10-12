@@ -198,7 +198,7 @@ fbq('track', 'PageView');
           <li>Pagamento processado pelo Mercado Pago</li>
         </ul>
         <p class="realizacao">Realização: <strong>ROY ENTRETENIMENTO</strong></p>
-        <p class="letras">Seus dados são usados só pra emitir e enviar o ingresso. Ao pagar, você concorda que cada QR Code vale uma entrada, que meia-entrada exige documento na portaria e que pode pedir reembolso em até 7 dias após a compra.</p>
+        <p class="letras">Seus dados são usados pra emitir e enviar o ingresso — e, se a compra não for concluída, pra te ajudar a finalizar. Ao pagar, você concorda que cada QR Code vale uma entrada, que meia-entrada exige documento na portaria e que pode pedir reembolso em até 7 dias após a compra.</p>
       </div>
       <div id="suporte-inline"></div>
     </form>
@@ -431,7 +431,41 @@ fbq('track', 'PageView');
   copiarNome();
   campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); });
   campos.email.addEventListener('change', function () { if (estado.metodo === 'cartao') prepararCartao(); });
-  Object.keys(campos).forEach(function (k) { campos[k].addEventListener('input', function () { guardar(); if (estado.tentou) validar(); }); });
+  Object.keys(campos).forEach(function (k) { campos[k].addEventListener('input', function () { guardar(); if (estado.tentou) validar(); rascunho(); }); });
+
+  // ---------- carrinho abandonado: assim que tem nome + WhatsApp ou e-mail, salva
+  // no painel. Se a pessoa não pagar em 30 min, o suporte chama ela.
+  var sessaoCarrinho = '';
+  try {
+    sessaoCarrinho = sessionStorage.getItem('cetabao_carrinho_sessao') || '';
+    if (!/^[a-z0-9]{12,40}$/.test(sessaoCarrinho)) {
+      sessaoCarrinho = Array.from(crypto.getRandomValues(new Uint8Array(16)), function (b) { return (b % 36).toString(36); }).join('');
+      sessionStorage.setItem('cetabao_carrinho_sessao', sessaoCarrinho);
+    }
+  } catch (e) { sessaoCarrinho = ''; }
+  var ultimoRascunho = '', relogioRascunho = null;
+  function corpoRascunho() {
+    var whats = whatsValido(campos.whatsapp.value), email = emailValido(campos.email.value);
+    if (!sessaoCarrinho || !nomeValido(campos.nome.value) || (!whats && !email)) return null;
+    var origem = '';
+    try { origem = sessionStorage.getItem('cetabao_origem') || ''; } catch (e) { /* tudo bem */ }
+    if (q.get('origem')) origem = q.get('origem');
+    return JSON.stringify({
+      sessao: sessaoCarrinho, nome: campos.nome.value.trim(), email: email ? campos.email.value.trim() : '', whatsapp: whats ? campos.whatsapp.value : '',
+      qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira }, valor: totalCent() / 100, origem: origem.slice(0, 120)
+    });
+  }
+  function enviarRascunho() {
+    clearTimeout(relogioRascunho);
+    var corpo = corpoRascunho();
+    if (!corpo || corpo === ultimoRascunho) return;
+    ultimoRascunho = corpo;
+    try { navigator.sendBeacon(API + '/api/site/carrinho', new Blob([corpo], { type: 'text/plain;charset=UTF-8' })); } catch (e) { /* não atrapalha a compra */ }
+  }
+  function rascunho() { clearTimeout(relogioRascunho); relogioRascunho = setTimeout(enviarRascunho, 1500); }
+  window.addEventListener('pagehide', enviarRascunho);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') enviarRascunho(); });
+  rascunho(); // dados já preenchidos deste aparelho (compra anterior) também contam
 
   function validar() {
     var ok = true;
@@ -492,14 +526,14 @@ fbq('track', 'PageView');
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
             qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
             titulares: titulares.map(function (el) { return el.value.trim(); }),
-            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem
+            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem, carrinho: sessaoCarrinho
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
       .then(function (res) {
         if (res.status === 200 && res.j.pedido) {
           if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { value: res.j.valor, currency: 'BRL', num_items: totalQtd });
-          try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); sessionStorage.removeItem('cetabao_carrinho'); } catch (e) { /* tudo bem */ }
+          try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); sessionStorage.removeItem('cetabao_carrinho'); sessionStorage.removeItem('cetabao_carrinho_sessao'); } catch (e) { /* tudo bem */ }
           location.href = '/pedido/' + res.j.pedido;
           return;
         }
