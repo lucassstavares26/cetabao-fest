@@ -134,6 +134,7 @@ fbq('track', 'PageView');
     <div class="contas">
       <div><span>Subtotal</span><span id="subtotal">—</span></div>
       <div><span>Taxa de serviço</span><span class="sem-taxa">SEM TAXA</span></div>
+      <div id="linha-juros" hidden><span id="juros-rot">Juros do cartão</span><span id="juros">—</span></div>
     </div>
     <div class="total-linha"><span>Total</span><b id="total">—</b></div>
     <p class="nota-meia" id="nota-meia" hidden>Meia-entrada: documento obrigatório na entrada.</p>
@@ -244,7 +245,8 @@ fbq('track', 'PageView');
   var estado = {
     preco: { pista: PRECO_PADRAO.pista || null, open: PRECO_PADRAO.open || null },
     restam: { pista: null, open: null }, lote: LOTE_PADRAO,
-    vendendo: false, chave: null, metodo: 'pix', tentou: false, enviando: false, brick: null, brickCriando: false
+    vendendo: false, chave: null, metodo: 'pix', tentou: false, enviando: false, brick: null, brickCriando: false,
+    mp: null, custos: null, parcelas: 1 // parcelamento escolhido no brick e quanto o cartão cobra em cada opção
   };
 
   // ---------- dinheiro: sempre em centavos inteiros (regra igual à do servidor)
@@ -270,7 +272,6 @@ fbq('track', 'PageView');
       (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', centavos(o || 0) * qtd.open_inteira, !!o) : '');
     var t = totalCent();
     $('subtotal').textContent = semPreco() ? 'em breve' : moeda(t);
-    $('total').textContent = semPreco() ? 'Em breve' : moeda(t);
     $('nota-meia').hidden = !qtd.pista_meia;
     var faltas = SETORES.filter(function (s) { return estado.restam[s.id] !== null && qtdSetor(s.id) > estado.restam[s.id]; });
     $('problema').hidden = !faltas.length;
@@ -326,12 +327,12 @@ fbq('track', 'PageView');
     var email = emailDoBrick();
     $('cartao-aviso').textContent = liberado ? 'Preencha seu e-mail lá em cima pra digitar o cartão.' : 'Os campos do cartão aparecem aqui quando as vendas pelo site abrirem.';
     $('cartao-aviso').hidden = !!(liberado && email);
-    if (estado.brick && estado.brickEmail !== email) { try { estado.brick.unmount(); } catch (e) { /* já saiu */ } estado.brick = null; }
+    if (estado.brick && estado.brickEmail !== email) { try { estado.brick.unmount(); } catch (e) { /* já saiu */ } estado.brick = null; zerarParcelas(); }
     if (!liberado || !email || estado.brick || estado.brickCriando) return;
     estado.brickCriando = true;
     estado.brickEmail = email;
     carregarSdk().then(function () {
-      var mp = new window.MercadoPago(estado.chave, { locale: 'pt-BR' });
+      var mp = estado.mp = new window.MercadoPago(estado.chave, { locale: 'pt-BR' });
       return mp.bricks().create('cardPayment', 'brick-cartao', {
         initialization: { amount: totalCent() / 100, payer: { email: email } },
         customization: {
@@ -341,7 +342,8 @@ fbq('track', 'PageView');
         callbacks: {
           onReady: function () {},
           onSubmit: function () { return Promise.resolve(); },
-          onError: function (e) { console.warn('Brick do cartão:', e && e.message); }
+          onError: function (e) { console.warn('Brick do cartão:', e && e.message); },
+          onBinChange: buscarParcelas
         }
       });
     }).then(function (controlador) {
@@ -354,6 +356,42 @@ fbq('track', 'PageView');
       if (estado.metodo === 'cartao' && estado.brickEmail !== emailDoBrick()) prepararCartao();
     });
   }
+  /*
+   * Parcelado, o cartão cobra juros por cima do valor do pedido. O brick não
+   * avisa quando a pessoa troca as parcelas, então: com o BIN (primeiros
+   * dígitos) a gente pergunta ao Mercado Pago o total de cada opção, e escuta
+   * as opções de parcela do brick (radios name="installments" na nossa página).
+   */
+  function zerarParcelas() { estado.custos = null; estado.parcelas = 1; botao(); }
+  function buscarParcelas(bin) {
+    estado.custos = null;
+    botao();
+    if (!bin || !estado.mp) return;
+    estado.mp.getInstallments({ amount: String(totalCent() / 100), bin: bin }).then(function (r) {
+      if (r && r[0]) { estado.custos = r[0].payer_costs || null; botao(); }
+    }).catch(function () { /* sem a tabela: o botão fica com o valor do pedido */ });
+  }
+  $('brick-cartao').addEventListener('change', function (ev) {
+    if (ev.target.name !== 'installments') return;
+    estado.parcelas = Number(ev.target.value) || 1;
+    botao();
+  }, true);
+  // Quanto sai no cartão com as parcelas escolhidas (null = igual ao pedido).
+  function totalCartaoCent() {
+    if (estado.metodo !== 'cartao' || estado.parcelas < 2 || !estado.custos) return null;
+    var c = estado.custos.filter(function (x) { return x.installments === estado.parcelas; })[0];
+    return c ? Math.round(c.total_amount * 100) : null;
+  }
+  function mostrarTotal() {
+    var t = totalCent(), noCartao = totalCartaoCent();
+    $('linha-juros').hidden = noCartao === null;
+    if (noCartao !== null) {
+      $('juros-rot').textContent = 'Juros do cartão (' + estado.parcelas + 'x)';
+      $('juros').textContent = moeda(noCartao - t);
+    }
+    $('total').textContent = semPreco() ? 'Em breve' : moeda(noCartao === null ? t : noCartao);
+  }
+
   function carregarSdk() {
     if (window.MercadoPago) return Promise.resolve();
     return new Promise(function (ok, falhou) {
@@ -482,10 +520,14 @@ fbq('track', 'PageView');
   function erroGeral(texto) { $('erro-geral').textContent = texto; $('erro-geral').hidden = !texto; }
   function botao() {
     var b = $('pagar');
+    mostrarTotal();
     b.disabled = estado.enviando || !estado.podePagar;
     if (estado.enviando) { b.innerHTML = '<span class="girando"></span><span>' + (estado.metodo === 'pix' ? 'Gerando o Pix…' : 'Processando o cartão…') + '</span>'; return; }
     if (!estado.vendendo) { b.textContent = 'Vendas em breve'; return; }
-    b.textContent = 'Pagar ' + moeda(totalCent()) + (estado.metodo === 'pix' ? ' no Pix' : ' no cartão');
+    var noCartao = totalCartaoCent();
+    b.textContent = estado.metodo === 'pix' ? 'Pagar ' + moeda(totalCent()) + ' no Pix'
+      : noCartao === null ? 'Pagar ' + moeda(totalCent()) + ' no cartão'
+      : 'Pagar ' + moeda(noCartao) + ' em ' + estado.parcelas + 'x no cartão';
   }
   function ocupado(sim) { estado.enviando = sim; botao(); }
 
