@@ -117,7 +117,12 @@ fbq('track', 'PageView');
   .setor .desc { grid-column: 1 / -1; font: 700 15.5px/1.35 var(--estreita); letter-spacing: .02em; }
   .setor .rodape-card { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .setor .tipo { display: inline-flex; padding: 5px 10px 4px; border-radius: 999px; background: rgba(0, 0, 0, .14); font: 800 12px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; }
-  .setor .abrir { font: 800 13px/1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+  .setor .abrir { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font: 800 13px/1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+  .setor .abrir::after { content: "▾"; font-size: 15px; transition: transform .2s; }
+  button.setor-topo { cursor: pointer; touch-action: manipulation; }
+  /* fechado: só o que é (nome, lote, preço); clicou, abre o que tem + a quantidade */
+  .setor:not(.expandido) .desc, .setor:not(.expandido) .setor-opcoes { display: none; }
+  .setor.expandido .abrir::after { transform: rotate(180deg); }
   .setor .resta { grid-column: 1 / -1; font: 800 12px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; }
   .setor-camarote .btn { margin: 0 16px 16px; width: calc(100% - 32px); min-height: 54px; font-size: 18px; }
   .setor.aberto { border-color: var(--tinta); transform: translateY(-2px); }
@@ -335,7 +340,7 @@ fbq('track', 'PageView');
   // A mesma lista existe em checkout/index.html — mudou aqui, muda lá.
   var SETORES = [
     { id: 'pista', nome: 'Pista VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
-    { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: 'Só inteira', meia: false }
+    { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: '', meia: false }
   ];
   // Preço e lote mostrados enquanto o painel ainda não tem a venda do site
   // configurada (antes de rodar o supabase-site.sql). Depois disso vale o que
@@ -351,7 +356,8 @@ fbq('track', 'PageView');
   var estado = {
     setores: SETORES.map(function (s) { return Object.assign({ preco: PRECO_PADRAO[s.id] || null, restam: null }, s); }),
     lote: LOTE_PADRAO,
-    q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0 }
+    q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0 },
+    expandido: { pista: false, open: false } // cartões começam fechados; abre no clique
   };
 
   // Escolha guardada na aba: quem volta do checkout encontra o que tinha escolhido.
@@ -413,23 +419,25 @@ fbq('track', 'PageView');
 
   function montar() {
     var box = $('setores');
+    // quem volta com ingresso já escolhido encontra o cartão aberto
+    estado.setores.forEach(function (s) { if (qtdSetor(s.id) > 0) estado.expandido[s.id] = true; });
     box.innerHTML = '';
     estado.setores.forEach(function (s) {
       var esgotado = s.restam === 0;
       var card = document.createElement('div');
-      card.className = 'setor setor-' + s.id + (esgotado ? ' esgotado' : '');
+      card.className = 'setor setor-' + s.id + (esgotado ? ' esgotado' : estado.expandido[s.id] ? ' expandido' : '');
       card.dataset.setor = s.id;
       card.innerHTML =
-        '<div class="setor-topo">' +
+        (esgotado ? '<div class="setor-topo">' : '<button type="button" class="setor-topo" data-abrir="' + s.id + '" aria-expanded="' + estado.expandido[s.id] + '">') +
           '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + '</small>' +
           '<strong>' + s.nome + '</strong>' +
           (esgotado ? '<span class="preco">Esgotado</span>'
             : s.preco ? '<span class="preco">' + moeda(centavos(s.preco)) + '</span>'
             : '<span class="preco em-breve">Valor<br>em breve</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
-          '<span class="rodape-card"><span class="tipo">' + s.tipo + '</span></span>' +
+          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + s.tipo + '</span>' : '') + (esgotado ? '' : '<span class="abrir" data-abrir-rot></span>') + '</span>' +
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
-        '</div>' +
+        (esgotado ? '</div>' : '</button>') +
         (esgotado ? '' :
           '<div class="setor-opcoes">' +
             (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + linhaQtd('pista_meia', 'Meia-entrada') : linhaQtd('open_inteira', 'Inteira')) +
@@ -448,6 +456,15 @@ fbq('track', 'PageView');
       '<a class="btn btn-zap" target="_blank" rel="noopener" href="' + link + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Chamar no WhatsApp</span></a>';
     box.appendChild(cam);
 
+    box.querySelectorAll('[data-abrir]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.dataset.abrir;
+        estado.expandido[id] = !estado.expandido[id];
+        b.closest('.setor').classList.toggle('expandido', estado.expandido[id]);
+        b.setAttribute('aria-expanded', String(estado.expandido[id]));
+        atualizar();
+      });
+    });
     box.querySelectorAll('[data-qtd]').forEach(function (b) {
       b.addEventListener('click', function () { mudarQtd(b.dataset.qtd, Number(b.dataset.d)); });
     });
@@ -470,6 +487,8 @@ fbq('track', 'PageView');
       var card = document.querySelector('.setor[data-setor="' + s.id + '"]');
       if (!card) return;
       card.classList.toggle('aberto', qtdSetor(s.id) > 0); // com ingresso escolhido: borda + ✓
+      var rot = card.querySelector('[data-abrir-rot]');
+      if (rot) rot.textContent = estado.expandido[s.id] ? 'Fechar' : s.id === 'open' ? 'Ver o que tem e escolher' : 'Escolher';
       card.querySelectorAll('[data-preco]').forEach(function (e) {
         var meia = e.dataset.preco === 'pista_meia';
         e.textContent = s.preco ? moeda(meia ? meiaCent(s.preco) : centavos(s.preco)) + ' cada' : 'Valor em breve';
