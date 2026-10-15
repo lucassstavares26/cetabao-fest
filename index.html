@@ -92,6 +92,8 @@ fbq('track', 'PageView');
   }
   .nomes { padding-top: 2px; }
   .cabeca { font: 400 clamp(20px, 7.2vw, 32px)/1.05 var(--placa); color: #fff; text-wrap: balance; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  /* só o "&" numa fonte mais tradicional (o da Bungee ficou estranho) */
+  .e-comercial { font: 800 1.12em/1 var(--estreita); vertical-align: -.02em; }
   .mais { margin-top: 6px; font: 400 clamp(19px, 6.6vw, 30px)/1 var(--placa); color: #fff; text-shadow: 0 3px 0 var(--engradado-escuro); }
   .demais { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 9px; margin-top: 14px; padding-inline: 6px; }
   .demais li { font: 400 clamp(11px, 3.3vw, 15px)/1.25 var(--placa); color: var(--sol); text-shadow: 0 2px 0 var(--engradado-escuro); }
@@ -274,7 +276,7 @@ fbq('track', 'PageView');
   <section class="porteira" aria-label="Atrações">
     <div class="nomes">
       <h1 class="sr">Ingressos Cê Tá Bão Fest · Passos-MG · sábado, 28/11 — site oficial de vendas</h1>
-      <p class="cabeca">Henrique &amp; Diego</p>
+      <p class="cabeca">Henrique <span class="e-comercial">&amp;</span> Diego</p>
       <p class="mais">+ Kamisa 10</p>
       <ul class="demais">
         <li>Luan e Rafael</li>
