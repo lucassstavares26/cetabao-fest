@@ -44,10 +44,46 @@ fbq('track', 'PageView');
 <noscript><img height="1" width="1" style="display:none" alt=""
   src="https://www.facebook.com/tr?id=1400962194832152&ev=PageView&noscript=1"></noscript>
 <style>
-  /* ---------- topo: flyer + artistas (igual ao antigo cadastro) ---------- */
+  /* ---------- faixa fixa do topo (pedido do Lucas, 15/10): logo + "Site oficial" + menu ---------- */
+  :root { --faixa-h: 58px; }
+  .faixa {
+    position: sticky; top: 0; z-index: 60; height: var(--faixa-h);
+    display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px;
+    background: #000; border-bottom: 3px solid var(--sol);
+  }
+  .faixa-marca { flex: none; display: block; }
+  .faixa-marca img { width: auto; height: 38px; }
+  .faixa-oficial {
+    display: inline-flex; align-items: center; gap: 5px; min-width: 0;
+    padding: 5px 9px 4px 6px; border-radius: 999px; border: 1.5px solid rgba(37, 211, 102, .55); background: rgba(37, 211, 102, .12);
+    font: 800 13px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; color: #fff; white-space: nowrap;
+  }
+  .faixa-oficial svg { width: 16px; height: 16px; flex: none; color: #25d366; }
+  .faixa-menu-btn {
+    margin-left: auto; flex: none; width: 46px; height: 46px; display: grid; place-content: center; gap: 5px;
+    border: 0; border-radius: 10px; background: none; cursor: pointer; touch-action: manipulation;
+  }
+  .faixa-menu-btn span { display: block; width: 26px; height: 3px; border-radius: 2px; background: #fff; transition: transform .2s, opacity .2s; }
+  .faixa-menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .faixa-menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .faixa-menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+  .faixa-menu {
+    position: absolute; top: 100%; left: 0; right: 0; display: grid; gap: 4px;
+    padding: 10px 14px 16px; background: #000; border-bottom: 3px solid var(--sol); box-shadow: 0 18px 30px rgba(0, 0, 0, .45);
+  }
+  .faixa-menu a {
+    display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 12px;
+    font: 800 19px/1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; color: #fff; text-decoration: none;
+  }
+  .faixa-menu a:not(.menu-comprar) { border: 1.5px solid rgba(255, 255, 255, .18); }
+  .faixa-menu .menu-comprar { gap: 8px; background: var(--sol); color: var(--engradado); box-shadow: 0 4px 0 var(--sol-sombra); margin-bottom: 4px; }
+  .faixa-menu .menu-comprar svg { width: 22px; height: 22px; }
+  /* âncoras param logo abaixo da faixa */
+  #atracoes, #mapa, #compra, .setores { scroll-margin-top: calc(var(--faixa-h) + 10px); }
+
+  /* ---------- topo: artistas (sem a logo do cartaz — ela já está na faixa) ---------- */
   .artistas { position: relative; overflow: hidden; background: var(--ceu-foto, #004697); }
-  /* Corta a faixa de céu acima do logo (pedido do Lucas, 12/10): a placa "10 horas | 360°" entra na primeira tela. */
-  .artistas img { width: 100%; margin-top: -10%; }
+  .artistas img { width: 100%; }
   .artistas::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; background: linear-gradient(180deg, rgba(180, 18, 18, 0), var(--engradado)); }
   .porteira {
     padding: 4px var(--lado) 28px;
@@ -92,6 +128,9 @@ fbq('track', 'PageView');
     background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e);
   }
   .cartao h2 { font-size: clamp(23px, 6.6vw, 27px); color: var(--ceu); }
+  /* "Escolha seu ingresso" sempre numa linha (pedido do Lucas, 15/10): a letra encolhe com a tela */
+  #t-compra { white-space: nowrap; font-size: min(27px, calc((100vw - 76px) / 13.4)); }
+  @media (min-width: 480px) { #t-compra { font-size: 27px; } }
   .cartao .sub { margin-top: 6px; font-size: 15.5px; color: var(--tinta-suave); }
 
   .setores { display: grid; gap: 14px; margin-top: 22px; text-align: left; }
@@ -211,9 +250,22 @@ fbq('track', 'PageView');
   <symbol id="i-local" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></symbol>
 </svg>
 
+<header class="faixa">
+  <a class="faixa-marca" href="#atracoes" data-ir aria-label="Cê Tá Bão Fest — voltar ao topo">
+    <img src="/img/logo-horizontal.webp" alt="Cê Tá Bão Fest" width="243" height="96" fetchpriority="high">
+  </a>
+  <span class="faixa-oficial"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>Site oficial</span>
+  <button class="faixa-menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  <nav class="faixa-menu" id="menu" aria-label="Menu" hidden>
+    <a class="menu-comprar" href="#compra" data-ir><svg aria-hidden="true"><use href="#i-ticket"/></svg>Comprar ingressos</a>
+    <a href="#mapa" data-ir>Mapa do festival</a>
+    <a href="#atracoes" data-ir>Atrações</a>
+  </nav>
+</header>
+
 <main>
-  <figure class="artistas">
-    <img src="/img/topo-flyer.webp" alt="Cartaz do Cê Tá Bão Fest: Henrique e Diego, Kamisa 10 e as demais atrações" width="800" height="1052" fetchpriority="high">
+  <figure class="artistas" id="atracoes">
+    <img src="/img/topo-artistas.webp" alt="Artistas do Cê Tá Bão Fest: Henrique e Diego, Kamisa 10 e as demais atrações" width="800" height="712" fetchpriority="high">
   </figure>
 
   <section class="porteira" aria-label="Atrações">
@@ -238,7 +290,7 @@ fbq('track', 'PageView');
     </div>
   </div>
 
-  <section class="mapa" aria-labelledby="t-mapa">
+  <section class="mapa" id="mapa" aria-labelledby="t-mapa">
     <p class="rotulo">Antes de escolher</p>
     <h2 id="t-mapa">Mapa do festival</h2>
     <figure>
@@ -558,12 +610,19 @@ fbq('track', 'PageView');
 /* Atalho pros ingressos sem deixar "#compra" no endereço (pedido do Lucas,
    12/10): o link compartilhado fica só www.cetabaofest.com.br. */
 (function () {
-  var ir = function (suave) { var c = document.getElementById('compra'); if (c) c.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' }); };
+  var ir = function (suave, id) { var c = document.getElementById(id || 'compra'); if (c) c.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' }); };
+  var btn = document.getElementById('menu-btn'), menu = document.getElementById('menu');
+  var abrir = function (sim) { menu.hidden = !sim; btn.setAttribute('aria-expanded', String(sim)); btn.setAttribute('aria-label', sim ? 'Fechar menu' : 'Abrir menu'); };
+  btn.addEventListener('click', function () { abrir(menu.hidden); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { abrir(false); btn.focus(); } });
   document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('a[href="#compra"]');
+    // clicou fora do menu aberto: fecha
+    if (!menu.hidden && !(e.target.closest && e.target.closest('.faixa'))) abrir(false);
+    var a = e.target.closest && e.target.closest('a[href="#compra"], a[data-ir]');
     if (!a) return;
     e.preventDefault();
-    ir(true);
+    abrir(false);
+    ir(true, a.getAttribute('href').slice(1));
   });
   // Voltou do checkout ("Alterar pedido" leva pra /#compra): rola e limpa o endereço.
   if (location.hash === '#compra') {
