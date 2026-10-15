@@ -49,7 +49,8 @@ fbq('track', 'PageView');
   .faixa {
     position: sticky; top: 0; z-index: 60; height: var(--faixa-h);
     display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px;
-    background: #000; border-bottom: 3px solid var(--sol);
+    background: rgba(0, 37, 96, .94); border-bottom: 3px solid var(--sol);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); /* mesmo azul da barra de baixo */
   }
   .faixa-marca { flex: none; display: block; }
   .faixa-marca img { width: auto; height: 38px; }
@@ -69,7 +70,7 @@ fbq('track', 'PageView');
   .faixa-menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
   .faixa-menu {
     position: absolute; top: 100%; left: 0; right: 0; display: grid; gap: 4px;
-    padding: 10px 14px 16px; background: #000; border-bottom: 3px solid var(--sol); box-shadow: 0 18px 30px rgba(0, 0, 0, .45);
+    padding: 10px 14px 16px; background: rgb(0, 37, 96); border-bottom: 3px solid var(--sol); box-shadow: 0 18px 30px rgba(0, 0, 0, .45);
   }
   .faixa-menu a {
     display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 12px;
