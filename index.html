@@ -226,16 +226,18 @@ fbq('track', 'PageView');
     transform: translateX(-50%); transition: transform .25s ease;
   }
   .barra.escondida { transform: translate(-50%, 115%); }
-  .barra { display: flex; align-items: center; gap: 12px; }
-  .barra-total { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; color: #fff; white-space: nowrap; }
-  .barra-total span { font: 700 16px/1 var(--estreita); letter-spacing: .04em; color: var(--ceu-texto); }
-  .barra-total b { font: 400 clamp(20px, 6vw, 25px)/1 var(--placa); color: var(--sol); }
+  .barra { display: flex; align-items: center; gap: 10px; padding-inline: 14px; }
+  .barra-total { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 6px; color: #fff; white-space: nowrap; }
+  .barra-total span { font: 700 15px/1 var(--estreita); letter-spacing: .04em; color: var(--ceu-texto); }
+  .barra-total b { font: 400 clamp(17px, 5.2vw, 23px)/1 var(--placa); color: var(--sol); }
   .barra-btn {
-    flex: none; min-height: 52px; padding: 0 22px; border: 0; border-radius: 999px; cursor: pointer; touch-action: manipulation;
-    background: var(--sol); color: var(--engradado); font: 800 18px/1 var(--estreita); letter-spacing: .03em;
+    flex: none; min-height: 46px; padding: 0 15px; border: 0; border-radius: 999px; cursor: pointer; touch-action: manipulation;
+    background: var(--sol); color: var(--engradado); font: 800 16px/1 var(--estreita); letter-spacing: .02em; white-space: nowrap;
     box-shadow: 0 4px 0 var(--sol-sombra), 0 10px 22px rgba(0, 0, 0, .25); transition: transform .15s, box-shadow .15s;
   }
   .barra-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--sol-sombra); }
+  /* celular bem estreito: total de 4 dígitos + botão cabem sem encostar */
+  @media (max-width: 345px) { .barra { gap: 8px; padding-inline: 12px; } .barra-total b { font-size: 16px; } .barra-btn { padding: 0 12px; font-size: 15px; } }
 </style>
 <script src="/suporte.js" defer></script>
 <script src="/acesso.js" data-pagina="compra" defer></script>
