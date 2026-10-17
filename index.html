@@ -306,7 +306,7 @@ fbq('track', 'PageView');
     <h2 id="t-mapa">Mapa do festival</h2>
     <figure>
       <img src="/img/mapa-festival.webp" width="960" height="960" loading="lazy" decoding="async"
-           alt="Mapa do Cê Tá Bão Fest: Open Bar em azul à esquerda, Pista VIP em amarelo à direita e Setor Premium em vermelho embaixo, com camarotes e mesas numerados; o palco fica no centro.">
+           alt="Mapa do Cê Tá Bão Fest: Open Bar em azul à esquerda, Pista VIP em amarelo à direita e Setor Premium em vermelho embaixo, com lounges e mesas numerados; o palco fica no centro.">
     </figure>
     <p class="legenda" aria-hidden="true">
       <span><i style="background:var(--sol)"></i>Pista VIP</span>
@@ -352,7 +352,7 @@ fbq('track', 'PageView');
       <ul class="info-setores">
         <li style="--cor: var(--sol)"><strong>🟡 Pista VIP</strong>Visão privilegiada do Palco 360°, praça de alimentação e banheiros exclusivos.</li>
         <li style="--cor: #6fa8ff"><strong>🔵 Open Bar</strong>Bebidas à vontade, incluindo cerveja, vodka, energético, gin, tônica, água e refrigerante, além de acesso e banheiros exclusivos.</li>
-        <li style="--cor: #ff6b6b"><strong>🔴 Premium — Camarotes e Mesas Bistrô</strong>Para curtir com sua turma, com espaço reservado, visão privilegiada do Palco 360°, atendimento de garçom e banheiros exclusivos. (Compras pelo WhatsApp da produção)</li>
+        <li style="--cor: #ff6b6b"><strong>🔴 Premium — Lounge e Mesas Bistrô</strong>Para curtir com sua turma, com espaço reservado, visão privilegiada do Palco 360°, atendimento de garçom e banheiros exclusivos. (Compras pelo WhatsApp da produção)</li>
       </ul>
 
       <div class="info-quando">
@@ -399,7 +399,7 @@ fbq('track', 'PageView');
   // Camarotes e mesas (Setor Premium) são vendidos pelo WhatsApp da produção:
   // número só com dígitos, com 55 na frente (ex.: 5535999998888).
   var WHATSAPP_CAMAROTES = '553531690079'; // suporte do Cê Tá Bão (quem vende camarote e mesa)
-  // O que aparece ao abrir o cartão Camarotes e Mesas (cada um com seu botão de reservar).
+  // O que aparece ao abrir o cartão Lounge e Mesas (cada um com seu botão de reservar).
   // preco: null = não mostra valor.
   var PREMIUM = [
     { nome: 'Lounge Ouro', artigo: 'o', pessoas: 10, preco: 2500, consumo: 500 },
@@ -526,7 +526,7 @@ fbq('track', 'PageView');
         : 'https://www.instagram.com/cetabaofest/';
     };
     cam.innerHTML = '<button type="button" class="setor-topo" data-abrir="camarote" aria-expanded="' + estado.expandido.camarote + '">' +
-        '<small><span class="rot">Setor Premium</span></small><strong>Camarotes e Mesas</strong>' +
+        '<small><span class="rot">Setor Premium</span></small><strong>Lounge e Mesas</strong>' +
         '<span class="desc">Espaço reservado e exclusivo, com melhor visão para o palco.</span>' +
         '<span class="rodape-card"><span class="tipo">Lounges e Mesa Bistrô</span><span class="abrir" data-abrir-rot></span></span>' +
       '</button>' +
