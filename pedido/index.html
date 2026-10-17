@@ -71,13 +71,13 @@
     <p class="pix-codigo" id="pix-codigo"></p>
     <button class="btn btn-sol" type="button" id="pix-copiar">Copiar código Pix</button>
     <p class="pix-tempo">O Pix vence em <b id="pix-tempo">30:00</b></p>
-    <p>Esta página atualiza sozinha. Os ingressos também chegam no seu WhatsApp e e-mail.</p>
+    <p>Esta página atualiza sozinha. Os ingressos também chegam no seu e-mail.</p>
   </div>
 
   <div class="cartao" id="pendente" hidden>
     <span class="espera" aria-hidden="true"></span>
     <h2 id="pendente-titulo">Esperando a confirmação do pagamento</h2>
-    <p id="pendente-texto">Se você pagou com Pix, costuma cair em segundos. Esta página atualiza sozinha e os ingressos aparecem aqui — e chegam no seu e-mail e WhatsApp.</p>
+    <p id="pendente-texto">Se você pagou com Pix, costuma cair em segundos. Esta página atualiza sozinha e os ingressos aparecem aqui — e chegam no seu e-mail.</p>
   </div>
 
   <div class="cartao" id="expirou" hidden>
@@ -98,7 +98,7 @@
 
   <div class="cartao" id="nao-achou" hidden>
     <h2>Pedido não encontrado</h2>
-    <p>Confira se o link está completo — ele chegou no seu e-mail e no WhatsApp.</p>
+    <p>Confira se o link está completo — ele chegou no seu e-mail.</p>
     <a class="btn btn-sol" href="/">Ir para os ingressos</a>
   </div>
 
@@ -106,7 +106,7 @@
     <div class="cartao nao-imprime">
       <div class="ok-icone" aria-hidden="true">✓</div>
       <h2 id="pago-titulo">Pagamento aprovado!</h2>
-      <p id="pago-texto">Seus ingressos estão aqui embaixo e também foram pro seu e-mail e WhatsApp.</p>
+      <p id="pago-texto">Seus ingressos estão aqui embaixo e também foram pro seu e-mail.</p>
     </div>
     <ul class="instrucoes">
       <li>Na entrada, mostre o <strong>QR Code de cada pessoa</strong> — pode ser na tela do celular.</li>
@@ -157,7 +157,7 @@
         }
         if (p.mp_status === 'in_process' || p.mp_status === 'pending') {
           $('pendente-titulo').textContent = 'Pagamento em análise';
-          $('pendente-texto').textContent = 'O Mercado Pago está conferindo o pagamento do cartão — costuma levar poucos minutos. Assim que aprovar, os ingressos aparecem aqui e chegam no seu WhatsApp e e-mail.';
+          $('pendente-texto').textContent = 'O Mercado Pago está conferindo o pagamento do cartão — costuma levar poucos minutos. Assim que aprovar, os ingressos aparecem aqui e chegam no seu e-mail.';
         }
         if (p.mp_status === 'rejected') {
           $('pendente-titulo').textContent = 'Pagamento recusado';
