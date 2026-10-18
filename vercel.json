@@ -24,6 +24,10 @@
     {
       "source": "/ingresso/:codigo",
       "destination": "/ingresso/index.html"
+    },
+    {
+      "source": "/pagar/:token",
+      "destination": "/pagar/index.html"
     }
   ]
 }
