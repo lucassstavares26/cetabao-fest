@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lounge e Mesas · Cê Tá Bão Fest</title>
+<meta name="description" content="Escolha seu Lounge ou Mesa Bistrô no Setor Premium do Cê Tá Bão Fest e pague no Pix ou cartão.">
+<meta name="theme-color" content="#003c86">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<style>
+  body { text-align: left; }
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
+  .barra-topo img { width: 54px; }
+  .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
+  .barra-topo a { margin-left: auto; color: var(--ceu-texto); font: 700 14px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; }
+  .conteudo { padding: 22px var(--lado) 40px; display: grid; gap: 18px; }
+  h1 { font-size: clamp(30px, 9vw, 38px); }
+  .lead { margin-top: 6px; color: var(--ceu-texto); font-size: 15.5px; }
+  .bloco { padding: 18px 16px; border-radius: 20px; background: #fff; color: var(--tinta); box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .28); }
+  .rot { display: block; margin-bottom: 8px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
+
+  /* categorias */
+  .cats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cat { position: relative; padding: 12px 12px 10px 34px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff; text-align: left; cursor: pointer; font: inherit; color: var(--tinta); touch-action: manipulation; }
+  .cat::before { content: ""; position: absolute; left: 12px; top: 14px; width: 14px; height: 14px; border-radius: 50%; background: var(--cor); box-shadow: 0 0 0 2px rgba(0, 0, 0, .15); }
+  .cat b { display: block; font: 800 15px/1.1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; }
+  .cat span { display: block; margin-top: 4px; font-size: 13.5px; color: var(--tinta-suave); }
+  .cat[aria-pressed="true"] { border-color: var(--ceu); background: #e8eefb; box-shadow: 0 0 0 3px rgba(0, 60, 134, .12); }
+
+  /* mapa do Setor Premium (mesmo desenho do painel) */
+  .mapa-premium { padding: 12px; border-radius: 16px; border: 4px solid #5a0b10; background: radial-gradient(120% 90% at 60% 0%, #e01b24 0%, #b10f19 55%, #7d0a12 100%); }
+  .mapa-grade { display: flex; gap: 10px; }
+  .mesas { display: grid; grid-template-columns: repeat(2, 30px); gap: 6px; align-self: start; }
+  .lounges { flex: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; align-content: start; }
+  .lugar { position: relative; display: grid; place-items: center; border: 2px solid transparent; font: 800 14px/1 var(--estreita); cursor: pointer; touch-action: manipulation; padding: 0; color: #fff; }
+  .mesas .lugar { width: 30px; height: 30px; border-radius: 50%; }
+  .lounges .lugar { aspect-ratio: 5 / 4; border-radius: 6px; font-size: 15px; }
+  .lugar.livre { background: var(--cor); color: #3b0a0e; border-color: rgba(0, 0, 0, .25); }
+  .lugar.outra { background: rgba(255, 255, 255, .18); color: rgba(255, 255, 255, .55); cursor: default; }
+  .lugar.ocupado { background: #3b0a0e; color: rgba(255, 255, 255, .35); cursor: default; }
+  .lugar.ocupado::after { content: "✕"; position: absolute; font-size: 11px; bottom: 1px; right: 3px; color: rgba(255, 255, 255, .5); }
+  .lugar.escolhido { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px rgba(255, 255, 255, .25); }
+  .mapa-titulo { margin-top: 10px; text-align: center; font: 400 22px/1 var(--placa); color: #fff; }
+  .legenda { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 13px; color: var(--tinta-suave); }
+  .legenda i { display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: -1px; border-radius: 3px; }
+  .ver-mapa { margin-top: 12px; font-size: 14px; }
+  .ver-mapa summary { cursor: pointer; font-weight: 700; color: var(--ceu); }
+  .ver-mapa img { width: 100%; margin-top: 10px; border-radius: 12px; }
+
+  /* escolha */
+  .escolha h2 { font: 400 clamp(22px, 6.4vw, 26px)/1.1 var(--placa); color: var(--ceu); }
+  .escolha ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 4px; font: 700 15.5px/1.3 var(--estreita); letter-spacing: .02em; }
+  .escolha .preco { margin-top: 12px; font: 400 30px/1 var(--placa); color: var(--ceu); }
+  .escolha .btn { margin-top: 14px; }
+  .escolha .btn-zap { min-height: 46px; font-size: 15px; background: #fff; color: var(--verde-escuro); border: 2px solid var(--verde); box-shadow: none; }
+  .escolha .vazio { color: var(--tinta-suave); font-size: 15px; }
+  .erro-geral { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
+  .fechado { text-align: center; }
+  .fechado p { margin-top: 8px; color: var(--tinta-suave); }
+  .fechado .btn { margin-top: 14px; }
+  .btn:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+</style>
+<script src="/suporte.js" defer></script>
+</head>
+<body data-suporte-msg="Oi! Tenho uma dúvida sobre os Lounges e Mesas do Cê Tá Bão Fest.">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-zap" viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41z"/></symbol>
+</svg>
+
+<header class="barra-topo">
+  <img src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+  <span>Setor Premium</span>
+  <a href="/#compra">‹ Voltar</a>
+</header>
+
+<main class="conteudo">
+  <div>
+    <h1>Escolha seu lugar</h1>
+    <p class="lead">Espaço reservado e exclusivo, com melhor visão para o palco. Toque num número livre no mapa.</p>
+  </div>
+
+  <section class="bloco" aria-label="Categoria">
+    <span class="rot">Categoria</span>
+    <div class="cats" id="cats" role="group" aria-label="Categoria"></div>
+  </section>
+
+  <section class="bloco" aria-label="Mapa do Setor Premium">
+    <span class="rot">Mapa do Setor Premium</span>
+    <div class="mapa-premium">
+      <div class="mapa-grade">
+        <div class="mesas" id="mesas" aria-label="Mesas Bistrô"></div>
+        <div class="lounges" id="lounges" aria-label="Lounges"></div>
+      </div>
+      <p class="mapa-titulo">Setor Premium</p>
+    </div>
+    <div class="legenda">
+      <span><i style="background:#ffd400"></i>Livre</span>
+      <span><i style="background:#3b0a0e"></i>Vendido</span>
+      <span><i style="background:rgba(0,0,0,.18)"></i>Outra categoria</span>
+    </div>
+    <details class="ver-mapa">
+      <summary>Ver onde fica no mapa do festival</summary>
+      <img src="/img/mapa-festival.webp" alt="Mapa do Cê Tá Bão Fest: o Setor Premium em vermelho, com lounges e mesas numerados." loading="lazy">
+    </details>
+  </section>
+
+  <section class="bloco escolha" id="escolha" aria-live="polite">
+    <p class="vazio" id="escolha-vazio">Toque num número livre no mapa.</p>
+    <div id="escolha-cheia" hidden>
+      <h2 id="e-lugar"></h2>
+      <ul>
+        <li id="e-pessoas"></li>
+        <li id="e-consumo"></li>
+      </ul>
+      <p class="preco" id="e-preco"></p>
+      <button class="btn btn-sol" type="button" id="continuar">Continuar para o pagamento</button>
+    </div>
+    <p class="erro-geral" id="erro" role="alert" hidden></p>
+    <a class="btn btn-zap" id="zap" target="_blank" rel="noopener" href="https://wa.me/553531690079"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Prefiro falar no WhatsApp</span></a>
+    <input type="text" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+  </section>
+
+  <section class="bloco fechado" id="fechado" hidden>
+    <h2 style="font:400 24px/1.1 var(--placa);color:var(--ceu)">Vendas online fechadas no momento</h2>
+    <p>Fale com a produção pelo WhatsApp pra reservar seu Lounge ou Mesa.</p>
+    <a class="btn btn-zap" target="_blank" rel="noopener" href="https://wa.me/553531690079?text=Oi!%20Quero%20reservar%20um%20Lounge%2FMesa%20no%20C%C3%AA%20T%C3%A1%20B%C3%A3o%20Fest."><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Chamar no WhatsApp</span></a>
+  </section>
+</main>
+
+<footer class="rodape" style="padding-bottom:30px;text-align:center">
+  <p>Cê Tá Bão Fest · Sábado, 28/11 · 16h · Parque de Exposições · Passos-MG</p>
+</footer>
+
+<script>
+(function () {
+  /* ================= CONFIGURAÇÃO ================= */
+  var API = 'https://cetabao-painel.vercel.app';
+  var SUPORTE = '553531690079';
+  // Mesma lista PREMIUM da página de compra (index.html) — o preço que vale vem do painel.
+  var CATS = {
+    ouro: { nome: 'Lounge Ouro', tipo: 'camarote', cor: '#f5c518', preco: 2500, consumo: 500 },
+    prata: { nome: 'Lounge Prata', tipo: 'camarote', cor: '#c9d1db', preco: 2300, consumo: 350 },
+    bronze: { nome: 'Lounge Bronze', tipo: 'camarote', cor: '#d98c45', preco: 2100, consumo: 250 },
+    mesa: { nome: 'Mesa Bistrô', tipo: 'mesa', cor: '#5b8cff', preco: 900, consumo: 150 }
+  };
+  // Desenho do mapa (igual ao painel e à arte do evento). Lounges: linhas de cima pra baixo (0 = vazio).
+  var MAPA_LOUNGES = [
+    [17, 8, 1, 0, 0, 0],
+    [18, 9, 2, 0, 0, 0],
+    [19, 10, 3, 0, 0, 0],
+    [20, 11, 4, 5, 6, 7],
+    [21, 12, 13, 14, 15, 16],
+    [22, 23, 24, 25, 26, 27]
+  ];
+  // Ouro 1–7, Prata 8–16, Bronze 17–27.
+  var catDoLounge = function (n) { return n <= 7 ? 'ouro' : n <= 16 ? 'prata' : 'bronze'; };
+  /* ================================================ */
+
+  var $ = function (id) { return document.getElementById(id); };
+  var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+  var pedido = new URLSearchParams(location.search).get('c');
+  var estado = { cat: CATS[pedido] ? pedido : 'ouro', escolhido: null, ocupados: { camarote: [], mesa: [] }, pessoas: { camarote: 10, mesa: 6 }, vendendo: true, enviando: false };
+
+  function montarCats() {
+    $('cats').innerHTML = Object.keys(CATS).map(function (k) {
+      var c = CATS[k];
+      return '<button type="button" class="cat" data-cat="' + k + '" style="--cor:' + c.cor + '" aria-pressed="' + (k === estado.cat) + '"><b>' + c.nome + '</b><span>' + moeda(c.preco) + '</span></button>';
+    }).join('');
+    $('cats').querySelectorAll('.cat').forEach(function (b) {
+      b.addEventListener('click', function () {
+        estado.cat = b.dataset.cat;
+        if (estado.escolhido && categoria(estado.escolhido) !== estado.cat) estado.escolhido = null;
+        try { history.replaceState(null, '', '?c=' + estado.cat); } catch (e) { /* tudo bem */ }
+        montarCats(); montarMapa(); montarEscolha();
+      });
+    });
+  }
+
+  function categoria(l) { return l.tipo === 'mesa' ? 'mesa' : catDoLounge(l.numero); }
+  function ocupado(tipo, n) { return estado.ocupados[tipo].indexOf(n) >= 0; }
+
+  function botaoLugar(tipo, n) {
+    var l = { tipo: tipo, numero: n };
+    var cat = categoria(l);
+    var classe = ocupado(tipo, n) ? 'ocupado' : cat === estado.cat ? 'livre' : 'outra';
+    var escolhido = estado.escolhido && estado.escolhido.tipo === tipo && estado.escolhido.numero === n;
+    var titulo = CATS[cat].nome + ' ' + n + (classe === 'ocupado' ? ' (vendido)' : '');
+    return '<button type="button" class="lugar ' + classe + (escolhido ? ' escolhido' : '') + '" style="--cor:' + CATS[cat].cor + '" data-tipo="' + tipo + '" data-n="' + n + '"' +
+      (classe === 'livre' ? '' : ' disabled') + ' aria-label="' + titulo + '" aria-pressed="' + !!escolhido + '">' + n + '</button>';
+  }
+
+  function montarMapa() {
+    var mesas = '';
+    for (var i = 1; i <= 10; i++) mesas += botaoLugar('mesa', i + 10) + botaoLugar('mesa', i);
+    $('mesas').innerHTML = mesas;
+    $('lounges').innerHTML = MAPA_LOUNGES.map(function (linha) {
+      return linha.map(function (n) { return n ? botaoLugar('camarote', n) : '<span></span>'; }).join('');
+    }).join('');
+    document.querySelectorAll('.lugar.livre').forEach(function (b) {
+      b.addEventListener('click', function () {
+        estado.escolhido = { tipo: b.dataset.tipo, numero: Number(b.dataset.n) };
+        montarMapa(); montarEscolha();
+        $('escolha').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
+  }
+
+  function montarEscolha() {
+    var l = estado.escolhido;
+    $('escolha-vazio').hidden = !!l;
+    $('escolha-cheia').hidden = !l;
+    $('erro').hidden = true;
+    var texto = 'Oi! Quero reservar um ' + CATS[estado.cat].nome + ' no Cê Tá Bão Fest.';
+    if (l) {
+      var c = CATS[categoria(l)];
+      $('e-lugar').textContent = c.nome + ' ' + l.numero;
+      $('e-pessoas').textContent = '👥 Para ' + estado.pessoas[l.tipo] + ' pessoas';
+      $('e-consumo').textContent = '🍻 ' + moeda(c.consumo) + ' de consumação';
+      $('e-preco').textContent = moeda(c.preco);
+      texto = 'Oi! Quero reservar o ' + c.nome + ' ' + l.numero + ' no Cê Tá Bão Fest.';
+    }
+    $('zap').href = 'https://wa.me/' + SUPORTE + '?text=' + encodeURIComponent(texto);
+  }
+
+  function carregar() {
+    return fetch(API + '/api/site/premium', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (p) {
+        Object.keys(CATS).forEach(function (k) { if (p.precos && p.precos[k]) CATS[k].preco = p.precos[k]; });
+        if (p.pessoas) estado.pessoas = p.pessoas;
+        estado.ocupados = p.ocupados || estado.ocupados;
+        estado.vendendo = !!p.vendendo;
+        if (estado.escolhido && ocupado(estado.escolhido.tipo, estado.escolhido.numero)) estado.escolhido = null;
+        $('fechado').hidden = estado.vendendo;
+        $('escolha').hidden = !estado.vendendo;
+        montarCats(); montarMapa(); montarEscolha();
+      })
+      .catch(function () { montarCats(); montarMapa(); montarEscolha(); });
+  }
+
+  $('continuar').addEventListener('click', function () {
+    var l = estado.escolhido;
+    if (!l || estado.enviando) return;
+    estado.enviando = true;
+    var b = $('continuar');
+    b.disabled = true;
+    b.innerHTML = '<span class="girando"></span><span>Guardando seu lugar…</span>';
+    fetch(API + '/api/site/premium/reservar', {
+      method: 'POST',
+      headers: { 'content-type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify({ tipo: l.tipo, numero: l.numero, empresa: $('empresa').value })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        if (res.status === 200 && res.j.token) { location.href = '/pagar/' + res.j.token; return; }
+        throw new Error(res.j.erro || 'Não deu certo agora. Tente de novo.');
+      })
+      .catch(function (e) {
+        estado.enviando = false;
+        b.disabled = false;
+        b.textContent = 'Continuar para o pagamento';
+        var msg = e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Sem conexão. Confira a internet e tente de novo.';
+        carregar().then(function () { $('erro').textContent = msg; $('erro').hidden = false; });
+      });
+  });
+
+  window.addEventListener('pageshow', function (e) { if (e.persisted) { estado.enviando = false; carregar(); } });
+  montarCats(); montarMapa(); montarEscolha();
+  carregar();
+})();
+</script>
+</body>
+</html>

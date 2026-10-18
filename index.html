@@ -173,6 +173,8 @@ fbq('track', 'PageView');
   .premium-preco { font: 400 clamp(18px, 5.2vw, 21px)/1 var(--placa); color: var(--ceu); white-space: nowrap; }
   .premium ul { list-style: none; display: grid; gap: 4px; margin: 10px 0 12px; padding: 0; font: 700 15.5px/1.3 var(--estreita); letter-spacing: .02em; }
   .premium .btn { min-height: 50px; padding: 12px 16px; font-size: 17px; }
+  .premium .btn + .btn { margin-top: 10px; }
+  .premium .btn-zap.secundario { min-height: 44px; font-size: 15px; background: #fff; color: var(--verde-escuro); border: 2px solid var(--verde); box-shadow: none; }
   .setor.aberto { border-color: var(--tinta); transform: translateY(-2px); }
   .setor.aberto::after {
     content: "✓"; position: absolute; top: -10px; right: -8px; width: 30px; height: 30px; display: grid; place-items: center;
@@ -352,7 +354,7 @@ fbq('track', 'PageView');
       <ul class="info-setores">
         <li style="--cor: var(--sol)"><strong>🟡 Pista VIP</strong>Visão privilegiada do Palco 360°, praça de alimentação e banheiros exclusivos.</li>
         <li style="--cor: #6fa8ff"><strong>🔵 Open Bar</strong>Bebidas à vontade, incluindo cerveja, vodka, energético, gin, tônica, água e refrigerante, além de acesso e banheiros exclusivos.</li>
-        <li style="--cor: #ff6b6b"><strong>🔴 Premium — Lounge e Mesas Bistrô</strong>Para curtir com sua turma, com espaço reservado, visão privilegiada do Palco 360°, atendimento de garçom e banheiros exclusivos. (Compras pelo WhatsApp da produção)</li>
+        <li style="--cor: #ff6b6b"><strong>🔴 Premium — Lounge e Mesas Bistrô</strong>Para curtir com sua turma, com espaço reservado, visão privilegiada do Palco 360°, atendimento de garçom e banheiros exclusivos. (Compras pelo site ou pelo WhatsApp da produção)</li>
       </ul>
 
       <div class="info-quando">
@@ -399,14 +401,17 @@ fbq('track', 'PageView');
   // Camarotes e mesas (Setor Premium) são vendidos pelo WhatsApp da produção:
   // número só com dígitos, com 55 na frente (ex.: 5535999998888).
   var WHATSAPP_CAMAROTES = '553531690079'; // suporte do Cê Tá Bão (quem vende camarote e mesa)
-  // O que aparece ao abrir o cartão Lounge e Mesas (cada um com seu botão de reservar).
-  // preco: null = não mostra valor.
+  // O que aparece ao abrir o cartão Lounge e Mesas. Com a venda aberta, cada um
+  // ganha "Comprar agora" (escolhe o número no mapa em /lounge/ e paga no site);
+  // o WhatsApp continua. O preço que vale é o do painel (/api/site/premium).
+  // A consumação também está em lounge/ e pagar/ — mudou aqui, muda lá.
   var PREMIUM = [
-    { nome: 'Lounge Ouro', artigo: 'o', pessoas: 10, preco: 2500, consumo: 500 },
-    { nome: 'Lounge Prata', artigo: 'o', pessoas: 10, preco: 2300, consumo: 350 },
-    { nome: 'Lounge Bronze', artigo: 'o', pessoas: 10, preco: 2100, consumo: 250 },
-    { nome: 'Mesa Bistrô', artigo: 'a', pessoas: 6, preco: 900, consumo: 150 }
+    { cat: 'ouro', nome: 'Lounge Ouro', artigo: 'o', pessoas: 10, preco: 2500, consumo: 500 },
+    { cat: 'prata', nome: 'Lounge Prata', artigo: 'o', pessoas: 10, preco: 2300, consumo: 350 },
+    { cat: 'bronze', nome: 'Lounge Bronze', artigo: 'o', pessoas: 10, preco: 2100, consumo: 250 },
+    { cat: 'mesa', nome: 'Mesa Bistrô', artigo: 'a', pessoas: 6, preco: 900, consumo: 150 }
   ];
+  var premiumVendendo = false;
   // Setores vendidos no site. Preço, lote e estoque vêm do painel (/api/site/publico).
   // A mesma lista existe em checkout/index.html — mudou aqui, muda lá.
   var SETORES = [
@@ -466,6 +471,14 @@ fbq('track', 'PageView');
         montar();
       })
       .catch(function () { /* fica com o preço padrão */ });
+    fetch(API + '/api/site/premium', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (p) {
+        PREMIUM.forEach(function (o) { if (p.precos && p.precos[o.cat]) o.preco = p.precos[o.cat]; });
+        premiumVendendo = !!p.vendendo;
+        montar();
+      })
+      .catch(function () { /* fica só com o WhatsApp */ });
   }
 
   // Se o estoque de um setor caiu abaixo do que a pessoa tinha escolhido, corta.
@@ -534,7 +547,8 @@ fbq('track', 'PageView');
         return '<div class="premium"><div class="premium-topo"><b>' + p.nome + '</b>' +
             (p.preco ? '<span class="premium-preco">' + moeda(centavos(p.preco)) + '</span>' : '') + '</div>' +
           '<ul><li>👥 Para ' + p.pessoas + ' pessoas</li><li>🍻 ' + moeda(centavos(p.consumo)) + ' de consumação</li></ul>' +
-          '<a class="btn btn-zap" target="_blank" rel="noopener" href="' + reservar(p) + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Reservar no WhatsApp</span></a></div>';
+          (premiumVendendo ? '<a class="btn btn-sol" href="/lounge/?c=' + p.cat + '">Comprar agora</a>' : '') +
+          '<a class="btn btn-zap' + (premiumVendendo ? ' secundario' : '') + '" target="_blank" rel="noopener" href="' + reservar(p) + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Reservar no WhatsApp</span></a></div>';
       }).join('') + '</div>';
     box.appendChild(cam);
 

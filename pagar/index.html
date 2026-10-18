@@ -43,11 +43,23 @@
   .total-linha b { font: 400 30px/1 var(--placa); color: var(--ceu); }
 
   .rot { display: block; margin-bottom: 7px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
-  .dados { display: grid; gap: 12px; }
-  .dado { font-size: 16px; }
-  .dado .rot { margin-bottom: 4px; }
-  .nomes { margin: 0; padding: 12px 14px 12px 32px; border-radius: 12px; background: var(--campo-fundo); border: 1.5px solid #dbe3f2; display: grid; gap: 4px; font-size: 15px; }
-  .confere { font-size: 13.5px; color: var(--tinta-suave); }
+  .dados { display: grid; gap: 16px; }
+  .campo input {
+    width: 100%; height: 54px; padding: 0 14px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff;
+    font: 500 17px/1.2 var(--texto); color: var(--tinta); transition: border-color .15s, box-shadow .15s;
+  }
+  .campo input::placeholder { color: #9aa6c2; }
+  .campo input:focus { outline: none; border-color: var(--ceu); box-shadow: 0 0 0 4px rgba(0, 60, 134, .12); }
+  .campo small { display: none; margin-top: 6px; font-size: 13.5px; font-weight: 600; color: var(--brasa); }
+  .campo.erro input { border-color: var(--brasa); background: #fff6f6; }
+  .campo.erro small { display: block; }
+  .dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dica { margin-top: -8px; font-size: 13px; color: var(--tinta-suave); }
+  .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .titulares { display: grid; gap: 12px; padding: 16px 14px; border-radius: 14px; background: var(--campo-fundo); border: 1.5px solid #dbe3f2; }
+  .titulares .explica { margin-top: -2px; font-size: 13.5px; color: var(--tinta-suave); }
+  .guardado { padding: 12px 14px; border-radius: 14px; background: #fff7d6; border: 2px solid var(--sol); color: #5a3b00; font: 700 15px/1.35 var(--estreita); letter-spacing: .02em; text-align: center; }
+  .guardado b { color: var(--brasa); font-variant-numeric: tabular-nums; }
 
   .pagamento { display: grid; gap: 16px; }
   .metodos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -95,10 +107,12 @@
 <main class="conteudo">
   <div>
     <h1 id="titulo">Falta só pagar</h1>
-    <p class="lead" id="lead">Nossa equipe já preencheu seus dados. É só escolher como pagar.</p>
+    <p class="lead" id="lead">Preencha seus dados, o nome de quem vai e escolha como pagar.</p>
   </div>
 
   <div class="bloco estado" id="carregando"><span class="espera" aria-hidden="true"></span><p>Carregando…</p></div>
+
+  <p class="guardado" id="guardado" hidden>Seu lugar está guardado por <b id="guardado-tempo">20:00</b></p>
 
   <section class="bloco" id="resumo" aria-label="O que você está pagando" hidden>
     <p class="evento">Cê Tá Bão Fest</p>
@@ -113,10 +127,35 @@
   </section>
 
   <section class="bloco dados" id="dados" aria-label="Seus dados" hidden>
-    <div class="dado"><span class="rot">Nome</span><span id="d-nome"></span></div>
-    <div class="dado"><span class="rot">E-mail · os ingressos chegam aqui</span><span id="d-email"></span></div>
-    <div class="dado"><span class="rot">Nome em cada ingresso</span><ol class="nomes" id="d-nomes"></ol></div>
-    <p class="confere">Algo errado? Fale com o suporte antes de pagar que a gente corrige.</p>
+    <div class="campo" id="c-nome">
+      <label class="rot" for="nome">Nome completo</label>
+      <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Como está no seu documento" maxlength="80">
+      <small>Digite seu nome completo.</small>
+    </div>
+    <div class="dupla">
+      <div class="campo" id="c-whats">
+        <label class="rot" for="whatsapp">WhatsApp</label>
+        <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="next" placeholder="(35) 99999-9999" maxlength="16">
+        <small>WhatsApp com DDD.</small>
+      </div>
+      <div class="campo" id="c-cpf">
+        <label class="rot" for="cpf">CPF</label>
+        <input id="cpf" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="next" placeholder="000.000.000-00" maxlength="14">
+        <small>CPF inválido.</small>
+      </div>
+    </div>
+    <div class="campo" id="c-email">
+      <label class="rot" for="email">E-mail</label>
+      <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="voce@email.com" maxlength="254">
+      <small>Digite um e-mail válido.</small>
+    </div>
+    <p class="dica">É por este e-mail que os ingressos chegam.</p>
+    <input class="isca" type="text" name="empresa" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="titulares">
+      <span class="rot">Nome em cada ingresso</span>
+      <p class="explica">Cada pessoa entra com o próprio QR Code. Quem ficar sem nome sai como "Convidado" — dá pra repassar depois.</p>
+      <div id="lista-titulares" style="display:grid;gap:12px"></div>
+    </div>
   </section>
 
   <section class="bloco pagamento" id="pagamento" aria-label="Pagamento" hidden>
@@ -128,6 +167,7 @@
       </div>
     </div>
     <div id="area-cartao" hidden>
+      <p class="cartao-aviso" id="cartao-aviso" hidden>Preencha seu e-mail lá em cima pra digitar o cartão.</p>
       <div id="brick-cartao"></div>
       <p class="cartao-aviso" style="margin-top:10px">À vista sai sem taxa. Em 2x ou 3x entram os juros do cartão — o valor de cada parcela aparece no campo "Parcelas" antes de pagar.</p>
     </div>
@@ -178,6 +218,7 @@
   <section class="bloco estado" id="fechado" hidden>
     <h2 id="fechado-titulo">Este link de pagamento venceu</h2>
     <p id="fechado-texto">Fale com o nosso suporte que a gente manda um link novo.</p>
+    <a class="btn btn-sol" id="fechado-site" href="/lounge/" hidden>Escolher de novo</a>
     <a class="btn btn-zap" id="fechado-zap" target="_blank" rel="noopener" href="https://wa.me/553531690079">Falar com o suporte</a>
   </section>
 
@@ -199,15 +240,16 @@
   var SUPORTE = '553531690079';
   // Consumação de cada categoria — a mesma lista PREMIUM da página de compra (index.html).
   var CONSUMO = { ouro: 500, prata: 350, bronze: 250, mesa: 150 };
+  var CHAVE_DADOS = 'cetabao_compra_dados_v1'; // mesmos dados guardados pelo checkout da Pista/Open Bar
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
   // /pagar/<token> (pela regra do vercel.json) ou /pagar/?t=<token>
   var token = (location.pathname.split('/')[2] || new URLSearchParams(location.search).get('t') || '').toUpperCase();
   var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
-  var estado = { c: null, metodo: 'pix', enviando: false, brick: null, brickCriando: false, mp: null, custos: null, parcelas: 1, montado: false };
+  var estado = { c: null, metodo: 'pix', enviando: false, brick: null, brickCriando: false, brickEmail: '', mp: null, custos: null, parcelas: 1, montado: false, tentou: false };
   var inicio = Date.now();
-  var relogio = null;
+  var relogio = null, relogioGuardado = null;
 
   var SECOES = ['carregando', 'pix', 'analise', 'pago', 'divergente', 'fechado', 'nao-achou'];
   function mostrar(qual) {
@@ -216,6 +258,7 @@
     $('resumo').hidden = !(form || qual === 'pix' || qual === 'analise');
     $('dados').hidden = !form;
     $('pagamento').hidden = !form;
+    $('guardado').hidden = !(form && estado.c && estado.c.origem === 'site');
   }
 
   function zapSuporte(texto) { return 'https://wa.me/' + SUPORTE + '?text=' + encodeURIComponent(texto); }
@@ -240,7 +283,10 @@
         if (c.pix) seguir(5000); // trocou pro cartão com o Pix aberto: se o Pix cair mesmo assim, a página vê
         if (c.status === 'aguardando' || (c.mp_status === 'in_process' && c.metodo !== 'Pix')) { mostrar('analise'); return seguir(5000); }
         if (c.status !== 'aberta') {
-          $('fechado-titulo').textContent = c.status === 'cancelada' ? 'Este link de pagamento foi cancelado' : 'Este link de pagamento venceu';
+          var doSite = c.origem === 'site';
+          $('fechado-titulo').textContent = c.status === 'cancelada' ? 'Este link de pagamento foi cancelado' : doSite ? 'O tempo pra pagar acabou' : 'Este link de pagamento venceu';
+          $('fechado-texto').textContent = doSite ? 'O lugar foi liberado. Se ainda estiver livre, é só escolher de novo.' : 'Fale com o nosso suporte que a gente manda um link novo.';
+          $('fechado-site').hidden = !doSite;
           $('fechado-zap').href = zapSuporte('Oi! O link de pagamento do ' + c.lugar + ' (' + c.codigo + ') ' + (c.status === 'cancelada' ? 'foi cancelado' : 'venceu') + '. Pode me mandar outro?');
           mostrar('fechado');
           return;
@@ -260,14 +306,90 @@
     mostrarTotal();
   }
 
+  // ---------- dados do cliente e nome de cada ingresso
+  var campos = { nome: $('nome'), cpf: $('cpf'), email: $('email'), whatsapp: $('whatsapp') };
+  var titulares = [], primeiroMexido = false;
+  var digitos = function (v) { return String(v || '').replace(/\D/g, ''); };
+  function cpfValido(v) {
+    var c = digitos(v);
+    if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
+    var dv = function (ate) { var s = 0; for (var i = 0; i < ate; i++) s += Number(c[i]) * (ate + 1 - i); var r = (s * 10) % 11; return r === 10 ? 0 : r; };
+    return dv(9) === Number(c[9]) && dv(10) === Number(c[10]);
+  }
+  var nomeValido = function (v) { var n = String(v || '').trim(); return n.length >= 2 && /\p{L}/u.test(n) && !/https?:|:\/\/|www\.|[<>]/i.test(n); };
+  var emailValido = function (v) { return /^[^\s@,;<>"']+@[^\s@,;<>"'.]+(\.[^\s@,;<>"'.]+)+$/.test(String(v || '').trim()); };
+  var whatsValido = function (v) { var d = digitos(v); if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2); return d.length === 10 || d.length === 11; };
+  function mascaraCpf(v) {
+    var d = digitos(v).slice(0, 11);
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return d.slice(0, 3) + '.' + d.slice(3);
+    if (d.length <= 9) return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6);
+    return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6, 9) + '-' + d.slice(9);
+  }
+  function mascaraFone(v) {
+    var d = digitos(v);
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    d = d.slice(0, 11);
+    if (d.length <= 2) return d.length ? '(' + d : '';
+    if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  }
+  function guardar() {
+    try { var d = {}; Object.keys(campos).forEach(function (k) { d[k] = campos[k].value; }); localStorage.setItem(CHAVE_DADOS, JSON.stringify(d)); } catch (e) { /* tudo bem */ }
+  }
+  campos.cpf.addEventListener('input', function () { campos.cpf.value = mascaraCpf(campos.cpf.value); });
+  campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); });
+  campos.nome.addEventListener('input', function () { if (!primeiroMexido && titulares[0]) titulares[0].value = campos.nome.value; });
+  campos.email.addEventListener('change', function () { if (estado.metodo === 'cartao') prepararCartao(); });
+  Object.keys(campos).forEach(function (k) { campos[k].addEventListener('input', function () { guardar(); if (estado.tentou) validar(); }); });
+
+  function validar() {
+    var ok = true;
+    var marca = function (id, valido) { $(id).classList.toggle('erro', !valido); if (!valido) ok = false; };
+    marca('c-nome', nomeValido(campos.nome.value));
+    marca('c-whats', whatsValido(campos.whatsapp.value));
+    marca('c-cpf', cpfValido(campos.cpf.value));
+    marca('c-email', emailValido(campos.email.value));
+    titulares.forEach(function (el, i) { marca('c-tit-' + i, !el.value.trim() || nomeValido(el.value)); });
+    return ok;
+  }
+
   function montarForm(c) {
     if (estado.montado) return;
     estado.montado = true;
-    $('d-nome').textContent = c.nome;
-    $('d-email').textContent = c.email;
-    $('d-nomes').innerHTML = '';
-    c.nomes.forEach(function (n) { var li = document.createElement('li'); li.textContent = n; $('d-nomes').appendChild(li); });
+    // O que já está no link (tentativa anterior ou o suporte) vale mais que o guardado neste aparelho.
+    var salvo = {};
+    try { salvo = JSON.parse(localStorage.getItem(CHAVE_DADOS) || 'null') || {}; } catch (e) { /* sem armazenamento */ }
+    campos.nome.value = c.nome || salvo.nome || '';
+    campos.whatsapp.value = mascaraFone(c.whatsapp || salvo.whatsapp || '');
+    campos.email.value = c.email || salvo.email || '';
+    campos.cpf.value = mascaraCpf(salvo.cpf || '');
+    $('lista-titulares').innerHTML = c.nomes.map(function (_, i) {
+      return '<div class="campo titular" id="c-tit-' + i + '"><label class="rot" for="tit-' + i + '">Ingresso ' + (i + 1) + '</label>' +
+        '<input id="tit-' + i + '" type="text" autocomplete="off" autocapitalize="words" maxlength="80" placeholder="' +
+        (i === 0 ? 'Seu nome ou de quem vai usar' : 'Nome completo (opcional)') + '">' +
+        '<small>Nome inválido.</small></div>';
+    }).join('');
+    titulares = c.nomes.map(function (n, i) { var el = $('tit-' + i); el.value = n || ''; return el; });
+    primeiroMexido = !!c.nomes[0] && c.nomes[0] !== campos.nome.value;
+    if (!titulares[0].value) titulares[0].value = campos.nome.value;
+    titulares.forEach(function (el, i) { el.addEventListener('input', function () { if (i === 0) primeiroMexido = true; if (estado.tentou) validar(); }); });
+    if (c.origem === 'site') relogioDoLugar(c.expira_em);
     botao();
+  }
+
+  // Compra pelo site: o lugar fica guardado por alguns minutos.
+  function relogioDoLugar(ate) {
+    var fim = new Date(ate).getTime();
+    var tique = function () {
+      var s = Math.max(0, Math.round((fim - Date.now()) / 1000));
+      $('guardado-tempo').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+      if (!s) { clearInterval(relogioGuardado); if (!estado.enviando) { estado.montado = false; consultar(); } }
+    };
+    if (relogioGuardado) clearInterval(relogioGuardado);
+    tique();
+    relogioGuardado = setInterval(tique, 1000);
   }
 
   // ---------- forma de pagamento
@@ -292,15 +414,20 @@
 
   /* Campos do cartão = "brick" do Mercado Pago: o número do cartão vira um
      token de uso único, e o nosso servidor nunca vê o cartão. */
+  var emailDoBrick = function () { var v = campos.email.value.trim(); return emailValido(v) ? v : ''; };
   function prepararCartao() {
     var c = estado.c;
     if (!c || !c.mp_chave_publica) { erroGeral('O pagamento com cartão não está disponível agora. Pague no Pix ou fale com o suporte.'); return; }
-    if (estado.brick || estado.brickCriando) return;
+    var email = emailDoBrick();
+    $('cartao-aviso').hidden = !!email;
+    if (estado.brick && estado.brickEmail !== email) { try { estado.brick.unmount(); } catch (e) { /* já saiu */ } estado.brick = null; estado.custos = null; estado.parcelas = 1; botao(); }
+    if (!email || estado.brick || estado.brickCriando) return;
     estado.brickCriando = true;
+    estado.brickEmail = email;
     carregarSdk().then(function () {
       var mp = estado.mp = new window.MercadoPago(c.mp_chave_publica, { locale: 'pt-BR' });
       return mp.bricks().create('cardPayment', 'brick-cartao', {
-        initialization: { amount: c.valor, payer: { email: c.email } },
+        initialization: { amount: c.valor, payer: { email: email } },
         customization: {
           paymentMethods: { minInstallments: 1, maxInstallments: c.parcelas_max || 3 },
           visual: { hidePaymentButton: true, style: { theme: 'default', customVariables: { baseColor: '#003c86' } } }
@@ -316,7 +443,10 @@
       estado.brick = controlador;
     }).catch(function () {
       erroGeral('Não consegui carregar o pagamento com cartão. Tente de novo ou pague no Pix.');
-    }).then(function () { estado.brickCriando = false; });
+    }).then(function () {
+      estado.brickCriando = false;
+      if (estado.metodo === 'cartao' && estado.brickEmail !== emailDoBrick()) prepararCartao(); // e-mail mudou enquanto carregava
+    });
   }
   // Parcelado, o cartão cobra juros por cima: com o BIN a gente pergunta o total de cada opção.
   function buscarParcelas(bin) {
@@ -385,18 +515,29 @@
   $('pagar').addEventListener('click', function () {
     if (estado.enviando) return;
     erroGeral('');
+    estado.tentou = true;
+    if (!validar()) {
+      var primeiro = document.querySelector('.campo.erro input');
+      if (primeiro) { primeiro.scrollIntoView({ behavior: 'smooth', block: 'center' }); primeiro.focus({ preventScroll: true }); }
+      return;
+    }
+    guardar();
     ocupado(true);
     (estado.metodo === 'cartao' ? dadosDoCartao() : Promise.resolve(null))
       .then(function (cartao) {
         return fetch(API + '/api/cobranca/' + token + '/pagar', {
           method: 'POST',
           headers: { 'content-type': 'text/plain;charset=UTF-8' },
-          body: JSON.stringify({ metodo: estado.metodo, cartao: cartao })
+          body: JSON.stringify({
+            nome: campos.nome.value.trim(), cpf: campos.cpf.value, whatsapp: campos.whatsapp.value, email: campos.email.value.trim(),
+            nomes: titulares.map(function (el) { return el.value.trim(); }),
+            metodo: estado.metodo, cartao: cartao, empresa: $('empresa').value
+          })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
       .then(function (res) {
         ocupado(false);
-        if (res.status === 200 && res.j.ok) { estado.montado = false; consultar(); return; }
+        if (res.status === 200 && res.j.ok) { estado.preferiuCartao = false; consultar(); return; }
         erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
         if (res.status === 409) consultar(); // link venceu ou já foi pago
       })
