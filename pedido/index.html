@@ -197,6 +197,10 @@
     if (pixRelogio) clearInterval(pixRelogio);
     $('titulo').innerHTML = 'Seus <span>ingressos</span>';
     // Camarote/mesa emitido no painel: não teve pagamento pelo site.
+    if (p.cortesia) {
+      $('pago-titulo').textContent = 'Sua cortesia chegou!';
+      $('pago-texto').textContent = 'Seus ingressos estão aqui embaixo e também foram pro seu e-mail.';
+    }
     if (p.reserva) {
       $('pago-titulo').textContent = 'Reserva confirmada!';
       $('pago-texto').textContent = 'Aqui estão os ingressos de todo mundo. Mande o de cada pessoa pelo botão "Enviar pelo WhatsApp" embaixo dele.';
@@ -218,6 +222,7 @@
    * endereço (o Pixel manda a URL pro Meta); a aba lembra o token pra recarregar.
    */
   function registrarCompra(p) {
+    if (p.cortesia) return; // cortesia não é compra
     try {
       var chave = 'cetabao_purchase_' + p.codigo;
       if (localStorage.getItem('cetabao_ultimo_pedido') !== token || localStorage.getItem(chave)) return;
