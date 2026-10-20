@@ -4,3 +4,4 @@ Disallow: /pedido/
 Disallow: /checkout/
 Disallow: /ingresso/
 Disallow: /pagar/
+Disallow: /cartao/

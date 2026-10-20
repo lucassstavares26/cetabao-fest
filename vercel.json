@@ -28,6 +28,10 @@
     {
       "source": "/pagar/:token",
       "destination": "/pagar/index.html"
+    },
+    {
+      "source": "/cartao/:token",
+      "destination": "/cartao/index.html"
     }
   ]
 }
