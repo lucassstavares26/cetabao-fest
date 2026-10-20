@@ -220,10 +220,8 @@ fbq('track', 'PageView');
     { id: 'pista', nome: 'Pista VIP', meia: true },
     { id: 'open', nome: 'Open Bar', meia: false }
   ];
-  // Preço e lote mostrados enquanto o painel ainda não tem a venda do site
-  // configurada. Depois disso vale o que estiver no painel — é ele que cobra.
-  var PRECO_PADRAO = { pista: 90, open: 195 };
-  var LOTE_PADRAO = '2º Lote';
+  // Preço e lote vêm SEMPRE do painel (é ele que cobra). Sem valor "de reserva"
+  // escrito aqui: ficava velho quando o lote virava. Enquanto carrega, "…".
   var PARCELAS = 3;
   var QTD_MAX = 10;
   var CHAVE_DADOS = 'cetabao_compra_dados_v1';
@@ -244,8 +242,8 @@ fbq('track', 'PageView');
   }
   var qtdSetor = function (id) { return id === 'pista' ? qtd.pista_inteira + qtd.pista_meia : qtd.open_inteira; };
   var estado = {
-    preco: { pista: PRECO_PADRAO.pista || null, open: PRECO_PADRAO.open || null },
-    restam: { pista: null, open: null }, lote: LOTE_PADRAO,
+    preco: { pista: null, open: null },
+    restam: { pista: null, open: null }, lote: null, carregou: false, tentativas: 0,
     vendendo: false, chave: null, metodo: 'pix', tentou: false, enviando: false, brick: null, brickCriando: false,
     mp: null, custos: null, parcelas: 1 // parcelamento escolhido no brick e quanto o cartão cobra em cada opção
   };
@@ -264,7 +262,7 @@ fbq('track', 'PageView');
   function montarResumo() {
     var linha = function (n, nome, tipo, cent, temPreco) {
       return '<div class="item"><span><b>' + n + '× ' + nome + ' — ' + tipo + '</b><small>' + (estado.lote || '') + '</small></span>' +
-        '<span>' + (temPreco ? moeda(cent) : 'em breve') + '</span></div>';
+        '<span>' + (temPreco ? moeda(cent) : estado.carregou ? 'em breve' : '…') + '</span></div>';
     };
     var p = estado.preco.pista, o = estado.preco.open;
     $('itens').innerHTML =
@@ -272,7 +270,7 @@ fbq('track', 'PageView');
       (qtd.pista_meia ? linha(qtd.pista_meia, 'Pista VIP', 'Meia', meiaCent(p || 0) * qtd.pista_meia, !!p) : '') +
       (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', centavos(o || 0) * qtd.open_inteira, !!o) : '');
     var t = totalCent();
-    $('subtotal').textContent = semPreco() ? 'em breve' : moeda(t);
+    $('subtotal').textContent = semPreco() ? (estado.carregou ? 'em breve' : '…') : moeda(t);
     $('nota-meia').hidden = !qtd.pista_meia;
     var faltas = SETORES.filter(function (s) { return estado.restam[s.id] !== null && qtdSetor(s.id) > estado.restam[s.id]; });
     $('problema').hidden = !faltas.length;
@@ -291,16 +289,21 @@ fbq('track', 'PageView');
       .then(function (cfg) {
         (cfg.setores || []).forEach(function (c) {
           if (!(c.id in estado.preco)) return;
-          estado.preco[c.id] = c.preco || PRECO_PADRAO[c.id] || null;
+          estado.preco[c.id] = c.preco || null;
           estado.restam[c.id] = c.restam;
         });
-        estado.lote = cfg.lote || LOTE_PADRAO;
+        estado.lote = cfg.lote || null;
+        estado.carregou = true;
         estado.vendendo = !!cfg.vendendo;
         estado.chave = cfg.mp_chave_publica || null;
         montarResumo();
         if (estado.metodo === 'cartao') prepararCartao();
       })
-      .catch(function () { estado.vendendo = false; montarResumo(); });
+      .catch(function () {
+        estado.tentativas++;
+        if (estado.tentativas < 3) { setTimeout(carregar, 2000 * estado.tentativas); return; }
+        estado.carregou = true; estado.vendendo = false; montarResumo();
+      });
   }
 
   // ---------- forma de pagamento
@@ -390,7 +393,7 @@ fbq('track', 'PageView');
       $('juros-rot').textContent = 'Juros do cartão (' + estado.parcelas + 'x)';
       $('juros').textContent = moeda(noCartao - t);
     }
-    $('total').textContent = semPreco() ? 'Em breve' : moeda(noCartao === null ? t : noCartao);
+    $('total').textContent = semPreco() ? (estado.carregou ? 'Em breve' : '…') : moeda(noCartao === null ? t : noCartao);
   }
 
   function carregarSdk() {

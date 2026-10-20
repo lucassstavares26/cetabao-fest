@@ -419,11 +419,10 @@ fbq('track', 'PageView');
     { id: 'pista', nome: 'Pista VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
     { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: '', meia: false }
   ];
-  // Preço e lote mostrados enquanto o painel ainda não tem a venda do site
-  // configurada (antes de rodar o supabase-site.sql). Depois disso vale o que
-  // estiver no painel (aba "Vendas do site") — é ele que cobra.
-  var PRECO_PADRAO = { pista: 90, open: 195 };
-  var LOTE_PADRAO = '2º Lote';
+  // Preço e lote vêm SEMPRE do painel (aba "Vendas do site"). Não existe valor
+  // "de reserva" aqui: um valor escrito na página fica velho quando o lote vira
+  // e aparecia por um instante antes do certo (Lucas, 20/10: "abre 2º lote e
+  // muda pro 3º"). Enquanto carrega, o cartão mostra "…".
   var PARCELAS = 3;
   var QTD_MAX = 10; // por pedido, somando os setores
   /* ================================================ */
@@ -431,8 +430,10 @@ fbq('track', 'PageView');
   var $ = function (id) { return document.getElementById(id); };
   // Tudo começa zerado; a pessoa pode somar Pista e Open Bar no mesmo pedido.
   var estado = {
-    setores: SETORES.map(function (s) { return Object.assign({ preco: PRECO_PADRAO[s.id] || null, restam: null }, s); }),
-    lote: LOTE_PADRAO,
+    setores: SETORES.map(function (s) { return Object.assign({ preco: null, restam: null }, s); }),
+    lote: null,
+    carregou: false, // false = ainda buscando o preço no painel ("…" no lugar do valor)
+    tentativas: 0,
     q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0 },
     expandido: { pista: false, open: false, camarote: false } // cartões começam fechados; abre no clique
   };
@@ -465,13 +466,20 @@ fbq('track', 'PageView');
       .then(function (cfg) {
         (cfg.setores || []).forEach(function (c) {
           var s = setor(c.id);
-          if (s) { s.preco = c.preco || PRECO_PADRAO[s.id] || null; s.restam = c.restam; }
+          if (s) { s.preco = c.preco || null; s.restam = c.restam; }
         });
-        estado.lote = cfg.lote || LOTE_PADRAO;
+        estado.lote = cfg.lote || null;
+        estado.carregou = true;
         ajustarAoEstoque();
         montar();
       })
-      .catch(function () { /* fica com o preço padrão */ });
+      .catch(function () {
+        // Painel não respondeu: tenta de novo; depois de 3 vezes mostra "Valor em breve".
+        estado.tentativas++;
+        if (estado.tentativas < 3) { setTimeout(carregar, 2000 * estado.tentativas); return; }
+        estado.carregou = true;
+        montar();
+      });
     fetch(API + '/api/site/premium', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (p) {
@@ -518,7 +526,8 @@ fbq('track', 'PageView');
           '<strong>' + s.nome + '</strong>' +
           (esgotado ? '<span class="preco">Esgotado</span>'
             : s.preco ? '<span class="preco">' + moeda(centavos(s.preco)) + '</span>'
-            : '<span class="preco em-breve">Valor<br>em breve</span>') +
+            : estado.carregou ? '<span class="preco em-breve">Valor<br>em breve</span>'
+            : '<span class="preco em-breve" aria-label="Carregando o preço">…</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
           '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + s.tipo + '</span>' : '') + (esgotado ? '' : '<span class="abrir" data-abrir-rot></span>') + '</span>' +
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
@@ -590,7 +599,7 @@ fbq('track', 'PageView');
       if (rot) rot.textContent = estado.expandido[s.id] ? 'Fechar' : s.id === 'open' ? 'Ver o que tem e escolher' : 'Escolher';
       card.querySelectorAll('[data-preco]').forEach(function (e) {
         var meia = e.dataset.preco === 'pista_meia';
-        e.textContent = s.preco ? moeda(meia ? meiaCent(s.preco) : centavos(s.preco)) + ' cada' : 'Valor em breve';
+        e.textContent = s.preco ? moeda(meia ? meiaCent(s.preco) : centavos(s.preco)) + ' cada' : estado.carregou ? 'Valor em breve' : '…';
       });
       card.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado.q[e.dataset.valor]; });
       card.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado.q[b.dataset.qtd] < 1; });
