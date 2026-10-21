@@ -151,7 +151,7 @@
       <small>Digite um e-mail válido.</small>
     </div>
     <p class="dica">É por este e-mail que os ingressos chegam.</p>
-    <input class="isca" type="text" name="empresa" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input class="isca" type="text" name="zx_ref" id="zx_ref" tabindex="-1" autocomplete="off" readonly aria-hidden="true">
     <div class="titulares">
       <span class="rot">Nome em cada ingresso</span>
       <p class="explica">Cada pessoa entra com o próprio QR Code. Quem ficar sem nome sai como "Convidado" — dá pra repassar depois.</p>
@@ -532,7 +532,7 @@
           body: JSON.stringify({
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, whatsapp: campos.whatsapp.value, email: campos.email.value.trim(),
             nomes: titulares.map(function (el) { return el.value.trim(); }),
-            metodo: estado.metodo, cartao: cartao, empresa: $('empresa').value
+            metodo: estado.metodo, cartao: cartao, empresa: $('zx_ref').value
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })

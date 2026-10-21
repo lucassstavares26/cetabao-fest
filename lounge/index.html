@@ -126,7 +126,7 @@
     </div>
     <p class="erro-geral" id="erro" role="alert" hidden></p>
     <a class="btn btn-zap" id="zap" target="_blank" rel="noopener" href="https://wa.me/553531690079"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Prefiro falar no WhatsApp</span></a>
-    <input type="text" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+    <input type="text" id="zx_ref" tabindex="-1" autocomplete="off" readonly aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
   </section>
 
   <section class="bloco fechado" id="fechado" hidden>
@@ -258,7 +258,7 @@
     fetch(API + '/api/site/premium/reservar', {
       method: 'POST',
       headers: { 'content-type': 'text/plain;charset=UTF-8' },
-      body: JSON.stringify({ tipo: l.tipo, numero: l.numero, empresa: $('empresa').value })
+      body: JSON.stringify({ tipo: l.tipo, numero: l.numero, empresa: $('zx_ref').value })
     })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
       .then(function (res) {

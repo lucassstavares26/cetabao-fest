@@ -166,7 +166,7 @@ fbq('track', 'PageView');
         <small>Digite um e-mail válido.</small>
       </div>
       <p class="dica">É por este e-mail que o ingresso chega.</p>
-      <input class="isca" type="text" name="empresa" id="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input class="isca" type="text" name="zx_ref" id="zx_ref" tabindex="-1" autocomplete="off" readonly aria-hidden="true">
 
       <div class="titulares" id="titulares" aria-labelledby="t-titulares">
         <span class="rot" id="t-titulares">Nome em cada ingresso</span>
@@ -575,7 +575,7 @@ fbq('track', 'PageView');
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
             qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
             titulares: titulares.map(function (el) { return el.value.trim(); }),
-            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem, carrinho: sessaoCarrinho, meta: meta
+            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('zx_ref').value, origem: origem, carrinho: sessaoCarrinho, meta: meta
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
