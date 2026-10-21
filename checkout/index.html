@@ -563,6 +563,11 @@ fbq('track', 'PageView');
     try { origem = sessionStorage.getItem('cetabao_origem') || ''; } catch (e) { /* tudo bem */ }
     if (q.get('origem')) origem = q.get('origem').slice(0, 120); // link do e-mail/WhatsApp de recuperação
     ocupado(true);
+    // Cookies do anúncio (Pixel): o servidor manda pro Meta quando o pagamento cair (API de Conversões).
+    var cookie = function (n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; };
+    var fbc = cookie('_fbc');
+    if (!fbc) { var clique = /(?:^|[?&])fbclid=([^&]+)/.exec(origem || location.search); if (clique) fbc = 'fb.1.' + Date.now() + '.' + clique[1]; }
+    var meta = { fbp: cookie('_fbp'), fbc: fbc };
     (estado.metodo === 'cartao' ? dadosDoCartao() : Promise.resolve(null))
       .then(function (cartao) {
         return fetch(API + '/api/comprar', {
@@ -572,7 +577,7 @@ fbq('track', 'PageView');
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
             qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
             titulares: titulares.map(function (el) { return el.value.trim(); }),
-            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem, carrinho: sessaoCarrinho
+            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('empresa').value, origem: origem, carrinho: sessaoCarrinho, meta: meta
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
