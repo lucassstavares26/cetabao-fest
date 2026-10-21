@@ -435,7 +435,7 @@ fbq('track', 'PageView');
     carregou: false, // false = ainda buscando o preço no painel ("…" no lugar do valor)
     tentativas: 0,
     q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0 },
-    expandido: { pista: false, open: false, camarote: false } // cartões começam fechados; abre no clique
+    expandido: { camarote: false } // Pista e Open Bar ficam sempre abertos; só o Lounge e Mesas abre no clique
   };
 
   // Escolha guardada na aba: quem volta do checkout encontra o que tinha escolhido.
@@ -512,16 +512,14 @@ fbq('track', 'PageView');
 
   function montar() {
     var box = $('setores');
-    // quem volta com ingresso já escolhido encontra o cartão aberto
-    estado.setores.forEach(function (s) { if (qtdSetor(s.id) > 0) estado.expandido[s.id] = true; });
     box.innerHTML = '';
     estado.setores.forEach(function (s) {
       var esgotado = s.restam === 0;
       var card = document.createElement('div');
-      card.className = 'setor setor-' + s.id + (esgotado ? ' esgotado' : estado.expandido[s.id] ? ' expandido' : '');
+      card.className = 'setor setor-' + s.id + (esgotado ? ' esgotado' : ' expandido');
       card.dataset.setor = s.id;
       card.innerHTML =
-        (esgotado ? '<div class="setor-topo">' : '<button type="button" class="setor-topo" data-abrir="' + s.id + '" aria-expanded="' + estado.expandido[s.id] + '">') +
+        '<div class="setor-topo">' +
           '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + '</small>' +
           '<strong>' + s.nome + '</strong>' +
           (esgotado ? '<span class="preco">Esgotado</span>'
@@ -529,9 +527,9 @@ fbq('track', 'PageView');
             : estado.carregou ? '<span class="preco em-breve">Valor<br>em breve</span>'
             : '<span class="preco em-breve" aria-label="Carregando o preço">…</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
-          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + s.tipo + '</span>' : '') + (esgotado ? '' : '<span class="abrir" data-abrir-rot></span>') + '</span>' +
+          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + s.tipo + '</span>' : '') + '</span>' +
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
-        (esgotado ? '</div>' : '</button>') +
+        '</div>' +
         (esgotado ? '' :
           '<div class="setor-opcoes">' +
             (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + linhaQtd('pista_meia', 'Meia-entrada') : linhaQtd('open_inteira', 'Inteira')) +
@@ -595,8 +593,6 @@ fbq('track', 'PageView');
       var card = document.querySelector('.setor[data-setor="' + s.id + '"]');
       if (!card) return;
       card.classList.toggle('aberto', qtdSetor(s.id) > 0); // com ingresso escolhido: borda + ✓
-      var rot = card.querySelector('[data-abrir-rot]');
-      if (rot) rot.textContent = estado.expandido[s.id] ? 'Fechar' : s.id === 'open' ? 'Ver o que tem e escolher' : 'Escolher';
       card.querySelectorAll('[data-preco]').forEach(function (e) {
         var meia = e.dataset.preco === 'pista_meia';
         e.textContent = s.preco ? moeda(meia ? meiaCent(s.preco) : centavos(s.preco)) + ' cada' : estado.carregou ? 'Valor em breve' : '…';
