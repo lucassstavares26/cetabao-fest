@@ -234,8 +234,7 @@ fbq('track', 'PageView');
   .setor-open { --cor-setor: var(--open); --cor-texto: var(--open); --cor-preco: #fff; --cor-sombra: var(--open-escuro); }
   .setor-camarote { --cor-setor: var(--brasa); --cor-texto: var(--brasa); --cor-preco: #fff; --cor-sombra: var(--engradado-escuro); }
   /* faixa fina com a cor do setor, do lado esquerdo */
-  .setor:not(.setor-promo)::before { content: ""; position: absolute; left: -1.5px; top: -1.5px; bottom: -1.5px; width: 7px; border-radius: 16px 0 0 16px; background: var(--cor-setor); }
-  .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 24px; gap: 5px 12px; }
+  .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 16px; gap: 5px 12px; }
   .setor:not(.setor-promo) small { color: var(--cor-texto); letter-spacing: .16em; }
   .setor small .rot { opacity: 1; }
   .lote-tag { background: #eef2f9; color: var(--tinta-suave); box-shadow: none; letter-spacing: .08em; }
@@ -245,16 +244,16 @@ fbq('track', 'PageView');
   /* preço em destaque: maior, num quadrado na cor do setor (Lucas, 23/10). "Valor em breve" fica sem quadrado. */
   .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 6px 9px 5px; border-radius: 9px; background: var(--cor-setor); color: var(--cor-preco); font: 400 clamp(16px, 4.8vw, 20px)/1 var(--placa); box-shadow: 0 2px 0 var(--cor-sombra); }
   /* Lounge e Mesas: cada opção na cor da categoria (as mesmas do mapa em /lounge/) */
-  .premium-ouro { --cor-cat: #f5c518; --cor-cat-texto: #3b2300; --cor-cat-sombra: #a67c00; }
-  .premium-prata { --cor-cat: #c9d1db; --cor-cat-texto: #1f2a44; --cor-cat-sombra: #8d97a6; }
-  .premium-bronze { --cor-cat: #d98c45; --cor-cat-texto: #fff; --cor-cat-sombra: #94571f; }
-  .premium-mesa { --cor-cat: #5b8cff; --cor-cat-texto: #fff; --cor-cat-sombra: #2f5bc4; }
-  .setor-camarote .premium-preco { padding: 5px 8px 4px; border-radius: 8px; background: var(--cor-cat, var(--brasa)); color: var(--cor-cat-texto, #fff); font: 400 clamp(14px, 4.2vw, 17px)/1 var(--placa); box-shadow: 0 2px 0 var(--cor-cat-sombra, var(--engradado-escuro)); }
+  .premium-ouro { --cor-cat: #f5c518; }
+  .premium-prata { --cor-cat: #c9d1db; }
+  .premium-bronze { --cor-cat: #d98c45; }
+  .premium-mesa { --cor-cat: #5b8cff; }
+  .setor-camarote .premium-preco { padding: 5px 8px 4px; border-radius: 8px; background: var(--brasa); color: #fff; font: 400 clamp(14px, 4.2vw, 17px)/1 var(--placa); box-shadow: 0 2px 0 var(--engradado-escuro); }
   .setor:not(.setor-promo) .desc { font: 500 14.5px/1.45 var(--texto); letter-spacing: 0; color: var(--tinta-suave); }
   .setor .tipo { background: none; padding: 0; color: var(--tinta-suave); font: 700 12.5px/1 var(--estreita); letter-spacing: .08em; }
   .setor .abrir { color: var(--ceu); }
   .setor .resta { color: var(--brasa); }
-  .setor:not(.setor-promo) .setor-opcoes { padding: 0 14px 14px 24px; gap: 8px; }
+  .setor:not(.setor-promo) .setor-opcoes { padding: 0 14px 14px 16px; gap: 8px; }
   .opcao { background: #f6f8fc; border: 1px solid #e8ecf4; border-radius: 12px; padding: 9px 9px 9px 14px; }
   .opcao b { font-size: 16.5px; color: var(--tinta); }
   /* o "R$ X cada" mantém o tamanho maior que o Lucas pediu (88ebe02) */
@@ -265,9 +264,11 @@ fbq('track', 'PageView');
   .nota-meia strong { color: var(--brasa); }
   /* escolhido: borda na cor do setor (o ✓ verde continua) */
   /* a cor do setor fica SEMPRE em volta do cartão; escolher um ingresso só acrescenta o ✓ verde (Lucas, 23/10) */
-  .setor:not(.setor-promo), .setor:not(.setor-promo).aberto { border-color: var(--cor-setor); transform: none; box-shadow: 0 0 0 2px var(--cor-setor), 0 8px 20px rgba(18, 34, 74, .1); }
+  /* a faixa da esquerda É a própria borda (mais grossa), então a cor em volta acompanha a faixa nas curvas (Lucas, 23/10) */
+  .setor:not(.setor-promo), .setor:not(.setor-promo).aberto { border: 3px solid var(--cor-setor); border-left-width: 8px; transform: none; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
   /* Lounge e Mesas: mesmas regras, opções em caixinhas cinza-claro */
-  .premium { background: #f6f8fc; border: 1.5px solid var(--cor-cat, #e8ecf4); border-left-width: 6px; }
+  /* cor da categoria só na faixa da esquerda (Lucas, 23/10: borda inteira colorida confundia) */
+  .premium { background: #f6f8fc; border: 1px solid #e8ecf4; border-left: 6px solid var(--cor-cat, #e8ecf4); }
   .premium-topo b { font: 800 clamp(19px, 5.6vw, 22px)/1 var(--estreita); text-transform: uppercase; color: var(--tinta); }
   .premium-preco { font: 800 clamp(19px, 5.4vw, 22px)/1 var(--estreita); color: var(--tinta); }
   .premium ul { font: 600 14.5px/1.35 var(--texto); color: var(--tinta-suave); }
