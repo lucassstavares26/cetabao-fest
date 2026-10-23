@@ -213,7 +213,10 @@ fbq('track', 'PageView');
   .pacote .de-por { text-align: right; white-space: nowrap; }
   .pacote s { display: block; font-size: min(14px, calc(var(--f) * .8)); font-weight: 600; color: #6b4a00; }
   .pacote .por { display: block; margin-top: 2px; font: 400 var(--f)/1 var(--placa); color: var(--engradado); }
-  .pacote[aria-pressed="true"] { border-color: var(--verde); }
+  /* escolhido (Lucas, 23/10): só o pacote fica verde, com a sombra verde acompanhando a borda; sem o ✓ no canto do cartão da promo */
+  .pacote[aria-pressed="true"] { border-color: var(--verde); box-shadow: 0 3px 0 var(--verde-escuro); }
+  .setor-promo.aberto::after { display: none; }
+  .setor-promo.aberto { transform: none; border-color: var(--sol); }
   .pacote[aria-pressed="true"] .marca { border-color: var(--verde); background: var(--verde) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 14px no-repeat; }
   .promo-regra { padding: 2px 4px 0; font-size: 13px; line-height: 1.35; color: var(--tinta-suave); }
 
