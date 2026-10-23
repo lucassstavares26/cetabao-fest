@@ -267,8 +267,10 @@ fbq('track', 'PageView');
   /* a faixa da esquerda É a própria borda (mais grossa), então a cor em volta acompanha a faixa nas curvas (Lucas, 23/10) */
   .setor:not(.setor-promo), .setor:not(.setor-promo).aberto { border: 3px solid var(--cor-setor); border-left-width: 8px; transform: none; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
   /* Lounge e Mesas: mesmas regras, opções em caixinhas cinza-claro */
-  /* cor da categoria só na faixa da esquerda (Lucas, 23/10: borda inteira colorida confundia) */
-  .premium { background: #f6f8fc; border: 1px solid #e8ecf4; border-left: 6px solid var(--cor-cat, #e8ecf4); }
+  /* Lounge e Mesas (Lucas, 23/10): o cartão de fora fica com o vermelho SÓ na faixa da esquerda (em volta, cinza-claro);
+     já Ouro, Prata, Bronze e Mesa ficam com a cor da categoria em volta e na faixa */
+  .setor-camarote:not(.setor-promo), .setor-camarote:not(.setor-promo).aberto { border: 1.5px solid #e2e7f1; border-left: 8px solid var(--brasa); }
+  .premium { background: #f6f8fc; border: 1.5px solid var(--cor-cat, #e8ecf4); border-left-width: 6px; }
   .premium-topo b { font: 800 clamp(19px, 5.6vw, 22px)/1 var(--estreita); text-transform: uppercase; color: var(--tinta); }
   .premium-preco { font: 800 clamp(19px, 5.4vw, 22px)/1 var(--estreita); color: var(--tinta); }
   .premium ul { font: 600 14.5px/1.35 var(--texto); color: var(--tinta-suave); }
