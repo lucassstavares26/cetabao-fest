@@ -230,9 +230,9 @@ fbq('track', 'PageView');
     background: #fff; color: var(--tinta); border: 1.5px solid #e2e7f1; border-radius: 16px;
     box-shadow: 0 1px 2px rgba(18, 34, 74, .06), 0 8px 20px rgba(18, 34, 74, .07);
   }
-  .setor-pista { --cor-setor: var(--sol); --cor-texto: #8a6400; }
-  .setor-open { --cor-setor: var(--open); --cor-texto: var(--open); }
-  .setor-camarote { --cor-setor: var(--brasa); --cor-texto: var(--brasa); }
+  .setor-pista { --cor-setor: var(--sol); --cor-texto: #8a6400; --cor-preco: #3b2300; --cor-sombra: var(--sol-sombra); }
+  .setor-open { --cor-setor: var(--open); --cor-texto: var(--open); --cor-preco: #fff; --cor-sombra: var(--open-escuro); }
+  .setor-camarote { --cor-setor: var(--brasa); --cor-texto: var(--brasa); --cor-preco: #fff; --cor-sombra: var(--engradado-escuro); }
   /* faixa fina com a cor do setor, do lado esquerdo */
   .setor:not(.setor-promo)::before { content: ""; position: absolute; left: -1.5px; top: -1.5px; bottom: -1.5px; width: 7px; border-radius: 16px 0 0 16px; background: var(--cor-setor); }
   .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 24px; gap: 5px 12px; }
@@ -242,6 +242,9 @@ fbq('track', 'PageView');
   .setor:not(.setor-promo) .setor-topo strong { font: 800 clamp(23px, 6.6vw, 27px)/1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); }
   .setor .preco { background: none; box-shadow: none; padding: 0; color: var(--tinta); font: 800 clamp(21px, 6vw, 25px)/1 var(--estreita); letter-spacing: .01em; }
   .setor .preco.em-breve { color: var(--tinta-suave); }
+  /* preço em destaque: maior, num quadrado na cor do setor (Lucas, 23/10). "Valor em breve" fica sem quadrado. */
+  .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 8px 11px 7px; border-radius: 10px; background: var(--cor-setor); color: var(--cor-preco); font: 400 clamp(19px, 5.8vw, 24px)/1 var(--placa); box-shadow: 0 3px 0 var(--cor-sombra); }
+  .setor-camarote .premium-preco { padding: 6px 9px 5px; border-radius: 9px; background: var(--brasa); color: #fff; font: 400 clamp(16px, 4.8vw, 19px)/1 var(--placa); box-shadow: 0 3px 0 var(--engradado-escuro); }
   .setor:not(.setor-promo) .desc { font: 500 14.5px/1.45 var(--texto); letter-spacing: 0; color: var(--tinta-suave); }
   .setor .tipo { background: none; padding: 0; color: var(--tinta-suave); font: 700 12.5px/1 var(--estreita); letter-spacing: .08em; }
   .setor .abrir { color: var(--ceu); }
@@ -265,6 +268,7 @@ fbq('track', 'PageView');
 
   /* celular estreito: botões um pouco menores pra "R$ 210,00 cada" caber; abaixo de 345px o "cada" pode descer de linha */
   @media (max-width: 385px) { .opcao { gap: 6px; padding-left: 12px; } .opcao button { width: 38px; height: 40px; } .opcao output { width: 26px; } .opcao span { font-size: 15.5px; } }
+  @media (max-width: 345px) { .setor:not(.setor-promo) small { letter-spacing: .1em; } .setor:not(.setor-promo) .setor-topo strong { font-size: 21px; } .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 7px 9px 6px; font-size: 17px; } }
   @media (max-width: 345px) { .opcao { gap: 4px; padding: 8px 6px 8px 10px; } .opcao button { width: 34px; height: 38px; } .opcao span { white-space: normal; } }
   .nota-meia { padding: 2px 4px 0; font-size: 13.5px; line-height: 1.35; }
   .nota-meia strong { color: var(--engradado); }
