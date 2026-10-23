@@ -243,8 +243,13 @@ fbq('track', 'PageView');
   .setor .preco { background: none; box-shadow: none; padding: 0; color: var(--tinta); font: 800 clamp(21px, 6vw, 25px)/1 var(--estreita); letter-spacing: .01em; }
   .setor .preco.em-breve { color: var(--tinta-suave); }
   /* preço em destaque: maior, num quadrado na cor do setor (Lucas, 23/10). "Valor em breve" fica sem quadrado. */
-  .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 8px 11px 7px; border-radius: 10px; background: var(--cor-setor); color: var(--cor-preco); font: 400 clamp(19px, 5.8vw, 24px)/1 var(--placa); box-shadow: 0 3px 0 var(--cor-sombra); }
-  .setor-camarote .premium-preco { padding: 6px 9px 5px; border-radius: 9px; background: var(--brasa); color: #fff; font: 400 clamp(16px, 4.8vw, 19px)/1 var(--placa); box-shadow: 0 3px 0 var(--engradado-escuro); }
+  .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 6px 9px 5px; border-radius: 9px; background: var(--cor-setor); color: var(--cor-preco); font: 400 clamp(16px, 4.8vw, 20px)/1 var(--placa); box-shadow: 0 2px 0 var(--cor-sombra); }
+  /* Lounge e Mesas: cada opção na cor da categoria (as mesmas do mapa em /lounge/) */
+  .premium-ouro { --cor-cat: #f5c518; --cor-cat-texto: #3b2300; --cor-cat-sombra: #a67c00; }
+  .premium-prata { --cor-cat: #c9d1db; --cor-cat-texto: #1f2a44; --cor-cat-sombra: #8d97a6; }
+  .premium-bronze { --cor-cat: #d98c45; --cor-cat-texto: #fff; --cor-cat-sombra: #94571f; }
+  .premium-mesa { --cor-cat: #5b8cff; --cor-cat-texto: #fff; --cor-cat-sombra: #2f5bc4; }
+  .setor-camarote .premium-preco { padding: 5px 8px 4px; border-radius: 8px; background: var(--cor-cat, var(--brasa)); color: var(--cor-cat-texto, #fff); font: 400 clamp(14px, 4.2vw, 17px)/1 var(--placa); box-shadow: 0 2px 0 var(--cor-cat-sombra, var(--engradado-escuro)); }
   .setor:not(.setor-promo) .desc { font: 500 14.5px/1.45 var(--texto); letter-spacing: 0; color: var(--tinta-suave); }
   .setor .tipo { background: none; padding: 0; color: var(--tinta-suave); font: 700 12.5px/1 var(--estreita); letter-spacing: .08em; }
   .setor .abrir { color: var(--ceu); }
@@ -259,16 +264,17 @@ fbq('track', 'PageView');
   .opcao output { font: 800 22px/1 var(--estreita); color: var(--tinta); }
   .nota-meia strong { color: var(--brasa); }
   /* escolhido: borda na cor do setor (o ✓ verde continua) */
-  .setor:not(.setor-promo).aberto { border-color: var(--cor-setor); transform: none; box-shadow: 0 0 0 2px var(--cor-setor), 0 8px 20px rgba(18, 34, 74, .1); }
+  /* a cor do setor fica SEMPRE em volta do cartão; escolher um ingresso só acrescenta o ✓ verde (Lucas, 23/10) */
+  .setor:not(.setor-promo), .setor:not(.setor-promo).aberto { border-color: var(--cor-setor); transform: none; box-shadow: 0 0 0 2px var(--cor-setor), 0 8px 20px rgba(18, 34, 74, .1); }
   /* Lounge e Mesas: mesmas regras, opções em caixinhas cinza-claro */
-  .premium { background: #f6f8fc; border: 1px solid #e8ecf4; }
+  .premium { background: #f6f8fc; border: 1.5px solid var(--cor-cat, #e8ecf4); border-left-width: 6px; }
   .premium-topo b { font: 800 clamp(19px, 5.6vw, 22px)/1 var(--estreita); text-transform: uppercase; color: var(--tinta); }
   .premium-preco { font: 800 clamp(19px, 5.4vw, 22px)/1 var(--estreita); color: var(--tinta); }
   .premium ul { font: 600 14.5px/1.35 var(--texto); color: var(--tinta-suave); }
 
   /* celular estreito: botões um pouco menores pra "R$ 210,00 cada" caber; abaixo de 345px o "cada" pode descer de linha */
   @media (max-width: 385px) { .opcao { gap: 6px; padding-left: 12px; } .opcao button { width: 38px; height: 40px; } .opcao output { width: 26px; } .opcao span { font-size: 15.5px; } }
-  @media (max-width: 345px) { .setor:not(.setor-promo) small { letter-spacing: .1em; } .setor:not(.setor-promo) .setor-topo strong { font-size: 21px; } .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 7px 9px 6px; font-size: 17px; } }
+  @media (max-width: 345px) { .setor:not(.setor-promo) small { letter-spacing: .1em; } .setor:not(.setor-promo) .setor-topo strong { font-size: 21px; } .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 6px 8px 5px; font-size: 15px; } }
   @media (max-width: 345px) { .opcao { gap: 4px; padding: 8px 6px 8px 10px; } .opcao button { width: 34px; height: 38px; } .opcao span { white-space: normal; } }
   .nota-meia { padding: 2px 4px 0; font-size: 13.5px; line-height: 1.35; }
   .nota-meia strong { color: var(--engradado); }
@@ -682,7 +688,7 @@ fbq('track', 'PageView');
         '<span class="rodape-card"><span class="tipo">Lounges e Mesa Bistrô</span><span class="abrir" data-abrir-rot></span></span>' +
       '</button>' +
       '<div class="setor-opcoes">' + PREMIUM.map(function (p) {
-        return '<div class="premium"><div class="premium-topo"><b>' + p.nome + '</b>' +
+        return '<div class="premium premium-' + p.cat + '"><div class="premium-topo"><b>' + p.nome + '</b>' +
             (p.preco ? '<span class="premium-preco">' + moeda(centavos(p.preco)) + '</span>' : '') + '</div>' +
           '<ul><li>👥 Para ' + p.pessoas + ' pessoas</li><li>🍻 ' + moeda(centavos(p.consumo)) + ' de consumação</li></ul>' +
           (premiumVendendo ? '<a class="btn btn-sol" href="/lounge/?c=' + p.cat + '">Comprar agora</a>' : '') +
