@@ -184,16 +184,20 @@ fbq('track', 'PageView');
   .setor.esgotado { opacity: .45; }
 
   /* promo da Pista VIP (23/10): pacotes de 2, 3 e 4 inteiras com desconto. Só aparece com a promo ligada no painel. */
-  .setor-promo { background: radial-gradient(120% 90% at 100% 0, #4a0707, #140202 60%, #000); color: #fff; border-color: var(--sol); box-shadow: 0 5px 0 var(--sol-sombra), 0 0 26px rgba(255, 198, 26, .28); }
-  .setor-promo .setor-topo { padding-bottom: 12px; }
+  /* 23/10 (2ª versão, pedido do Lucas): branco com o amarelo da Pista VIP, título numa linha só e o 20% OFF num quadrado */
+  .setor-promo { background: #fff; color: var(--tinta); border-color: var(--sol); box-shadow: 0 5px 0 var(--sol-sombra); }
+  .setor-promo .setor-topo { padding-bottom: 14px; border-radius: 15px 15px 0 0; background: linear-gradient(140deg, #ffe55c, var(--sol) 50%, #f0a800); color: #3b2300; }
+  .setor-promo .setor-topo small { grid-column: 1; }
+  .setor-promo .setor-opcoes { padding-top: 14px; }
   .promo-tempo { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px 4px; border-radius: 999px; background: var(--brasa); color: #fff; letter-spacing: .12em; animation: promo-pisca 1.6s ease-in-out infinite; }
   @keyframes promo-pisca { 50% { background: var(--engradado); } }
   @media (prefers-reduced-motion: reduce) { .promo-tempo { animation: none; } }
-  .setor-promo .setor-topo strong { color: var(--sol); white-space: normal; line-height: 1.05; }
-  .promo-off { display: grid; place-items: center; width: 74px; height: 74px; border-radius: 50%; background: var(--sol); color: var(--engradado); font: 400 22px/.9 var(--placa); text-align: center; transform: rotate(-10deg); box-shadow: 0 4px 0 var(--sol-sombra); }
-  .promo-off span { display: block; font-size: 15px; }
-  .setor-promo .desc { color: var(--sol-claro); }
-  .pacote { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 11px 12px 11px 12px; border: 3px solid transparent; border-radius: 14px; background: rgba(255, 255, 255, .96); color: var(--tinta); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+  /* "Promo Pista VIP" sempre numa linha: a letra encolhe com a tela (mesmo truque do #t-compra) */
+  .setor-promo .setor-topo strong { grid-column: 1 / -1; white-space: nowrap; font-size: min(25px, calc((100vw - 92px) / 12.6)); }
+  .promo-off { grid-column: 2; grid-row: 1; display: grid; place-items: center; align-content: center; width: 66px; height: 66px; border-radius: 12px; background: #fff; color: var(--engradado); font: 400 22px/1 var(--placa); text-align: center; transform: rotate(-4deg); box-shadow: 0 4px 0 var(--sol-sombra); }
+  .promo-off span { display: block; margin-top: 2px; font-size: 14px; }
+  .setor-promo .desc { color: #3b2300; }
+  .pacote { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 11px 12px 11px 12px; border: 3px solid #ffe7a0; border-radius: 14px; background: #fffbea; color: var(--tinta); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
   .pacote:disabled { opacity: .4; cursor: not-allowed; }
   .pacote .marca { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--campo-borda); background: #fff; }
   .pacote b { display: block; font: 800 19px/1.05 var(--estreita); letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
@@ -203,7 +207,7 @@ fbq('track', 'PageView');
   .pacote .por { display: block; margin-top: 2px; font: 400 clamp(16px, 4.9vw, 21px)/1 var(--placa); color: var(--engradado); }
   .pacote[aria-pressed="true"] { border-color: var(--verde); background: #fff8d9; }
   .pacote[aria-pressed="true"] .marca { border-color: var(--verde); background: var(--verde) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 14px no-repeat; }
-  .promo-regra { padding: 2px 4px 0; font-size: 13px; line-height: 1.35; color: var(--ceu-texto); }
+  .promo-regra { padding: 2px 4px 0; font-size: 13px; line-height: 1.35; color: var(--tinta-suave); }
 
   /* quantidade dentro do cartão aberto */
   .setor-opcoes { display: grid; gap: 8px; padding: 0 12px 14px; }
@@ -557,7 +561,7 @@ fbq('track', 'PageView');
     card.innerHTML =
       '<div class="setor-topo">' +
         '<small><span class="promo-tempo">⏳ Por tempo limitado</span></small>' +
-        '<strong>Promo<br>Pista VIP</strong>' +
+        '<strong>Promo Pista VIP</strong>' +
         '<span class="promo-off">' + estado.promo.pct + '%<span>OFF</span></span>' +
         '<span class="desc">Comprando ' + estado.promo.min + ', 3 ou ' + estado.promo.max + ' ingressos inteiros da Pista VIP' + (estado.lote ? ' (' + estado.lote + ')' : '') + '.</span>' +
       '</div>' +
