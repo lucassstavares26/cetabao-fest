@@ -518,6 +518,7 @@ fbq('track', 'PageView');
   // muda pro 3º"). Enquanto carrega, o cartão mostra "…".
   var PARCELAS = 4;
   var QTD_MAX = 10; // por pedido, somando os setores
+  var PISTA_MAX = 4; // Pista VIP: no máximo 4 por compra, somando inteira, meia e pacote da promo (Lucas, 23/10). Igual ao servidor.
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
@@ -547,6 +548,8 @@ fbq('track', 'PageView');
   var meiaCent = function (preco) { return Math.round(centavos(preco) / 2); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var setor = function (id) { return estado.setores.filter(function (s) { return s.id === id; })[0]; };
+  // Quantos dá pra levar do setor neste pedido (null = sem limite): estoque e, na Pista, o teto de 4.
+  var limite = function (s) { return s.id !== 'pista' ? s.restam : s.restam === null ? PISTA_MAX : Math.min(s.restam, PISTA_MAX); };
   var inteirasPista = function () { return estado.q.pacote || estado.q.pista_inteira; }; // o que vai pro pedido
   var qtdSetor = function (id) { return id === 'pista' ? inteirasPista() + estado.q.pista_meia : estado.q.open_inteira; };
   var qtdTotal = function () { return inteirasPista() + estado.q.pista_meia + estado.q.open_inteira; };
@@ -594,11 +597,12 @@ fbq('track', 'PageView');
       .catch(function () { /* fica só com o WhatsApp */ });
   }
 
-  // Se o estoque de um setor caiu abaixo do que a pessoa tinha escolhido, corta.
+  // Se o estoque de um setor caiu abaixo do que a pessoa tinha escolhido (ou passou do teto da Pista), corta.
   function ajustarAoEstoque() {
     estado.setores.forEach(function (s) {
-      if (s.restam === null) return;
-      while (qtdSetor(s.id) > s.restam) {
+      var lim = limite(s);
+      if (lim === null) return;
+      while (qtdSetor(s.id) > lim) {
         if (s.id === 'pista' && estado.q.pista_meia > 0) estado.q.pista_meia--;
         else if (s.id === 'pista' && estado.q.pacote) { estado.q.pista_inteira = estado.q.pacote - 1; estado.q.pacote = 0; }
         else if (s.id === 'pista') estado.q.pista_inteira--;
@@ -650,7 +654,7 @@ fbq('track', 'PageView');
   function cabePacote(n) {
     var s = setor('pista');
     var outros = qtdTotal() - inteirasPista();
-    return outros + n <= QTD_MAX && (s.restam === null || estado.q.pista_meia + n <= s.restam);
+    return outros + n <= QTD_MAX && estado.q.pista_meia + n <= limite(s);
   }
 
   function escolherPacote(n) {
@@ -685,6 +689,7 @@ fbq('track', 'PageView');
           '<div class="setor-opcoes">' +
             (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + linhaQtd('pista_meia', 'Meia-entrada') : linhaQtd('open_inteira', 'Inteira')) +
             (s.meia ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
+            (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Pista VIP por compra.</p>' : '') +
           '</div>');
       box.appendChild(card);
     });
@@ -733,7 +738,7 @@ fbq('track', 'PageView');
     var s = setor(id);
     var novo = estado.q[chave] + d;
     if (novo < 0) return;
-    if (d > 0 && (qtdTotal() >= QTD_MAX || (s.restam !== null && qtdSetor(id) >= s.restam))) return;
+    if (d > 0 && (qtdTotal() >= QTD_MAX || (limite(s) !== null && qtdSetor(id) >= limite(s)))) return;
     estado.q[chave] = novo;
     atualizar();
   }
@@ -754,9 +759,11 @@ fbq('track', 'PageView');
       });
       card.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado.q[e.dataset.valor]; });
       card.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado.q[b.dataset.qtd] < 1; });
-      card.querySelectorAll('[data-d="1"]').forEach(function (b) { b.disabled = total >= QTD_MAX || (s.restam !== null && qtdSetor(s.id) >= s.restam); });
+      card.querySelectorAll('[data-d="1"]').forEach(function (b) { b.disabled = total >= QTD_MAX || (limite(s) !== null && qtdSetor(s.id) >= limite(s)); });
       var nota = card.querySelector('[data-nota-meia]');
       if (nota) nota.hidden = estado.q.pista_meia < 1;
+      var notaLimite = card.querySelector('[data-nota-limite]');
+      if (notaLimite) notaLimite.hidden = qtdSetor(s.id) < PISTA_MAX;
     });
 
     var cardPromo = document.querySelector('.setor-promo');
@@ -821,6 +828,7 @@ fbq('track', 'PageView');
     })(performance.now());
   }
 
+  ajustarAoEstoque(); // carrinho guardado na aba também respeita o teto da Pista
   montar();
   carregar();
 })();

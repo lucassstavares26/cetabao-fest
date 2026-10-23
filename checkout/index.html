@@ -234,7 +234,8 @@ fbq('track', 'PageView');
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
   var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
   var valido = Object.keys(qtd).every(function (k) { return Number.isInteger(qtd[k]) && qtd[k] >= 0; });
-  if (!valido || totalQtd < 1 || totalQtd > QTD_MAX) {
+  // Pista VIP: até 4 por compra (inteira + meia), igual à página de compra e ao servidor.
+  if (!valido || totalQtd < 1 || totalQtd > QTD_MAX || qtd.pista_inteira + qtd.pista_meia > 4) {
     location.replace('/#compra'); // endereço mexido ou incompleto: volta pra escolher
     return;
   }
