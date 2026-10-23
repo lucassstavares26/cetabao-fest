@@ -528,7 +528,9 @@ fbq('track', 'PageView');
     promo: null, // promo da Pista ligada no painel: { pct, min, max } (igual a entraNaPromo do servidor)
     carregou: false, // false = ainda buscando o preço no painel ("…" no lugar do valor)
     tentativas: 0,
-    q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0 },
+    // pacote = pacote da promo escolhido no cartão da promo (2, 3 ou 4 inteiras da Pista). Fica SEPARADO do
+    // contador da Pista VIP (Lucas, 23/10: escolher na promo não marca a Pista); os dois nunca valem juntos.
+    q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0, pacote: 0 },
     expandido: { camarote: false } // Pista e Open Bar ficam sempre abertos; só o Lounge e Mesas abre no clique
   };
 
@@ -545,16 +547,17 @@ fbq('track', 'PageView');
   var meiaCent = function (preco) { return Math.round(centavos(preco) / 2); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var setor = function (id) { return estado.setores.filter(function (s) { return s.id === id; })[0]; };
-  var qtdSetor = function (id) { return id === 'pista' ? estado.q.pista_inteira + estado.q.pista_meia : estado.q.open_inteira; };
-  var qtdTotal = function () { return estado.q.pista_inteira + estado.q.pista_meia + estado.q.open_inteira; };
+  var inteirasPista = function () { return estado.q.pacote || estado.q.pista_inteira; }; // o que vai pro pedido
+  var qtdSetor = function (id) { return id === 'pista' ? inteirasPista() + estado.q.pista_meia : estado.q.open_inteira; };
+  var qtdTotal = function () { return inteirasPista() + estado.q.pista_meia + estado.q.open_inteira; };
   var semPreco = function () { return SETORES.some(function (s) { return qtdSetor(s.id) > 0 && !setor(s.id).preco; }); };
   // Promo da Pista: desconto só na inteira e só com min..max inteiras (5 ou mais = preço cheio; meia fora). Igual ao servidor.
   var naPromo = function (n) { return !!estado.promo && n >= estado.promo.min && n <= estado.promo.max; };
   var promoCent = function (preco) { return Math.round(centavos(preco) * (100 - estado.promo.pct) / 100); };
-  var inteiraPistaCent = function (p) { return naPromo(estado.q.pista_inteira) ? promoCent(p) : centavos(p); };
+  var inteiraPistaCent = function (p) { return naPromo(inteirasPista()) ? promoCent(p) : centavos(p); };
   function totalCent() {
     var p = setor('pista').preco, o = setor('open').preco;
-    return (p ? inteiraPistaCent(p) * estado.q.pista_inteira + meiaCent(p) * estado.q.pista_meia : 0) + (o ? centavos(o) * estado.q.open_inteira : 0);
+    return (p ? inteiraPistaCent(p) * inteirasPista() + meiaCent(p) * estado.q.pista_meia : 0) + (o ? centavos(o) * estado.q.open_inteira : 0);
   }
 
   // ---------- preços / lote / estoque do painel
@@ -568,6 +571,8 @@ fbq('track', 'PageView');
         });
         estado.lote = cfg.lote || null;
         estado.promo = cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null;
+        // promo desligou (ou pacote guardado inválido): o pacote volta a ser inteira comum da Pista
+        if (estado.q.pacote && !naPromo(estado.q.pacote)) { estado.q.pista_inteira = estado.q.pacote; estado.q.pacote = 0; }
         estado.carregou = true;
         ajustarAoEstoque();
         montar();
@@ -595,6 +600,7 @@ fbq('track', 'PageView');
       if (s.restam === null) return;
       while (qtdSetor(s.id) > s.restam) {
         if (s.id === 'pista' && estado.q.pista_meia > 0) estado.q.pista_meia--;
+        else if (s.id === 'pista' && estado.q.pacote) { estado.q.pista_inteira = estado.q.pacote - 1; estado.q.pacote = 0; }
         else if (s.id === 'pista') estado.q.pista_inteira--;
         else estado.q.open_inteira--;
       }
@@ -643,13 +649,13 @@ fbq('track', 'PageView');
 
   function cabePacote(n) {
     var s = setor('pista');
-    var outros = qtdTotal() - estado.q.pista_inteira;
+    var outros = qtdTotal() - inteirasPista();
     return outros + n <= QTD_MAX && (s.restam === null || estado.q.pista_meia + n <= s.restam);
   }
 
   function escolherPacote(n) {
-    if (estado.q.pista_inteira === n) estado.q.pista_inteira = 0; // tocou de novo no escolhido: tira
-    else if (cabePacote(n)) estado.q.pista_inteira = n;
+    if (estado.q.pacote === n) estado.q.pacote = 0; // tocou de novo no escolhido: tira
+    else if (cabePacote(n)) { estado.q.pacote = n; estado.q.pista_inteira = 0; }
     atualizar();
   }
 
@@ -721,6 +727,8 @@ fbq('track', 'PageView');
   }
 
   function mudarQtd(chave, d) {
+    // + na inteira da Pista com um pacote escolhido: o pacote vira inteira comum e soma mais uma
+    if (chave === 'pista_inteira' && d > 0 && estado.q.pacote) { estado.q.pista_inteira = estado.q.pacote; estado.q.pacote = 0; }
     var id = chave.indexOf('pista') === 0 ? 'pista' : 'open';
     var s = setor(id);
     var novo = estado.q[chave] + d;
@@ -737,7 +745,8 @@ fbq('track', 'PageView');
     estado.setores.forEach(function (s) {
       var card = document.querySelector('.setor[data-setor="' + s.id + '"]');
       if (!card) return;
-      card.classList.toggle('aberto', qtdSetor(s.id) > 0); // com ingresso escolhido: borda + ✓
+      // com ingresso escolhido: ✓ (o pacote da promo não conta aqui, ele marca só o cartão da promo)
+      card.classList.toggle('aberto', (s.id === 'pista' ? estado.q.pista_inteira + estado.q.pista_meia : qtdSetor(s.id)) > 0);
       card.querySelectorAll('[data-preco]').forEach(function (e) {
         var meia = e.dataset.preco === 'pista_meia';
         var promo = e.dataset.preco === 'pista_inteira' && naPromo(estado.q.pista_inteira);
@@ -752,15 +761,17 @@ fbq('track', 'PageView');
 
     var cardPromo = document.querySelector('.setor-promo');
     if (cardPromo) {
-      cardPromo.classList.toggle('aberto', naPromo(estado.q.pista_inteira));
+      cardPromo.classList.toggle('aberto', estado.q.pacote > 0);
       cardPromo.querySelectorAll('[data-pacote]').forEach(function (b) {
         var n = Number(b.dataset.pacote);
-        b.setAttribute('aria-pressed', String(estado.q.pista_inteira === n));
-        b.disabled = estado.q.pista_inteira !== n && !cabePacote(n);
+        b.setAttribute('aria-pressed', String(estado.q.pacote === n));
+        b.disabled = estado.q.pacote !== n && !cabePacote(n);
       });
     }
 
     var partes = [];
+    // (o pacote guardado na aba pode aparecer antes da promo chegar do painel)
+    if (estado.q.pacote) partes.push('Promo Pista VIP: ' + estado.q.pacote + ' ingressos' + (estado.promo ? ' (' + estado.promo.pct + '% OFF)' : ''));
     if (estado.q.pista_inteira) partes.push(estado.q.pista_inteira + 'x Pista VIP inteira' + (naPromo(estado.q.pista_inteira) ? ' (promo ' + estado.promo.pct + '% OFF)' : ''));
     if (estado.q.pista_meia) partes.push(estado.q.pista_meia + 'x Pista VIP meia');
     if (estado.q.open_inteira) partes.push(estado.q.open_inteira + 'x Open Bar');
@@ -776,7 +787,7 @@ fbq('track', 'PageView');
   // ---------- segunda parte: checkout (dados + pagamento)
   function irProCheckout() {
     if (qtdTotal() < 1) return;
-    location.href = '/checkout/?pi=' + estado.q.pista_inteira + '&pm=' + estado.q.pista_meia + '&oi=' + estado.q.open_inteira;
+    location.href = '/checkout/?pi=' + inteirasPista() + '&pm=' + estado.q.pista_meia + '&oi=' + estado.q.open_inteira;
   }
   $('continuar').addEventListener('click', irProCheckout);
   $('barra-comprar').addEventListener('click', function () {
