@@ -183,6 +183,28 @@ fbq('track', 'PageView');
   }
   .setor.esgotado { opacity: .45; }
 
+  /* promo da Pista VIP (23/10): pacotes de 2, 3 e 4 inteiras com desconto. Só aparece com a promo ligada no painel. */
+  .setor-promo { background: radial-gradient(120% 90% at 100% 0, #4a0707, #140202 60%, #000); color: #fff; border-color: var(--sol); box-shadow: 0 5px 0 var(--sol-sombra), 0 0 26px rgba(255, 198, 26, .28); }
+  .setor-promo .setor-topo { padding-bottom: 12px; }
+  .promo-tempo { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px 4px; border-radius: 999px; background: var(--brasa); color: #fff; letter-spacing: .12em; animation: promo-pisca 1.6s ease-in-out infinite; }
+  @keyframes promo-pisca { 50% { background: var(--engradado); } }
+  @media (prefers-reduced-motion: reduce) { .promo-tempo { animation: none; } }
+  .setor-promo .setor-topo strong { color: var(--sol); white-space: normal; line-height: 1.05; }
+  .promo-off { display: grid; place-items: center; width: 74px; height: 74px; border-radius: 50%; background: var(--sol); color: var(--engradado); font: 400 22px/.9 var(--placa); text-align: center; transform: rotate(-10deg); box-shadow: 0 4px 0 var(--sol-sombra); }
+  .promo-off span { display: block; font-size: 15px; }
+  .setor-promo .desc { color: var(--sol-claro); }
+  .pacote { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 11px 12px 11px 12px; border: 3px solid transparent; border-radius: 14px; background: rgba(255, 255, 255, .96); color: var(--tinta); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+  .pacote:disabled { opacity: .4; cursor: not-allowed; }
+  .pacote .marca { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--campo-borda); background: #fff; }
+  .pacote b { display: block; font: 800 19px/1.05 var(--estreita); letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
+  .pacote small { display: block; margin-top: 3px; font: 700 14px/1.2 var(--texto); letter-spacing: 0; text-transform: none; white-space: nowrap; color: var(--tinta-suave); }
+  .pacote .de-por { text-align: right; white-space: nowrap; }
+  .pacote s { display: block; font-size: 14px; font-weight: 600; color: var(--tinta-suave); }
+  .pacote .por { display: block; margin-top: 2px; font: 400 clamp(16px, 4.9vw, 21px)/1 var(--placa); color: var(--engradado); }
+  .pacote[aria-pressed="true"] { border-color: var(--verde); background: #fff8d9; }
+  .pacote[aria-pressed="true"] .marca { border-color: var(--verde); background: var(--verde) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 14px no-repeat; }
+  .promo-regra { padding: 2px 4px 0; font-size: 13px; line-height: 1.35; color: var(--ceu-texto); }
+
   /* quantidade dentro do cartão aberto */
   .setor-opcoes { display: grid; gap: 8px; padding: 0 12px 14px; }
   .opcao { display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 14px; border-radius: 14px; background: rgba(255, 255, 255, .94); color: var(--tinta); }
@@ -432,6 +454,7 @@ fbq('track', 'PageView');
   var estado = {
     setores: SETORES.map(function (s) { return Object.assign({ preco: null, restam: null }, s); }),
     lote: null,
+    promo: null, // promo da Pista ligada no painel: { pct, min, max } (igual a entraNaPromo do servidor)
     carregou: false, // false = ainda buscando o preço no painel ("…" no lugar do valor)
     tentativas: 0,
     q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0 },
@@ -454,9 +477,13 @@ fbq('track', 'PageView');
   var qtdSetor = function (id) { return id === 'pista' ? estado.q.pista_inteira + estado.q.pista_meia : estado.q.open_inteira; };
   var qtdTotal = function () { return estado.q.pista_inteira + estado.q.pista_meia + estado.q.open_inteira; };
   var semPreco = function () { return SETORES.some(function (s) { return qtdSetor(s.id) > 0 && !setor(s.id).preco; }); };
+  // Promo da Pista: desconto só na inteira e só com min..max inteiras (5 ou mais = preço cheio; meia fora). Igual ao servidor.
+  var naPromo = function (n) { return !!estado.promo && n >= estado.promo.min && n <= estado.promo.max; };
+  var promoCent = function (preco) { return Math.round(centavos(preco) * (100 - estado.promo.pct) / 100); };
+  var inteiraPistaCent = function (p) { return naPromo(estado.q.pista_inteira) ? promoCent(p) : centavos(p); };
   function totalCent() {
     var p = setor('pista').preco, o = setor('open').preco;
-    return (p ? centavos(p) * estado.q.pista_inteira + meiaCent(p) * estado.q.pista_meia : 0) + (o ? centavos(o) * estado.q.open_inteira : 0);
+    return (p ? inteiraPistaCent(p) * estado.q.pista_inteira + meiaCent(p) * estado.q.pista_meia : 0) + (o ? centavos(o) * estado.q.open_inteira : 0);
   }
 
   // ---------- preços / lote / estoque do painel
@@ -469,6 +496,7 @@ fbq('track', 'PageView');
           if (s) { s.preco = c.preco || null; s.restam = c.restam; }
         });
         estado.lote = cfg.lote || null;
+        estado.promo = cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null;
         estado.carregou = true;
         ajustarAoEstoque();
         montar();
@@ -510,9 +538,55 @@ fbq('track', 'PageView');
       '<button type="button" data-qtd="' + chave + '" data-d="1" aria-label="Mais uma ' + titulo.toLowerCase() + '">+</button></div>';
   }
 
+  // Cartão da promo (Lucas, 23/10): "PROMO PISTA VIP — 2 de tanto por tanto…". Escolher um
+  // pacote só põe N inteiras da Pista no carrinho; o desconto vale igual pelo cartão da Pista.
+  function cartaoPromo() {
+    var s = setor('pista');
+    if (!estado.promo || !s.preco || (s.restam !== null && s.restam < estado.promo.min)) return null;
+    var pacotes = '';
+    for (var n = estado.promo.min; n <= estado.promo.max; n++) {
+      pacotes += '<button type="button" class="pacote" data-pacote="' + n + '" aria-pressed="false">' +
+        '<span class="marca" aria-hidden="true"></span>' +
+        '<span><b>' + n + ' ingressos</b><small>' + moeda(promoCent(s.preco)) + ' cada</small></span>' +
+        '<span class="de-por"><s>de ' + moeda(centavos(s.preco) * n) + '</s><span class="por">por ' + moeda(promoCent(s.preco) * n) + '</span></span>' +
+      '</button>';
+    }
+    var card = document.createElement('div');
+    card.className = 'setor setor-promo expandido';
+    card.dataset.setor = 'promo';
+    card.innerHTML =
+      '<div class="setor-topo">' +
+        '<small><span class="promo-tempo">⏳ Por tempo limitado</span></small>' +
+        '<strong>Promo<br>Pista VIP</strong>' +
+        '<span class="promo-off">' + estado.promo.pct + '%<span>OFF</span></span>' +
+        '<span class="desc">Comprando ' + estado.promo.min + ', 3 ou ' + estado.promo.max + ' ingressos inteiros da Pista VIP' + (estado.lote ? ' (' + estado.lote + ')' : '') + '.</span>' +
+      '</div>' +
+      '<div class="setor-opcoes">' + pacotes +
+        '<p class="promo-regra">Válido para inteira. Meia-entrada segue no valor normal, no cartão da Pista VIP abaixo.</p>' +
+      '</div>';
+    card.querySelectorAll('[data-pacote]').forEach(function (b) {
+      b.addEventListener('click', function () { escolherPacote(Number(b.dataset.pacote)); });
+    });
+    return card;
+  }
+
+  function cabePacote(n) {
+    var s = setor('pista');
+    var outros = qtdTotal() - estado.q.pista_inteira;
+    return outros + n <= QTD_MAX && (s.restam === null || estado.q.pista_meia + n <= s.restam);
+  }
+
+  function escolherPacote(n) {
+    if (estado.q.pista_inteira === n) estado.q.pista_inteira = 0; // tocou de novo no escolhido: tira
+    else if (cabePacote(n)) estado.q.pista_inteira = n;
+    atualizar();
+  }
+
   function montar() {
     var box = $('setores');
     box.innerHTML = '';
+    var promo = cartaoPromo();
+    if (promo) box.appendChild(promo);
     estado.setores.forEach(function (s) {
       var esgotado = s.restam === 0;
       var card = document.createElement('div');
@@ -595,7 +669,8 @@ fbq('track', 'PageView');
       card.classList.toggle('aberto', qtdSetor(s.id) > 0); // com ingresso escolhido: borda + ✓
       card.querySelectorAll('[data-preco]').forEach(function (e) {
         var meia = e.dataset.preco === 'pista_meia';
-        e.textContent = s.preco ? moeda(meia ? meiaCent(s.preco) : centavos(s.preco)) + ' cada' : estado.carregou ? 'Valor em breve' : '…';
+        var promo = e.dataset.preco === 'pista_inteira' && naPromo(estado.q.pista_inteira);
+        e.textContent = s.preco ? moeda(meia ? meiaCent(s.preco) : promo ? promoCent(s.preco) : centavos(s.preco)) + ' cada' + (promo ? ' 🔥' : '') : estado.carregou ? 'Valor em breve' : '…';
       });
       card.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado.q[e.dataset.valor]; });
       card.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado.q[b.dataset.qtd] < 1; });
@@ -604,8 +679,18 @@ fbq('track', 'PageView');
       if (nota) nota.hidden = estado.q.pista_meia < 1;
     });
 
+    var cardPromo = document.querySelector('.setor-promo');
+    if (cardPromo) {
+      cardPromo.classList.toggle('aberto', naPromo(estado.q.pista_inteira));
+      cardPromo.querySelectorAll('[data-pacote]').forEach(function (b) {
+        var n = Number(b.dataset.pacote);
+        b.setAttribute('aria-pressed', String(estado.q.pista_inteira === n));
+        b.disabled = estado.q.pista_inteira !== n && !cabePacote(n);
+      });
+    }
+
     var partes = [];
-    if (estado.q.pista_inteira) partes.push(estado.q.pista_inteira + 'x Pista VIP inteira');
+    if (estado.q.pista_inteira) partes.push(estado.q.pista_inteira + 'x Pista VIP inteira' + (naPromo(estado.q.pista_inteira) ? ' (promo ' + estado.promo.pct + '% OFF)' : ''));
     if (estado.q.pista_meia) partes.push(estado.q.pista_meia + 'x Pista VIP meia');
     if (estado.q.open_inteira) partes.push(estado.q.open_inteira + 'x Open Bar');
     $('linha-resumo').textContent = partes.length ? partes.join(' · ') : 'Escolha seus ingressos acima';

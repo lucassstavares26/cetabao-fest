@@ -241,7 +241,7 @@ fbq('track', 'PageView');
   var qtdSetor = function (id) { return id === 'pista' ? qtd.pista_inteira + qtd.pista_meia : qtd.open_inteira; };
   var estado = {
     preco: { pista: null, open: null },
-    restam: { pista: null, open: null }, lote: null, carregou: false, tentativas: 0,
+    restam: { pista: null, open: null }, lote: null, promo: null, carregou: false, tentativas: 0,
     vendendo: false, chave: null, metodo: 'pix', tentou: false, enviando: false, brick: null, brickCriando: false,
     mp: null, custos: null, parcelas: 1 // parcelamento escolhido no brick e quanto o cartão cobra em cada opção
   };
@@ -251,20 +251,23 @@ fbq('track', 'PageView');
   var meiaCent = function (preco) { return Math.round(centavos(preco) / 2); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var semPreco = function () { return SETORES.some(function (s) { return qtdSetor(s.id) > 0 && !estado.preco[s.id]; }); };
+  // Promo da Pista (23/10): desconto só na inteira, com min..max inteiras; meia fora. Igual ao servidor e à página de compra.
+  var naPromo = function () { return !!estado.promo && qtd.pista_inteira >= estado.promo.min && qtd.pista_inteira <= estado.promo.max; };
+  var inteiraPistaCent = function (p) { return naPromo() ? Math.round(centavos(p) * (100 - estado.promo.pct) / 100) : centavos(p); };
   function totalCent() {
     var p = estado.preco.pista, o = estado.preco.open;
-    return (qtd.pista_inteira ? centavos(p || 0) * qtd.pista_inteira : 0) + (qtd.pista_meia ? meiaCent(p || 0) * qtd.pista_meia : 0) +
+    return (qtd.pista_inteira ? inteiraPistaCent(p || 0) * qtd.pista_inteira : 0) + (qtd.pista_meia ? meiaCent(p || 0) * qtd.pista_meia : 0) +
       (qtd.open_inteira ? centavos(o || 0) * qtd.open_inteira : 0);
   }
 
   function montarResumo() {
-    var linha = function (n, nome, tipo, cent, temPreco) {
-      return '<div class="item"><span><b>' + n + '× ' + nome + ' — ' + tipo + '</b><small>' + (estado.lote || '') + '</small></span>' +
+    var linha = function (n, nome, tipo, cent, temPreco, extra) {
+      return '<div class="item"><span><b>' + n + '× ' + nome + ' — ' + tipo + '</b><small>' + [estado.lote, extra].filter(Boolean).join(' · ') + '</small></span>' +
         '<span>' + (temPreco ? moeda(cent) : estado.carregou ? 'em breve' : '…') + '</span></div>';
     };
     var p = estado.preco.pista, o = estado.preco.open;
     $('itens').innerHTML =
-      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', centavos(p || 0) * qtd.pista_inteira, !!p) : '') +
+      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : '') : '') +
       (qtd.pista_meia ? linha(qtd.pista_meia, 'Pista VIP', 'Meia', meiaCent(p || 0) * qtd.pista_meia, !!p) : '') +
       (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', centavos(o || 0) * qtd.open_inteira, !!o) : '');
     var t = totalCent();
@@ -291,6 +294,7 @@ fbq('track', 'PageView');
           estado.restam[c.id] = c.restam;
         });
         estado.lote = cfg.lote || null;
+        estado.promo = cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null;
         estado.carregou = true;
         estado.vendendo = !!cfg.vendendo;
         estado.chave = cfg.mp_chave_publica || null;
