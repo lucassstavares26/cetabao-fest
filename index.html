@@ -137,7 +137,8 @@ fbq('track', 'PageView');
   @media (min-width: 480px) { #t-compra { font-size: 27px; } }
   .cartao .sub { margin-top: 6px; font-size: 15.5px; color: var(--tinta-suave); }
 
-  .setores { display: grid; gap: 14px; margin-top: 22px; text-align: left; }
+  /* minmax(0, 1fr): conteúdo que não quebra linha nunca alarga a coluna (23/10: a promo empurrava todos os cartões pra fora do branco) */
+  .setores { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 22px; text-align: left; }
   .setor { position: relative; border: 3px solid transparent; border-radius: 18px; transition: transform .15s, opacity .2s, border-color .2s; }
   .setor-pista { background: linear-gradient(140deg, #ffe55c, var(--sol) 50%, #f0a800); color: #3b2300; box-shadow: 0 5px 0 var(--sol-sombra); }
   .setor-open { background: linear-gradient(140deg, #3d8bff, var(--open) 55%, var(--open-escuro)); color: #fff; box-shadow: 0 5px 0 #062466; }
@@ -185,25 +186,30 @@ fbq('track', 'PageView');
 
   /* promo da Pista VIP (23/10): pacotes de 2, 3 e 4 inteiras com desconto. Só aparece com a promo ligada no painel. */
   /* 23/10 (3ª versão, pedido do Lucas): topo BRANCO, pacotes no AMARELO da Pista VIP e "20% OFF" na mesma linha do título */
-  .setor-promo { background: #fff; color: var(--tinta); border-color: var(--sol); box-shadow: 0 5px 0 var(--sol-sombra); }
-  .setor-promo .setor-topo { grid-template-columns: 1fr auto; padding-bottom: 6px; }
-  .setor-promo .setor-opcoes { padding-top: 6px; }
+  /* As letras da promo acompanham a LARGURA DO CARTÃO (cqw = 1% dela), pra nada vazar da borda em tela nenhuma.
+     A linha de antes de cada cqw é a reserva pra navegador antigo (cartão ≈ min(100vw, 480px) − 82px). */
+  .setor-promo { container-type: inline-size; background: #fff; color: var(--tinta); border-color: var(--sol); box-shadow: 0 5px 0 var(--sol-sombra); }
+  .setor-promo .setor-topo { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; padding-bottom: 6px; }
+  .setor-promo .setor-opcoes { padding: 6px 10px 12px; }
   .promo-tempo { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px 4px; border-radius: 999px; background: var(--brasa); color: #fff; letter-spacing: .12em; animation: promo-pisca 1.6s ease-in-out infinite; }
   @keyframes promo-pisca { 50% { background: var(--engradado); } }
   @media (prefers-reduced-motion: reduce) { .promo-tempo { animation: none; } }
   /* "Promo Pista VIP" + "20% OFF" sempre numa linha: a letra do título encolhe com a tela (mesmo truque do #t-compra) */
-  .setor-promo .setor-topo strong { color: var(--ceu); white-space: nowrap; font-size: min(25px, calc((100vw - 172px) / 9.6)); }
-  .promo-off { padding: 7px 9px 6px; border-radius: 9px; background: var(--sol); color: var(--engradado); font: 400 16px/1 var(--placa); white-space: nowrap; box-shadow: 0 3px 0 var(--sol-sombra); }
-  .promo-off span { margin-left: 4px; }
+  .setor-promo .setor-topo strong { color: var(--ceu); white-space: nowrap; font-size: min(25px, calc((min(100vw, 480px) - 142px) / 12.25)); font-size: min(25px, calc((100cqw - 60px) / 12.25)); }
+  .promo-off { padding: .45em .55em .38em; border-radius: 9px; background: var(--sol); color: var(--engradado); font: 400 16px/1 var(--placa); white-space: nowrap; box-shadow: 0 3px 0 var(--sol-sombra); }
+  .promo-off { font-size: min(16px, calc((min(100vw, 480px) - 142px) / 19.8)); font-size: min(16px, calc((100cqw - 60px) / 19.8)); }
+  .promo-off span { margin-left: .25em; }
   .setor-promo .desc { color: var(--tinta-suave); }
-  .pacote { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 11px 12px 11px 12px; border: 3px solid transparent; border-radius: 14px; background: linear-gradient(140deg, #ffe55c, var(--sol) 50%, #f0a800); color: #3b2300; box-shadow: 0 3px 0 var(--sol-sombra); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+  .pacote { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; padding: 11px 10px; border: 3px solid transparent; border-radius: 14px; background: linear-gradient(140deg, #ffe55c, var(--sol) 50%, #f0a800); color: #3b2300; box-shadow: 0 3px 0 var(--sol-sombra); font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
   .pacote:disabled { opacity: .4; cursor: not-allowed; }
-  .pacote .marca { width: 24px; height: 24px; border-radius: 50%; border: 3px solid var(--sol-sombra); background: #fff; }
-  .pacote b { display: block; font: 800 19px/1.05 var(--estreita); letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
-  .pacote small { display: block; margin-top: 3px; font: 700 14px/1.2 var(--texto); letter-spacing: 0; text-transform: none; white-space: nowrap; color: #6b4a00; }
+  /* tamanho dos pacotes: "2 INGRESSOS" + "POR R$ 152,00" cabem em (cartão − 84px) */
+  .pacote { --f: min(21px, calc((min(100vw, 480px) - 166px) / 13.2)); --f: min(21px, calc((100cqw - 84px) / 13.2)); }
+  .pacote .marca { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--sol-sombra); background: #fff; }
+  .pacote b { display: block; font: 800 min(19px, var(--f))/1.05 var(--estreita); letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
+  .pacote small { display: block; margin-top: 3px; font: 700 min(14px, calc(var(--f) * .8))/1.2 var(--texto); letter-spacing: 0; text-transform: none; white-space: nowrap; color: #6b4a00; }
   .pacote .de-por { text-align: right; white-space: nowrap; }
-  .pacote s { display: block; font-size: 14px; font-weight: 600; color: #6b4a00; }
-  .pacote .por { display: block; margin-top: 2px; font: 400 clamp(16px, 4.9vw, 21px)/1 var(--placa); color: var(--engradado); }
+  .pacote s { display: block; font-size: min(14px, calc(var(--f) * .8)); font-weight: 600; color: #6b4a00; }
+  .pacote .por { display: block; margin-top: 2px; font: 400 var(--f)/1 var(--placa); color: var(--engradado); }
   .pacote[aria-pressed="true"] { border-color: var(--verde); }
   .pacote[aria-pressed="true"] .marca { border-color: var(--verde); background: var(--verde) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 14px no-repeat; }
   .promo-regra { padding: 2px 4px 0; font-size: 13px; line-height: 1.35; color: var(--tinta-suave); }
@@ -217,6 +223,9 @@ fbq('track', 'PageView');
   .opcao button { width: 44px; height: 44px; flex: none; border-radius: 12px; border: 0; background: var(--ceu); color: #fff; font: 700 24px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
   .opcao button:disabled { opacity: .22; cursor: not-allowed; }
   .opcao output { width: 30px; text-align: center; font: 400 24px/1 var(--placa); color: var(--ceu); }
+  /* celular estreito: botões um pouco menores pra "R$ 210,00 cada" caber; abaixo de 345px o "cada" pode descer de linha */
+  @media (max-width: 385px) { .opcao { gap: 6px; padding-left: 12px; } .opcao button { width: 38px; height: 40px; } .opcao output { width: 26px; } .opcao span { font-size: 15.5px; } }
+  @media (max-width: 345px) { .opcao { gap: 4px; padding: 8px 6px 8px 10px; } .opcao button { width: 34px; height: 38px; } .opcao span { white-space: normal; } }
   .nota-meia { padding: 2px 4px 0; font-size: 13.5px; line-height: 1.35; }
   .nota-meia strong { color: var(--engradado); }
 
