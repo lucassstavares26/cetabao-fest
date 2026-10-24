@@ -18,6 +18,7 @@
 <script src="/sem-zoom.js"></script>
 <!-- Device ID do Mercado Pago (MP_DEVICE_SESSION_ID): vai junto no pagamento com cartão e ajuda a aprovar -->
 <script src="https://www.mercadopago.com/v2/security.js" view="checkout" defer></script>
+<script src="/desafio-3ds.js" defer></script>
 <style>
   body { text-align: left; }
   html, body { overflow-x: hidden; overflow-x: clip; }
@@ -153,7 +154,7 @@
         if (p.status === 'pago') { mostrar('pago'); location.replace('/pedido/' + token); return; }
         if (p.status === 'cancelado') { fechado('Esta cobrança foi cancelada', 'Se ainda quiser os ingressos, peça pra loja gerar de novo.'); return; }
         if (p.expirou) { fechado('O tempo pra pagar acabou', 'Peça pra loja gerar a cobrança de novo.'); return; }
-        if (p.mp_status === 'in_process') { montarResumo(p); mostrar('analise'); setTimeout(consultar, 5000); return; }
+        if (p.mp_status === 'in_process' || (p.mp_status === 'pending' && p.metodo && p.metodo !== 'Pix')) { montarResumo(p); mostrar('analise'); setTimeout(consultar, 5000); return; }
         montarResumo(p);
         if (primeira) { mostrar('form'); prepararCartao(); relogioDoLink(p.ponto.expira_em); }
       })
@@ -264,6 +265,8 @@
         estado.enviando = false; botao();
         if (res.status === 200 && res.j.ok) {
           if (res.j.situacao === 'pago') { mostrar('pago'); location.replace('/pedido/' + token); return; }
+          // O banco pediu pra confirmar a compra (3DS): abre a tela do banco e depois confere.
+          if (res.j.situacao === 'desafio' && window.CetabaoDesafio) { CetabaoDesafio.abrir(res.j.desafio, function () { mostrar('analise'); consultar(); }); return; }
           mostrar('analise'); setTimeout(consultar, 5000); return;
         }
         erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');

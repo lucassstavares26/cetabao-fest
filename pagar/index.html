@@ -95,6 +95,7 @@
 <script src="/suporte.js" defer></script>
 <!-- Device ID do Mercado Pago (MP_DEVICE_SESSION_ID): vai junto no pagamento com cartão e ajuda a aprovar -->
 <script src="https://www.mercadopago.com/v2/security.js" view="checkout" defer></script>
+<script src="/desafio-3ds.js" defer></script>
 </head>
 <body data-suporte-msg="Oi! Estou com uma dúvida sobre o link de pagamento do meu Lounge/Mesa no Cê Tá Bão Fest.">
 
@@ -284,7 +285,7 @@
         if (c.status === 'divergente') { $('cod-div').textContent = c.codigo; mostrar('divergente'); return; }
         if (c.pix && !estado.preferiuCartao) { mostrarPix(c.pix); return seguir(4000); }
         if (c.pix) seguir(5000); // trocou pro cartão com o Pix aberto: se o Pix cair mesmo assim, a página vê
-        if (c.status === 'aguardando' || (c.mp_status === 'in_process' && c.metodo !== 'Pix')) { mostrar('analise'); return seguir(5000); }
+        if (c.status === 'aguardando' || ((c.mp_status === 'in_process' || c.mp_status === 'pending') && c.metodo !== 'Pix')) { mostrar('analise'); return seguir(5000); }
         if (c.status !== 'aberta') {
           var doSite = c.origem === 'site';
           $('fechado-titulo').textContent = c.status === 'cancelada' ? 'Este link de pagamento foi cancelado' : doSite ? 'O tempo pra pagar acabou' : 'Este link de pagamento venceu';
@@ -540,7 +541,12 @@
       })
       .then(function (res) {
         ocupado(false);
-        if (res.status === 200 && res.j.ok) { estado.preferiuCartao = false; consultar(); return; }
+        if (res.status === 200 && res.j.ok) {
+          estado.preferiuCartao = false;
+          // O banco pediu pra confirmar a compra (3DS): abre a tela do banco e depois confere.
+          if (res.j.situacao === 'desafio' && window.CetabaoDesafio) { CetabaoDesafio.abrir(res.j.desafio, consultar); return; }
+          consultar(); return;
+        }
         erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
         if (res.status === 409) consultar(); // link venceu ou já foi pago
       })

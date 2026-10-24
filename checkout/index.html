@@ -108,6 +108,7 @@ fbq('track', 'PageView');
 <script src="/suporte.js" defer></script>
 <!-- Device ID do Mercado Pago (MP_DEVICE_SESSION_ID): vai junto no pagamento com cartão e ajuda a aprovar -->
 <script src="https://www.mercadopago.com/v2/security.js" view="checkout" defer></script>
+<script src="/desafio-3ds.js" defer></script>
 <script src="/acesso.js" data-pagina="checkout" defer></script>
 </head>
 <body data-suporte-msg="Oi! Estou com uma dúvida pra finalizar minha compra no site do Cê Tá Bão Fest.">
@@ -590,7 +591,10 @@ fbq('track', 'PageView');
         if (res.status === 200 && res.j.pedido) {
           if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { value: res.j.valor, currency: 'BRL', num_items: totalQtd });
           try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); sessionStorage.removeItem('cetabao_carrinho'); sessionStorage.removeItem('cetabao_carrinho_sessao'); } catch (e) { /* tudo bem */ }
-          location.href = '/pedido/' + res.j.pedido;
+          var irPedido = function () { location.href = '/pedido/' + res.j.pedido; };
+          // O banco pediu pra confirmar a compra (3DS): abre a tela do banco e depois vai pro pedido.
+          if (res.j.situacao === 'desafio' && window.CetabaoDesafio) { CetabaoDesafio.abrir(res.j.desafio, irPedido); return; }
+          irPedido();
           return;
         }
         ocupado(false);
