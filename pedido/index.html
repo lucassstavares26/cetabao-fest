@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="/estilo.css">
 <script src="/sem-zoom.js"></script>
 <script src="/ingresso-cartao.js"></script>
+<script src="/ingresso-pdf.js"></script>
 <!-- Sem Pixel no carregamento: o endereço desta página é o link secreto dos
      ingressos, e o Pixel manda a URL pro Meta. Ele só carrega na hora do
      Purchase, com o endereço já limpo (ver pago()). -->
@@ -123,7 +124,7 @@
       <li id="instr-meia" hidden><strong>Meia-entrada:</strong> leve o documento que comprova o direito.</li>
     </ul>
     <div id="ingressos" style="display:grid;gap:22px"></div>
-    <button class="btn btn-linha nao-imprime" type="button" onclick="window.print()">Salvar em PDF / imprimir</button>
+    <div id="pdf" class="nao-imprime" style="display:grid;gap:8px"></div>
   </div>
 </main>
 
@@ -223,6 +224,9 @@
         (i.cancelado || i.usado ? '' : CetabaoIngresso.botaoWhats(i)) + '</div>';
     }).join('');
     mostrar('pago');
+    // PDF de verdade, montado no celular (window.print não funciona no Instagram e no iPhone é escondido).
+    var validos = Array.prototype.slice.call(document.querySelectorAll('#ingressos .ingresso:not(.invalido)'));
+    if (window.CetabaoPdf) CetabaoPdf.botao($('pdf'), validos, 'ingressos-cetabao-' + p.codigo + '.pdf');
     registrarCompra(p);
   }
 

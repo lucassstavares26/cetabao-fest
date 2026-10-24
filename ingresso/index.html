@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="/estilo.css">
 <script src="/sem-zoom.js"></script>
 <script src="/ingresso-cartao.js"></script>
+<script src="/ingresso-pdf.js"></script>
 <style>
   .conteudo { padding: 22px var(--lado) 40px; display: grid; gap: 18px; }
   h1 { font-size: clamp(28px, 8.4vw, 36px); }
@@ -63,7 +64,7 @@
       <li>O QR vale <strong>uma entrada só</strong>. Não poste a imagem nas redes.</li>
       <li id="instr-meia" hidden><strong>Meia-entrada:</strong> leve o documento que comprova o direito.</li>
     </ul>
-    <button class="btn btn-linha nao-imprime" type="button" onclick="window.print()">Salvar em PDF / imprimir</button>
+    <div id="pdf" class="nao-imprime" style="display:grid;gap:8px"></div>
   </div>
 </main>
 
@@ -87,6 +88,8 @@
       $('ingresso').innerHTML = CetabaoIngresso.html(i);
       $('instr-meia').hidden = !i.meia;
       mostrar('pronto');
+      var el = document.querySelector('#ingresso .ingresso:not(.invalido)');
+      if (el && window.CetabaoPdf) CetabaoPdf.botao($('pdf'), [el], 'ingresso-cetabao-' + codigo.slice(0, 6) + '.pdf');
     })
     .catch(function () { mostrar('falhou'); });
 })();

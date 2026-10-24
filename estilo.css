@@ -62,6 +62,10 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .btn-zap { background: var(--verde); color: #fff; box-shadow: 0 5px 0 var(--verde-escuro), 0 14px 28px rgba(0, 0, 0, .2); }
 .btn-zap:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--verde-escuro), 0 8px 16px rgba(0, 0, 0, .2); }
 .btn-linha { background: transparent; color: #fff; border: 2px solid var(--vidro-borda); min-height: 52px; font-size: 17px; }
+/* aviso embaixo do "Baixar ingressos em PDF" (ingresso-pdf.js) */
+.pdf-aviso { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--ceu-texto); text-align: center; }
+.pdf-aviso strong { color: #fff; }
+.btn-linha:disabled { opacity: .6; cursor: wait; }
 .btn:disabled { cursor: progress; opacity: .8; }
 .girando { width: 20px; height: 20px; flex: none; border: 3px solid rgba(180, 18, 18, .25); border-top-color: currentColor; border-radius: 50%; animation: gira .8s linear infinite; }
 @keyframes gira { to { transform: rotate(360deg); } }
