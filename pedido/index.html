@@ -92,6 +92,13 @@
     <p>Em breve a equipe do evento fala com você pelo WhatsApp. Guarde o código do pedido: <strong id="cod-div"></strong>.</p>
   </div>
 
+  <!-- Cartão não aprovado (na hora ou depois da análise): um toque gera um pedido novo com as mesmas quantidades -->
+  <div class="cartao" id="recusado" hidden>
+    <h2>Pagamento não aprovado</h2>
+    <p>O cartão não foi aprovado e nada foi cobrado. Seus dados ficam salvos: é só tentar de novo com outro cartão ou no Pix, que libera os ingressos na hora.</p>
+    <a class="btn btn-sol" id="tentar-de-novo" href="/">Tentar de novo</a>
+  </div>
+
   <div class="cartao" id="cancelado" hidden>
     <h2>Este pedido foi cancelado</h2>
     <p>Os ingressos dele não valem mais na entrada. Dúvidas: fale com o nosso suporte no <a href="https://wa.me/553531690079" target="_blank" rel="noopener">WhatsApp (35) 3169-0079</a>.</p>
@@ -136,7 +143,7 @@
   var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
 
   function mostrar(qual) {
-    ['carregando', 'pix', 'pendente', 'expirou', 'divergente', 'cancelado', 'nao-achou', 'pago'].forEach(function (id) { $(id).hidden = id !== qual; });
+    ['carregando', 'pix', 'pendente', 'expirou', 'divergente', 'cancelado', 'recusado', 'nao-achou', 'pago'].forEach(function (id) { $(id).hidden = id !== qual; });
   }
 
   function consultar() {
@@ -149,6 +156,10 @@
         $('resumo').textContent = (p.reserva ? '' : 'Pedido ') + p.codigo + ' · ' + p.descricao + (p.valor == null ? '' : ' · ' + moeda(p.valor));
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
+        if (p.status === 'cancelado' && p.recusado && p.qtds) {
+          $('tentar-de-novo').href = '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0);
+          mostrar('recusado'); return;
+        }
         if (p.status === 'cancelado') { mostrar('cancelado'); return; }
         if (p.expirou) { mostrar('expirou'); return; }
         if (p.pix) {
