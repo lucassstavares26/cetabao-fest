@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
 <script src="/sem-zoom.js"></script>
+<script src="/copiar.js"></script>
 <script src="/ingresso-cartao.js"></script>
 <script src="/ingresso-pdf.js"></script>
 <!-- Sem Pixel no carregamento: o endereço desta página é o link secreto dos
@@ -31,6 +32,10 @@
   .ok-icone { width: 64px; height: 64px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--verde); color: #fff; font: 900 32px/1 var(--texto); box-shadow: 0 0 0 8px rgba(30, 158, 77, .15); }
   .pix-qr { width: 240px; height: 240px; margin: 16px auto 0; image-rendering: pixelated; }
   .pix-codigo { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: var(--campo-fundo); border: 1.5px dashed #c9d6ee; font: 500 12.5px/1.35 ui-monospace, Menlo, Consolas, monospace; color: var(--tinta); word-break: break-all; max-height: 74px; overflow: hidden; text-align: left; }
+  /* o código Pix inteiro seleciona com um toque (plano C do copiar, pro navegador do Instagram) */
+  .pix-codigo { -webkit-user-select: all; user-select: all; cursor: text; }
+  .pix-dica { margin-top: 10px; font-size: 14px; line-height: 1.4; color: var(--tinta-suave); text-align: center; }
+  .pix-dica strong { color: var(--tinta); }
   .pix-tempo { margin-top: 12px; font-size: 15px; color: var(--tinta-suave); }
   .pix-tempo b { color: var(--brasa); font-variant-numeric: tabular-nums; }
   .passos-pix { margin: 12px 0 0 18px; text-align: left; font-size: 15px; color: var(--tinta-suave); }
@@ -72,6 +77,7 @@
     <img class="pix-qr" id="pix-qr" width="240" height="240" alt="QR Code do Pix">
     <p class="pix-codigo" id="pix-codigo"></p>
     <button class="btn btn-sol" type="button" id="pix-copiar">Copiar código Pix</button>
+    <p class="pix-dica" id="pix-dica" hidden>Não copiou? Toque e segure no código acima e escolha <strong>Copiar</strong>.</p>
     <p class="pix-tempo">O Pix vence em <b id="pix-tempo">30:00</b></p>
     <p>Esta página atualiza sozinha. Os ingressos também chegam no seu e-mail.</p>
   </div>
@@ -192,8 +198,11 @@
     $('pix-codigo').textContent = pix.copia_cola;
     $('pix-copiar').addEventListener('click', function () {
       var feito = function () { $('pix-copiar').textContent = 'Código copiado ✓'; setTimeout(function () { $('pix-copiar').textContent = 'Copiar código Pix'; }, 2500); };
-      if (navigator.clipboard) navigator.clipboard.writeText(pix.copia_cola).then(feito, function () { window.prompt('Copie o código Pix:', pix.copia_cola); });
-      else window.prompt('Copie o código Pix:', pix.copia_cola);
+      // Copiar que funciona no navegador do Instagram (copiar.js); se nada der, a dica manda tocar e segurar.
+      CetabaoCopiar(pix.copia_cola, $('pix-codigo')).then(function (ok) {
+        $('pix-dica').hidden = ok;
+        if (ok) feito();
+      });
     });
     var fim = new Date(pix.expira_em).getTime();
     var tique = function () {
