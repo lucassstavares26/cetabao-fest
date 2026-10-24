@@ -93,6 +93,8 @@
   .espera { display: inline-block; width: 44px; height: 44px; margin-bottom: 12px; border: 5px solid #dbe4f5; border-top-color: var(--ceu); border-radius: 50%; animation: gira .9s linear infinite; }
 </style>
 <script src="/suporte.js" defer></script>
+<!-- Device ID do Mercado Pago (MP_DEVICE_SESSION_ID): vai junto no pagamento com cartão e ajuda a aprovar -->
+<script src="https://www.mercadopago.com/v2/security.js" view="checkout" defer></script>
 </head>
 <body data-suporte-msg="Oi! Estou com uma dúvida sobre o link de pagamento do meu Lounge/Mesa no Cê Tá Bão Fest.">
 
@@ -509,7 +511,7 @@
     if (!estado.brick) return Promise.reject(erroCartao('O cartão ainda está carregando. Espere um instante.'));
     return estado.brick.getFormData().then(function (d) {
       if (!d || !d.token) throw erroCartao('Confira os dados do cartão.');
-      return { token: d.token, payment_method_id: d.payment_method_id, issuer_id: d.issuer_id, installments: Number(d.installments) || 1, identification: d.payer && d.payer.identification };
+      return { token: d.token, payment_method_id: d.payment_method_id, issuer_id: d.issuer_id, installments: Number(d.installments) || 1, identification: d.payer && d.payer.identification, device_id: window.MP_DEVICE_SESSION_ID || undefined };
     }, function () { throw erroCartao('Confira os dados do cartão.'); });
   }
 

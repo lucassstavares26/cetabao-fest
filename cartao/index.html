@@ -16,6 +16,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
 <script src="/sem-zoom.js"></script>
+<!-- Device ID do Mercado Pago (MP_DEVICE_SESSION_ID): vai junto no pagamento com cartão e ajuda a aprovar -->
+<script src="https://www.mercadopago.com/v2/security.js" view="checkout" defer></script>
 <style>
   body { text-align: left; }
   html, body { overflow-x: hidden; overflow-x: clip; }
@@ -255,7 +257,7 @@
         return fetch(API + '/api/pedido/' + token + '/cartao', {
           method: 'POST',
           headers: { 'content-type': 'text/plain;charset=UTF-8' },
-          body: JSON.stringify({ cartao: { token: d.token, payment_method_id: d.payment_method_id, issuer_id: d.issuer_id, installments: Number(d.installments) || 1, identification: d.payer && d.payer.identification } })
+          body: JSON.stringify({ cartao: { token: d.token, payment_method_id: d.payment_method_id, issuer_id: d.issuer_id, installments: Number(d.installments) || 1, identification: d.payer && d.payer.identification, device_id: window.MP_DEVICE_SESSION_ID || undefined } })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       }, function () { throw new Error('Confira os dados do cartão.'); })
       .then(function (res) {
