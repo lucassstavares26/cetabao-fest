@@ -189,7 +189,7 @@ fbq('track', 'PageView');
         <p class="cartao-aviso" id="cartao-aviso" hidden>Os campos do cartão aparecem aqui quando as vendas pelo site abrirem.</p>
       </div>
 
-      <button class="btn btn-sol pagar" type="submit" id="pagar" disabled>Vendas em breve</button>
+      <button class="btn btn-sol pagar" type="submit" id="pagar" disabled>Carregando…</button>
       <p class="aviso-pagar" id="aviso-pagar" hidden>As vendas pelo site abrem em breve.</p>
       <p class="erro-geral" id="erro-geral" role="alert" hidden></p>
 
@@ -283,14 +283,21 @@ fbq('track', 'PageView');
       return r === 0 ? s.nome + ' esgotou.' : 'Só ' + (r === 1 ? 'resta 1 ingresso' : 'restam ' + r + ' ingressos') + ' de ' + s.nome + '.';
     }).join(' ') + ' <a href="/#compra">Alterar o pedido</a>';
     estado.podePagar = estado.vendendo && !semPreco() && !faltas.length;
-    $('aviso-pagar').hidden = estado.vendendo;
+    $('aviso-pagar').hidden = estado.vendendo || !estado.carregou; // carregando ainda não é "vendas fechadas"
     botao();
   }
 
+  // Nunca desiste e busca de novo ao voltar pra aba (mesma regra da página de compra, Lucas 24/10).
+  var buscando = false, carregadoEm = 0;
   function carregar() {
+    if (buscando) return;
+    buscando = true;
     return fetch(API + '/api/site/publico', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
+        buscando = false;
+        carregadoEm = Date.now();
+        estado.tentativas = 0;
         (cfg.setores || []).forEach(function (c) {
           if (!(c.id in estado.preco)) return;
           estado.preco[c.id] = c.preco || null;
@@ -305,9 +312,10 @@ fbq('track', 'PageView');
         if (estado.metodo === 'cartao') prepararCartao();
       })
       .catch(function () {
+        // Sem resposta (aba em segundo plano, internet oscilando): tenta de novo até conseguir.
+        buscando = false;
         estado.tentativas++;
-        if (estado.tentativas < 3) { setTimeout(carregar, 2000 * estado.tentativas); return; }
-        estado.carregou = true; estado.vendendo = false; montarResumo();
+        setTimeout(carregar, Math.min(2000 * estado.tentativas, 15000));
       });
   }
 
@@ -532,6 +540,7 @@ fbq('track', 'PageView');
     mostrarTotal();
     b.disabled = estado.enviando || !estado.podePagar;
     if (estado.enviando) { b.innerHTML = '<span class="girando"></span><span>' + (estado.metodo === 'pix' ? 'Gerando o Pix…' : 'Processando o cartão…') + '</span>'; return; }
+    if (!estado.carregou) { b.textContent = 'Carregando…'; return; }
     if (!estado.vendendo) { b.textContent = 'Vendas em breve'; return; }
     var noCartao = totalCartaoCent();
     b.textContent = estado.metodo === 'pix' ? 'Pagar ' + moeda(totalCent()) + ' no Pix'
@@ -607,6 +616,13 @@ fbq('track', 'PageView');
 
   montarResumo();
   carregar();
+  // Voltou pra aba depois de um tempo (foi no app do banco, por exemplo) ou a internet voltou: busca de novo.
+  var atualizarAoVoltar = function () {
+    if (document.visibilityState === 'visible' && Date.now() - carregadoEm > 30000) carregar();
+  };
+  document.addEventListener('visibilitychange', atualizarAoVoltar);
+  window.addEventListener('pageshow', function (e) { if (e.persisted) atualizarAoVoltar(); });
+  window.addEventListener('online', carregar);
 })();
 </script>
 </body>

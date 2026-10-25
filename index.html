@@ -564,10 +564,20 @@ fbq('track', 'PageView');
   }
 
   // ---------- preços / lote / estoque do painel
+  // Nunca desiste (Lucas, 24/10: voltando pro site, às vezes ficava "Valor em breve" até atualizar):
+  // o celular pausa a aba em segundo plano e corta a internet dela, e antes eram só 3 tentativas.
+  // Agora tenta até conseguir e busca de novo quando a pessoa volta pra aba ou a internet volta.
+  // "Valor em breve" só quando o painel RESPONDE sem preço; sem resposta, fica o "…".
+  var buscando = false, carregadoEm = 0;
   function carregar() {
+    if (buscando) return;
+    buscando = true;
     fetch(API + '/api/site/publico', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
+        buscando = false;
+        carregadoEm = Date.now();
+        estado.tentativas = 0;
         (cfg.setores || []).forEach(function (c) {
           var s = setor(c.id);
           if (s) { s.preco = c.preco || null; s.restam = c.restam; }
@@ -581,11 +591,10 @@ fbq('track', 'PageView');
         montar();
       })
       .catch(function () {
-        // Painel não respondeu: tenta de novo; depois de 3 vezes mostra "Valor em breve".
+        // Painel não respondeu: tenta de novo (2 s, 4 s, 6 s… até 15 s), sem desistir.
+        buscando = false;
         estado.tentativas++;
-        if (estado.tentativas < 3) { setTimeout(carregar, 2000 * estado.tentativas); return; }
-        estado.carregou = true;
-        montar();
+        setTimeout(carregar, Math.min(2000 * estado.tentativas, 15000));
       });
     fetch(API + '/api/site/premium', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
@@ -831,6 +840,13 @@ fbq('track', 'PageView');
   ajustarAoEstoque(); // carrinho guardado na aba também respeita o teto da Pista
   montar();
   carregar();
+  // Voltou pra aba (ou pelo "voltar" do navegador) depois de um tempo, ou a internet voltou: busca de novo.
+  var atualizarAoVoltar = function () {
+    if (document.visibilityState === 'visible' && Date.now() - carregadoEm > 30000) carregar();
+  };
+  document.addEventListener('visibilitychange', atualizarAoVoltar);
+  window.addEventListener('pageshow', function (e) { if (e.persisted) atualizarAoVoltar(); });
+  window.addEventListener('online', carregar);
 })();
 </script>
 <script>
