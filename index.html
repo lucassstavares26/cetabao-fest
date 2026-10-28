@@ -28,8 +28,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
 <script src="/sem-zoom.js"></script>
-<!-- Pixel do Meta: PageView aqui; InitiateCheckout só quando o servidor abre
-     o pagamento de verdade; Purchase na página do pedido, quando aprova. -->
+<!-- Pixel do Meta: PageView aqui; AddToCart no "Comprar ingressos"; InitiateCheckout
+     ao abrir o checkout; AddPaymentInfo quando o Pix/cartão é gerado; Purchase na
+     página do pedido, quando aprova. -->
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -803,7 +804,11 @@ fbq('track', 'PageView');
   // ---------- segunda parte: checkout (dados + pagamento)
   function irProCheckout() {
     if (qtdTotal() < 1) return;
-    location.href = '/checkout/?pi=' + inteirasPista() + '&pm=' + estado.q.pista_meia + '&oi=' + estado.q.open_inteira;
+    var destino = '/checkout/?pi=' + inteirasPista() + '&pm=' + estado.q.pista_meia + '&oi=' + estado.q.open_inteira;
+    // AddToCart pro Meta; espera um instante pra o evento sair antes de trocar de página.
+    if (typeof fbq !== 'function') { location.href = destino; return; }
+    try { fbq('track', 'AddToCart', { value: totalCent() / 100, currency: 'BRL', num_items: qtdTotal(), content_type: 'product' }); } catch (e) { /* tudo bem */ }
+    setTimeout(function () { location.href = destino; }, 300);
   }
   $('continuar').addEventListener('click', irProCheckout);
   $('barra-comprar').addEventListener('click', function () {

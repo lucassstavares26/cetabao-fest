@@ -14,7 +14,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/estilo.css">
 <script src="/sem-zoom.js"></script>
-<!-- Pixel do Meta: PageView aqui; InitiateCheckout só quando o servidor aceita o pagamento. -->
+<!-- Pixel do Meta: PageView + InitiateCheckout ao abrir (quando o preço chega);
+     AddPaymentInfo quando o servidor aceita o pagamento. -->
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -307,6 +308,10 @@ fbq('track', 'PageView');
         estado.promo = cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null;
         estado.carregou = true;
         estado.vendendo = !!cfg.vendendo;
+        if (!estado.iniciou && typeof fbq === 'function') {
+          estado.iniciou = true; // uma vez por abertura (o carregar roda de novo ao voltar pra aba)
+          fbq('track', 'InitiateCheckout', { value: totalCent() / 100, currency: 'BRL', num_items: totalQtd });
+        }
         estado.chave = cfg.mp_chave_publica || null;
         montarResumo();
         if (estado.metodo === 'cartao') prepararCartao();
@@ -597,7 +602,7 @@ fbq('track', 'PageView');
       })
       .then(function (res) {
         if (res.status === 200 && res.j.pedido) {
-          if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { value: res.j.valor, currency: 'BRL', num_items: totalQtd });
+          if (typeof fbq === 'function') fbq('track', 'AddPaymentInfo', { value: res.j.valor, currency: 'BRL', num_items: totalQtd });
           try { localStorage.setItem('cetabao_ultimo_pedido', res.j.pedido); sessionStorage.removeItem('cetabao_carrinho'); sessionStorage.removeItem('cetabao_carrinho_sessao'); } catch (e) { /* tudo bem */ }
           var irPedido = function () { location.href = '/pedido/' + res.j.pedido; };
           // O banco pediu pra confirmar a compra (3DS): abre a tela do banco e depois vai pro pedido.
