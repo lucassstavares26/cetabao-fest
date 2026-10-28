@@ -187,3 +187,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .suporte-flutuante.suporte-escondido { opacity: 0; pointer-events: none; transform: translateY(12px); }
 .suporte-flutuante { transition: bottom .25s ease, transform .2s, opacity .2s; }
 @media print { .suporte-flutuante, .suporte-inline { display: none !important; } }
+
+/* Aviso de quem recebe o Pix: o banco mostra "ROY ENTRETENIMENTO" e alguns alertam golpe em recebedor novo */
+.pix-recebedor { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: #eaf7ef; border: 1.5px solid #9fd8b4; color: var(--tinta); font-size: 14.5px; line-height: 1.4; text-align: left; }
+.pix-recebedor strong { color: var(--verde-escuro); }
