@@ -5,3 +5,4 @@ Disallow: /checkout/
 Disallow: /ingresso/
 Disallow: /pagar/
 Disallow: /cartao/
+Disallow: /comunidade/

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Black Friday da Comunidade · Cê Tá Bão Fest</title>
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Black Friday antecipada · Comunidade Cê Tá Bão">
+<meta property="og:description" content="Preço especial só pra quem é da comunidade: Pista VIP e Open Bar mais baratos. Sábado, 28/11 · Passos-MG.">
+<meta property="og:image" content="https://www.cetabaofest.com.br/img/compartilhar.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="1052">
+<meta name="theme-color" content="#003c86">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<!-- Pixel do Meta: PageView aqui; AddToCart no "Realizar pagamento" (igual à página de compra). -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1400962194832152');
+fbq('track', 'PageView');
+</script>
+<style>
+  /* Promo da comunidade (Lucas, 30/10): Black Friday antecipada só pra quem recebe o link no WhatsApp.
+     Separada da página de compra: só inteira, preço da promo, e o checkout recebe a chave (c=). */
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .topo-com { padding: 22px var(--lado) 0; background: linear-gradient(180deg, var(--ceu-alto), var(--ceu) 80%); }
+  .topo-com .logo { width: 132px; margin: 0 auto; }
+  .chamada { padding: 18px var(--lado) 34px; }
+  .chamada .selo {
+    display: inline-block; padding: 9px 14px 7px; border-radius: 8px; transform: rotate(-2deg);
+    font: 400 14px/1 var(--placa); color: var(--engradado); background: var(--sol); box-shadow: 0 3px 0 var(--sol-sombra);
+  }
+  .chamada h1 { margin-top: 16px; font-size: clamp(30px, 9.4vw, 42px); color: #fff; text-shadow: 0 4px 0 var(--ceu-noite); }
+  .chamada h1 span { display: block; color: var(--sol); }
+  .chamada p { margin-top: 12px; color: var(--ceu-texto); font-size: 16px; }
+  .compra { padding: 40px var(--lado) 44px; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e); }
+  .cartao h2 { font-size: clamp(22px, 6.4vw, 26px); color: var(--ceu); }
+  .cartao .sub { margin-top: 6px; font-size: 15px; color: var(--tinta-suave); }
+  .ofertas { display: grid; gap: 14px; margin-top: 22px; text-align: left; }
+  .oferta { border: 3px solid var(--cor); border-left-width: 8px; border-radius: 18px; padding: 16px 14px 14px 16px; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
+  .oferta-pista { --cor: var(--sol); --cor-texto: #8a6400; }
+  .oferta-open { --cor: var(--open); --cor-texto: var(--open); }
+  .oferta small { display: block; font: 800 11.5px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--cor-texto); }
+  .oferta h3 { margin-top: 6px; font: 800 clamp(23px, 6.6vw, 27px)/1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); }
+  .de-por { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+  .de-por s { font: 700 16px/1 var(--estreita); color: var(--tinta-suave); }
+  .de-por b { font: 400 clamp(24px, 7.4vw, 30px)/1 var(--placa); color: var(--engradado); }
+  .de-por em { font: 800 13px/1 var(--estreita); font-style: normal; letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px 4px; border-radius: 999px; background: var(--verde); color: #fff; }
+  .oferta .desc { margin-top: 8px; font-size: 14.5px; line-height: 1.45; color: var(--tinta-suave); }
+  .oferta .resta { margin-top: 8px; font: 800 12px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--brasa); }
+  .qtd { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 9px 9px 9px 14px; border-radius: 12px; background: #f6f8fc; border: 1px solid #e8ecf4; }
+  .qtd span { flex: 1; font: 800 16px/1.1 var(--estreita); letter-spacing: .03em; text-transform: uppercase; color: var(--tinta); }
+  .qtd button { width: 42px; height: 42px; flex: none; border-radius: 10px; background: #fff; color: var(--ceu); border: 1.5px solid #cfd8ea; font: 700 22px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
+  .qtd button:not(:disabled):active { background: #e8eefb; }
+  .qtd button:disabled { opacity: .35; cursor: not-allowed; }
+  .qtd output { width: 30px; text-align: center; font: 800 22px/1 var(--estreita); color: var(--tinta); }
+  .esgotado { opacity: .45; }
+  .resumo { margin-top: 24px; padding-top: 18px; border-top: 2px dashed #e1e6f0; }
+  .resumo .rot { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--campo-rotulo); }
+  .resumo .linha { margin-top: 6px; font: 700 15px/1.3 var(--estreita); letter-spacing: .03em; color: var(--tinta-suave); }
+  .resumo .valor { margin-top: 6px; font: 400 38px/1 var(--placa); color: var(--ceu); }
+  .resumo .economia { margin-top: 6px; font: 800 15px/1.2 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--verde); }
+  .resumo .btn { margin-top: 16px; }
+  .resumo .btn:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
+  .regras { margin-top: 14px; font-size: 13.5px; line-height: 1.45; color: var(--tinta-suave); }
+  .fechada p { margin-top: 10px; color: var(--tinta-suave); }
+  .fechada .btn { margin-top: 18px; }
+  .ficha { display: grid; gap: 6px; padding: 26px var(--lado) 30px; background: var(--ceu-fundo); color: var(--ceu-texto); font-size: 15px; }
+  .ficha b { color: #fff; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8.5V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.5a2.5 2.5 0 0 0 0 5V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4.5a2.5 2.5 0 0 0 0-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 5v14" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2.2"/></symbol>
+</svg>
+<header class="topo-com">
+  <img class="logo" src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+</header>
+<main>
+  <section class="chamada">
+    <span class="selo">Só pra comunidade</span>
+    <h1>Black Friday <span>antecipada</span></h1>
+    <p>Quem faz parte da comunidade do Cê Tá Bão compra antes de todo mundo, com preço que não tem no site.</p>
+  </section>
+
+  <section class="compra" aria-labelledby="t-compra">
+    <div class="cartao" id="cartao-compra" hidden>
+      <span class="etiqueta">Preço da comunidade</span>
+      <h2 id="t-compra">Escolha seu ingresso</h2>
+      <p class="sub">Só inteira · Pix ou até 4x no cartão</p>
+      <div class="ofertas" id="ofertas"></div>
+      <div class="resumo" aria-live="polite">
+        <p class="rot">Total</p>
+        <p class="linha" id="linha-resumo">Escolha seus ingressos acima</p>
+        <p class="valor" id="total">R$ 0,00</p>
+        <p class="economia" id="economia" hidden></p>
+        <button class="btn btn-sol" type="button" id="continuar" disabled><svg><use href="#i-ticket"/></svg><span>Realizar pagamento</span></button>
+      </div>
+      <p class="regras">Preço exclusivo deste link: não vale na página de compra do site. Promoção válida para inteira, enquanto durar.</p>
+    </div>
+
+    <div class="cartao fechada" id="cartao-fechada" hidden>
+      <span class="etiqueta">Cê Tá Bão Fest</span>
+      <h2 id="fechada-titulo">Promoção encerrada</h2>
+      <p id="fechada-texto">A Black Friday da comunidade acabou. Os ingressos continuam à venda no site oficial.</p>
+      <a class="btn btn-sol" href="/#compra"><svg><use href="#i-ticket"/></svg><span>Ver ingressos</span></a>
+    </div>
+
+    <div class="cartao" id="cartao-carregando">
+      <h2>Carregando…</h2>
+      <p class="sub">Buscando o preço da comunidade.</p>
+    </div>
+  </section>
+
+  <section class="ficha" aria-label="Quando e onde">
+    <p><b>Sábado, 28/11 · 16h</b></p>
+    <p>Parque de Exposições · Passos-MG</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var QTD_MAX = 10;   // por compra (igual ao servidor)
+  var PISTA_MAX = 4;  // Pista VIP por compra (igual ao servidor)
+  var SETORES = [
+    { id: 'pista', chave: 'pi', nome: 'Pista VIP', rot: 'Ingresso', desc: 'Visão privilegiada do Palco 360°, praça de alimentação e banheiros exclusivos.' },
+    { id: 'open', chave: 'oi', nome: 'Open Bar', rot: 'Ingresso', desc: 'Bebidas à vontade: cerveja, vodka, energético, gin, tônica, água e refrigerante, com acesso e banheiros exclusivos.' }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  var q = new URLSearchParams(location.search);
+  var CHAVE = /^[a-z0-9]{6,40}$/.test(q.get('c') || '') ? q.get('c') : null;
+  var centavos = function (reais) { return Math.round(reais * 100); };
+  var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+  var estado = { qtd: { pista: 0, open: 0 }, preco: {}, de: {}, restam: {}, vendendo: false };
+  // Volta do checkout ("Alterar"): mantém o que já tinha escolhido nesta aba.
+  try {
+    var guardada = JSON.parse(sessionStorage.getItem('cetabao_carrinho_comunidade') || 'null');
+    if (guardada) SETORES.forEach(function (s) { var v = parseInt(guardada[s.id], 10); if (v > 0) estado.qtd[s.id] = v; });
+  } catch (e) { /* tudo bem */ }
+
+  function mostrar(qual, titulo, texto) {
+    $('cartao-carregando').hidden = true;
+    $('cartao-compra').hidden = qual !== 'compra';
+    $('cartao-fechada').hidden = qual !== 'fechada';
+    if (titulo) $('fechada-titulo').textContent = titulo;
+    if (texto) $('fechada-texto').textContent = texto;
+  }
+
+  var total = function () { return estado.qtd.pista + estado.qtd.open; };
+  var limite = function (id) {
+    var r = estado.restam[id];
+    var max = id === 'pista' ? PISTA_MAX : QTD_MAX;
+    return r === null || r === undefined ? max : Math.min(r, max);
+  };
+
+  function montar() {
+    $('ofertas').innerHTML = SETORES.filter(function (s) { return estado.preco[s.id]; }).map(function (s) {
+      var esgotado = estado.restam[s.id] === 0;
+      var off = estado.de[s.id] ? Math.round((1 - estado.preco[s.id] / estado.de[s.id]) * 100) : 0;
+      return '<div class="oferta oferta-' + s.id + (esgotado ? ' esgotado' : '') + '" data-setor="' + s.id + '">' +
+        '<small>' + s.rot + ' · Inteira</small><h3>' + s.nome + '</h3>' +
+        '<div class="de-por">' + (estado.de[s.id] ? '<s>de ' + moeda(centavos(estado.de[s.id])) + '</s>' : '') +
+          '<b>' + (estado.de[s.id] ? 'por ' : '') + moeda(centavos(estado.preco[s.id])) + '</b>' + (off > 0 ? '<em>' + off + '% OFF</em>' : '') + '</div>' +
+        '<p class="desc">' + s.desc + '</p>' +
+        (esgotado ? '<p class="resta">Esgotado</p>'
+          : (estado.restam[s.id] !== null && estado.restam[s.id] !== undefined && estado.restam[s.id] <= 20 ? '<p class="resta">🔥 últimos ' + estado.restam[s.id] + '</p>' : '') +
+            '<div class="qtd"><span>Quantidade</span>' +
+            '<button type="button" data-id="' + s.id + '" data-d="-1" aria-label="Menos um ' + s.nome + '">−</button>' +
+            '<output data-valor="' + s.id + '" aria-live="polite">0</output>' +
+            '<button type="button" data-id="' + s.id + '" data-d="1" aria-label="Mais um ' + s.nome + '">+</button></div>') +
+      '</div>';
+    }).join('');
+    $('ofertas').querySelectorAll('[data-d]').forEach(function (b) {
+      b.addEventListener('click', function () { mudar(b.dataset.id, Number(b.dataset.d)); });
+    });
+    atualizar();
+  }
+
+  function mudar(id, d) {
+    var novo = estado.qtd[id] + d;
+    if (novo < 0) return;
+    if (d > 0 && (total() >= QTD_MAX || novo > limite(id))) return;
+    estado.qtd[id] = novo;
+    atualizar();
+  }
+
+  function atualizar() {
+    SETORES.forEach(function (s) {
+      // setor sem preço na promo ou estoque menor que o escolhido (voltou do checkout): ajusta
+      estado.qtd[s.id] = estado.preco[s.id] ? Math.min(estado.qtd[s.id], limite(s.id)) : 0;
+      var card = document.querySelector('.oferta[data-setor="' + s.id + '"]');
+      if (!card) return;
+      card.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado.qtd[s.id]; });
+      card.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado.qtd[s.id] < 1; });
+      card.querySelectorAll('[data-d="1"]').forEach(function (b) { b.disabled = total() >= QTD_MAX || estado.qtd[s.id] >= limite(s.id); });
+    });
+    var t = 0, cheio = 0, partes = [];
+    SETORES.forEach(function (s) {
+      var n = estado.qtd[s.id];
+      if (!n) return;
+      t += centavos(estado.preco[s.id]) * n;
+      cheio += centavos(estado.de[s.id] || estado.preco[s.id]) * n;
+      partes.push(n + 'x ' + s.nome);
+    });
+    $('linha-resumo').textContent = partes.length ? partes.join(' · ') : 'Escolha seus ingressos acima';
+    $('total').textContent = moeda(t);
+    $('economia').hidden = cheio <= t;
+    $('economia').textContent = 'Você economiza ' + moeda(cheio - t);
+    $('continuar').disabled = total() < 1 || !estado.vendendo;
+    try { sessionStorage.setItem('cetabao_carrinho_comunidade', JSON.stringify(estado.qtd)); } catch (e) { /* tudo bem */ }
+    return t;
+  }
+
+  $('continuar').addEventListener('click', function () {
+    if (total() < 1 || !estado.vendendo) return;
+    var destino = '/checkout/?pi=' + estado.qtd.pista + '&pm=0&oi=' + estado.qtd.open + '&c=' + CHAVE;
+    if (typeof fbq !== 'function') { location.href = destino; return; }
+    try { fbq('track', 'AddToCart', { value: atualizar() / 100, currency: 'BRL', num_items: total(), content_type: 'product' }); } catch (e) { /* tudo bem */ }
+    setTimeout(function () { location.href = destino; }, 300);
+  });
+
+  if (!CHAVE) {
+    mostrar('fechada', 'Promoção da comunidade', 'Esse preço é só pra quem recebeu o link da comunidade do Cê Tá Bão. Os ingressos estão à venda no site oficial.');
+    return;
+  }
+
+  var tentativas = 0;
+  function carregar() {
+    fetch(API + '/api/site/publico?c=' + CHAVE, { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (cfg) {
+        tentativas = 0;
+        if (!cfg.comunidade) { mostrar('fechada'); return; }
+        (cfg.setores || []).forEach(function (s) {
+          estado.de[s.id] = s.preco || null;
+          estado.restam[s.id] = s.restam;
+          estado.preco[s.id] = cfg.comunidade[s.id] || null;
+        });
+        estado.vendendo = !!cfg.vendendo;
+        if (!estado.vendendo) { mostrar('fechada', 'Vendas pausadas', 'As vendas pelo site estão pausadas agora. Tente de novo daqui a pouco.'); return; }
+        mostrar('compra');
+        montar();
+      })
+      .catch(function () {
+        tentativas++;
+        setTimeout(carregar, Math.min(2000 * tentativas, 15000));
+      });
+  }
+  carregar();
+  // Voltou do checkout pelo botão de voltar: confere de novo (a promo pode ter sido desligada).
+  window.addEventListener('pageshow', function (e) { if (e.persisted) carregar(); });
+})();
+</script>
+</body>
+</html>

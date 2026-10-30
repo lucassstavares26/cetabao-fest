@@ -233,19 +233,24 @@ fbq('track', 'PageView');
   // ---------- o que foi escolhido na página de compra (vem no endereço).
   // Pista e Open Bar podem vir juntos: pi = Pista inteira, pm = Pista meia, oi = Open Bar.
   var q = new URLSearchParams(location.search);
+  // Promo da comunidade (30/10): o link /comunidade/?c=<chave> chega aqui com c=. Preço da promo, só inteira.
+  var COMUNIDADE = /^[a-z0-9]{6,40}$/.test(q.get('c') || '') ? q.get('c') : null;
+  var VOLTAR = COMUNIDADE ? '/comunidade/?c=' + COMUNIDADE : '/#compra';
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
   var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
   var valido = Object.keys(qtd).every(function (k) { return Number.isInteger(qtd[k]) && qtd[k] >= 0; });
   // Pista VIP: até 4 por compra (inteira + meia), igual à página de compra e ao servidor.
-  if (!valido || totalQtd < 1 || totalQtd > QTD_MAX || qtd.pista_inteira + qtd.pista_meia > 4) {
-    location.replace('/#compra'); // endereço mexido ou incompleto: volta pra escolher
+  if (!valido || totalQtd < 1 || totalQtd > QTD_MAX || qtd.pista_inteira + qtd.pista_meia > 4 || (COMUNIDADE && qtd.pista_meia)) {
+    location.replace(VOLTAR); // endereço mexido ou incompleto: volta pra escolher
     return;
   }
+  document.querySelectorAll('a[href="/#compra"]').forEach(function (a) { a.href = VOLTAR; });
   var qtdSetor = function (id) { return id === 'pista' ? qtd.pista_inteira + qtd.pista_meia : qtd.open_inteira; };
   var estado = {
     preco: { pista: null, open: null },
     restam: { pista: null, open: null }, lote: null, promo: null, carregou: false, tentativas: 0,
+    de: { pista: null, open: null }, encerrada: false, // promo da comunidade: preço normal (riscado) e se o link ainda vale
     vendendo: false, chave: null, metodo: 'pix', tentou: false, enviando: false, brick: null, brickCriando: false,
     mp: null, custos: null, parcelas: 1 // parcelamento escolhido no brick e quanto o cartão cobra em cada opção
   };
@@ -270,19 +275,28 @@ fbq('track', 'PageView');
         '<span>' + (temPreco ? moeda(cent) : estado.carregou ? 'em breve' : '…') + '</span></div>';
     };
     var p = estado.preco.pista, o = estado.preco.open;
+    var de = function (id, n) { return COMUNIDADE && estado.de[id] ? '<s>de ' + moeda(centavos(estado.de[id]) * n) + '</s>' : ''; };
     $('itens').innerHTML =
-      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : '') : '') +
+      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
       (qtd.pista_meia ? linha(qtd.pista_meia, 'Pista VIP', 'Meia', meiaCent(p || 0) * qtd.pista_meia, !!p) : '') +
-      (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', centavos(o || 0) * qtd.open_inteira, !!o) : '');
+      (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', centavos(o || 0) * qtd.open_inteira, !!o, de('open', qtd.open_inteira)) : '');
     var t = totalCent();
     $('subtotal').textContent = semPreco() ? (estado.carregou ? 'em breve' : '…') : moeda(t);
     $('nota-meia').hidden = !qtd.pista_meia;
+    if (estado.encerrada) {
+      $('problema').hidden = false;
+      $('problema').innerHTML = 'Essa promoção da comunidade foi encerrada. <a href="/#compra">Ver os ingressos no site</a>';
+      estado.podePagar = false;
+      $('aviso-pagar').hidden = true;
+      botao();
+      return;
+    }
     var faltas = SETORES.filter(function (s) { return estado.restam[s.id] !== null && qtdSetor(s.id) > estado.restam[s.id]; });
     $('problema').hidden = !faltas.length;
     if (faltas.length) $('problema').innerHTML = faltas.map(function (s) {
       var r = estado.restam[s.id];
       return r === 0 ? s.nome + ' esgotou.' : 'Só ' + (r === 1 ? 'resta 1 ingresso' : 'restam ' + r + ' ingressos') + ' de ' + s.nome + '.';
-    }).join(' ') + ' <a href="/#compra">Alterar o pedido</a>';
+    }).join(' ') + ' <a href="' + VOLTAR + '">Alterar o pedido</a>';
     estado.podePagar = estado.vendendo && !semPreco() && !faltas.length;
     $('aviso-pagar').hidden = estado.vendendo || !estado.carregou; // carregando ainda não é "vendas fechadas"
     botao();
@@ -293,7 +307,7 @@ fbq('track', 'PageView');
   function carregar() {
     if (buscando) return;
     buscando = true;
-    return fetch(API + '/api/site/publico', { cache: 'no-store' })
+    return fetch(API + '/api/site/publico' + (COMUNIDADE ? '?c=' + COMUNIDADE : ''), { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
         buscando = false;
@@ -304,10 +318,18 @@ fbq('track', 'PageView');
           estado.preco[c.id] = c.preco || null;
           estado.restam[c.id] = c.restam;
         });
+        if (COMUNIDADE) {
+          // Promo da comunidade: preço próprio e sem a promo do site. Sem ela (desligada ou link trocado), não vende.
+          estado.de = { pista: estado.preco.pista, open: estado.preco.open };
+          estado.encerrada = !cfg.comunidade;
+          if (cfg.comunidade) { estado.preco.pista = cfg.comunidade.pista || null; estado.preco.open = cfg.comunidade.open || null; }
+          cfg.promo = null;
+          cfg.lote = 'Promo Comunidade';
+        }
         estado.lote = cfg.lote || null;
         estado.promo = cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null;
         estado.carregou = true;
-        estado.vendendo = !!cfg.vendendo;
+        estado.vendendo = !!cfg.vendendo && !estado.encerrada;
         if (!estado.iniciou && typeof fbq === 'function') {
           estado.iniciou = true; // uma vez por abertura (o carregar roda de novo ao voltar pra aba)
           fbq('track', 'InitiateCheckout', { value: totalCent() / 100, currency: 'BRL', num_items: totalQtd });
@@ -517,6 +539,7 @@ fbq('track', 'PageView');
   }
   function enviarRascunho() {
     clearTimeout(relogioRascunho);
+    if (COMUNIDADE) return; // promo da comunidade fica fora da recuperação de carrinho (Lucas, 30/10)
     var corpo = corpoRascunho();
     if (!corpo || corpo === ultimoRascunho) return;
     ultimoRascunho = corpo;
@@ -546,6 +569,7 @@ fbq('track', 'PageView');
     b.disabled = estado.enviando || !estado.podePagar;
     if (estado.enviando) { b.innerHTML = '<span class="girando"></span><span>' + (estado.metodo === 'pix' ? 'Gerando o Pix…' : 'Processando o cartão…') + '</span>'; return; }
     if (!estado.carregou) { b.textContent = 'Carregando…'; return; }
+    if (estado.encerrada) { b.textContent = 'Promoção encerrada'; return; }
     if (!estado.vendendo) { b.textContent = 'Vendas em breve'; return; }
     var noCartao = totalCartaoCent();
     b.textContent = estado.metodo === 'pix' ? 'Pagar ' + moeda(totalCent()) + ' no Pix'
@@ -596,7 +620,8 @@ fbq('track', 'PageView');
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, email: campos.email.value.trim(), whatsapp: campos.whatsapp.value,
             qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
             titulares: titulares.map(function (el) { return el.value.trim(); }),
-            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('zx_ref').value, origem: origem, carrinho: sessaoCarrinho, meta: meta
+            metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('zx_ref').value, origem: origem, carrinho: sessaoCarrinho, meta: meta,
+            comunidade: COMUNIDADE || undefined
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
