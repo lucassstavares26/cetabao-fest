@@ -233,9 +233,9 @@ fbq('track', 'PageView');
   // ---------- o que foi escolhido na página de compra (vem no endereço).
   // Pista e Open Bar podem vir juntos: pi = Pista inteira, pm = Pista meia, oi = Open Bar.
   var q = new URLSearchParams(location.search);
-  // Promo da comunidade (30/10): o link /comunidade/?c=<chave> chega aqui com c=. Preço da promo, só inteira.
+  // Promo da comunidade (30/10): a página /blackfriday chega aqui com c=blackfriday. Preço da promo, só inteira.
   var COMUNIDADE = /^[a-z0-9]{6,40}$/.test(q.get('c') || '') ? q.get('c') : null;
-  var VOLTAR = COMUNIDADE ? '/comunidade/?c=' + COMUNIDADE : '/#compra';
+  var VOLTAR = COMUNIDADE ? '/blackfriday/' : '/#compra';
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
   var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
