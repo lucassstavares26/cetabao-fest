@@ -93,6 +93,10 @@ fbq('track', 'PageView');
   .placa-black span { display: block; font-size: .78em; color: var(--engradado-escuro); }
   .compra { padding: 40px var(--lado) 44px; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e); }
   .cartao h2 { font-size: clamp(22px, 6.4vw, 26px); color: var(--ceu); }
+  /* "Escolha seu ingresso" sempre numa linha, até no celular (Lucas, 30/10): mesmo truque do site oficial */
+  #t-compra { white-space: nowrap; font-size: min(27px, calc((100vw - 76px) / 13.4)); }
+  @media (min-width: 480px) { #t-compra { font-size: 27px; } }
+  #t-compra + .ofertas { margin-top: 18px; }
   .cartao .sub { margin-top: 6px; font-size: 15px; color: var(--tinta-suave); }
   .ofertas { display: grid; gap: 14px; margin-top: 22px; text-align: left; }
   .oferta { border: 3px solid var(--cor); border-left-width: 8px; border-radius: 18px; padding: 16px 14px 14px 16px; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
@@ -103,7 +107,6 @@ fbq('track', 'PageView');
   .de-por { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
   .de-por s { font: 700 16px/1 var(--estreita); color: var(--tinta-suave); }
   .de-por b { font: 400 clamp(24px, 7.4vw, 30px)/1 var(--placa); color: var(--engradado); }
-  .de-por em { font: 800 13px/1 var(--estreita); font-style: normal; letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px 4px; border-radius: 999px; background: var(--verde); color: #fff; }
   .oferta .desc { margin-top: 8px; font-size: 14.5px; line-height: 1.45; color: var(--tinta-suave); }
   .oferta .resta { margin-top: 8px; font: 800 12px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--brasa); }
   .qtd { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 9px 9px 9px 14px; border-radius: 12px; background: #f6f8fc; border: 1px solid #e8ecf4; }
@@ -162,7 +165,6 @@ fbq('track', 'PageView');
     <div class="cartao" id="cartao-compra" hidden>
       <span class="etiqueta">Só pra comunidade</span>
       <h2 id="t-compra">Escolha seu ingresso</h2>
-      <p class="sub">Só inteira · Pix ou até 4x no cartão</p>
       <div class="ofertas" id="ofertas"></div>
       <div class="resumo" aria-live="polite">
         <p class="rot">Total</p>
@@ -199,7 +201,7 @@ fbq('track', 'PageView');
   var QTD_MAX = 10;   // por compra (igual ao servidor)
   var PISTA_MAX = 4;  // Pista VIP por compra (igual ao servidor)
   var SETORES = [
-    { id: 'pista', chave: 'pi', nome: 'Pista VIP', rot: 'Ingresso', desc: 'Visão privilegiada do Palco 360°, praça de alimentação e banheiros exclusivos.' },
+    { id: 'pista', chave: 'pi', nome: 'Pista VIP', rot: 'Ingresso', desc: '' },
     { id: 'open', chave: 'oi', nome: 'Open Bar', rot: 'Ingresso', desc: 'Bebidas à vontade: cerveja, vodka, energético, gin, tônica, água e refrigerante, com acesso e banheiros exclusivos.' }
   ];
   var $ = function (id) { return document.getElementById(id); };
@@ -231,12 +233,11 @@ fbq('track', 'PageView');
   function montar() {
     $('ofertas').innerHTML = SETORES.filter(function (s) { return estado.preco[s.id]; }).map(function (s) {
       var esgotado = estado.restam[s.id] === 0;
-      var off = estado.de[s.id] ? Math.round((1 - estado.preco[s.id] / estado.de[s.id]) * 100) : 0;
       return '<div class="oferta oferta-' + s.id + (esgotado ? ' esgotado' : '') + '" data-setor="' + s.id + '">' +
         '<small>' + s.rot + ' · Inteira</small><h3>' + s.nome + '</h3>' +
         '<div class="de-por">' + (estado.de[s.id] ? '<s>de ' + moeda(centavos(estado.de[s.id])) + '</s>' : '') +
-          '<b>' + (estado.de[s.id] ? 'por ' : '') + moeda(centavos(estado.preco[s.id])) + '</b>' + (off > 0 ? '<em>' + off + '% OFF</em>' : '') + '</div>' +
-        '<p class="desc">' + s.desc + '</p>' +
+          '<b>' + (estado.de[s.id] ? 'por ' : '') + moeda(centavos(estado.preco[s.id])) + '</b>' + '</div>' +
+        (s.desc ? '<p class="desc">' + s.desc + '</p>' : '') +
         (esgotado ? '<p class="resta">Esgotado</p>'
           : (estado.restam[s.id] !== null && estado.restam[s.id] !== undefined && estado.restam[s.id] <= 20 ? '<p class="resta">🔥 últimos ' + estado.restam[s.id] + '</p>' : '') +
             '<div class="qtd"><span>Quantidade</span>' +
