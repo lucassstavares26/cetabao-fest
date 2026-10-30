@@ -99,6 +99,12 @@ fbq('track', 'PageView');
   #t-compra + .ofertas { margin-top: 18px; }
   .cartao .sub { margin-top: 6px; font-size: 15px; color: var(--tinta-suave); }
   .ofertas { display: grid; gap: 14px; margin-top: 22px; text-align: left; }
+  /* "Por tempo limitado" + cronômetro na barra azul (Lucas, 30/10). Prazo único pra todos (FIM_PROMO);
+     no zero o relógio some e a promo continua até desligar no banco. */
+  .faixa-tempo { margin-left: auto; flex: none; display: grid; justify-items: end; gap: 3px; padding-right: 6px; }
+  .faixa-tempo small { font: 800 10.5px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; color: #fff; white-space: nowrap; }
+  .faixa-tempo b { font: 400 18px/1 var(--placa); color: var(--sol); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  @media (max-width: 370px) { .faixa { gap: 7px; padding-left: 10px; } .faixa-marca img { height: 32px; } .faixa-oficial { font-size: 11.5px; } .faixa-tempo b { font-size: 16px; } }
   .oferta { border: 3px solid var(--cor); border-left-width: 8px; border-radius: 18px; padding: 16px 14px 14px 16px; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
   .oferta-pista { --cor: var(--sol); --cor-texto: #8a6400; }
   .oferta-open { --cor: var(--open); --cor-texto: var(--open); }
@@ -137,6 +143,7 @@ fbq('track', 'PageView');
 <header class="faixa">
   <span class="faixa-marca"><img src="/img/logo-horizontal.webp" alt="Cê Tá Bão Fest" width="243" height="96" fetchpriority="high"></span>
   <span class="faixa-oficial"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>Site oficial</span>
+  <span class="faixa-tempo" id="faixa-tempo" aria-live="off"><small>⏳ Por tempo limitado</small><b id="cronometro">24:00:00</b></span>
 </header>
 <main>
   <figure class="artistas" id="atracoes">
@@ -198,6 +205,7 @@ fbq('track', 'PageView');
 <script>
 (function () {
   var API = 'https://cetabao-painel.vercel.app';
+  var FIM_PROMO = new Date('2026-10-31T15:15:00-03:00').getTime(); // cronômetro da barra azul (só visual: não desliga a promo)
   var QTD_MAX = 10;   // por compra (igual ao servidor)
   var PISTA_MAX = 4;  // Pista VIP por compra (igual ao servidor)
   var SETORES = [
@@ -205,6 +213,14 @@ fbq('track', 'PageView');
     { id: 'open', chave: 'oi', nome: 'Open Bar', rot: 'Ingresso', desc: 'Bebidas à vontade: cerveja, vodka, energético, gin, tônica, água e refrigerante, com acesso e banheiros exclusivos.' }
   ];
   var $ = function (id) { return document.getElementById(id); };
+  var dois = function (n) { return (n < 10 ? '0' : '') + n; };
+  function cronometro() {
+    var falta = Math.floor((FIM_PROMO - Date.now()) / 1000);
+    if (falta <= 0) { $('cronometro').hidden = true; return; } // zerou: fica só o "Por tempo limitado"
+    $('cronometro').textContent = dois(Math.floor(falta / 3600)) + ':' + dois(Math.floor(falta / 60) % 60) + ':' + dois(falta % 60);
+    setTimeout(cronometro, 1000 - (Date.now() % 1000));
+  }
+  cronometro();
   var CHAVE = 'blackfriday';
   var centavos = function (reais) { return Math.round(reais * 100); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
