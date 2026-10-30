@@ -105,7 +105,12 @@ fbq('track', 'PageView');
   .faixa-tempo small { font: 800 10.5px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; color: #fff; white-space: nowrap; }
   .faixa-tempo b { font: 400 18px/1 var(--placa); color: var(--sol); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
   @media (max-width: 370px) { .faixa { gap: 7px; padding-left: 10px; } .faixa-marca img { height: 32px; } .faixa-oficial { font-size: 11.5px; } .faixa-tempo b { font-size: 16px; } }
-  .oferta { border: 3px solid var(--cor); border-left-width: 8px; border-radius: 18px; padding: 16px 14px 14px 16px; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
+  /* ✓ verde no card com ingresso escolhido, igual ao site oficial (Lucas, 30/10) */
+  .oferta.aberto::after {
+    content: "✓"; position: absolute; top: -10px; right: -8px; width: 30px; height: 30px; display: grid; place-items: center;
+    border-radius: 50%; background: var(--verde); color: #fff; font: 900 15px/1 var(--texto); border: 3px solid #fff;
+  }
+  .oferta { position: relative; border: 3px solid var(--cor); border-left-width: 8px; border-radius: 18px; padding: 16px 14px 14px 16px; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
   .oferta-pista { --cor: var(--sol); --cor-texto: #8a6400; }
   .oferta-open { --cor: var(--open); --cor-texto: var(--open); }
   .oferta small { display: block; font: 800 11.5px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--cor-texto); }
@@ -282,6 +287,7 @@ fbq('track', 'PageView');
       estado.qtd[s.id] = estado.preco[s.id] ? Math.min(estado.qtd[s.id], limite(s.id)) : 0;
       var card = document.querySelector('.oferta[data-setor="' + s.id + '"]');
       if (!card) return;
+      card.classList.toggle('aberto', estado.qtd[s.id] > 0);
       card.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado.qtd[s.id]; });
       card.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado.qtd[s.id] < 1; });
       card.querySelectorAll('[data-d="1"]').forEach(function (b) { b.disabled = total() >= QTD_MAX || estado.qtd[s.id] >= limite(s.id); });
