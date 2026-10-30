@@ -532,6 +532,7 @@ fbq('track', 'PageView');
     var origem = '';
     try { origem = sessionStorage.getItem('cetabao_origem') || ''; } catch (e) { /* tudo bem */ }
     if (q.get('origem')) origem = q.get('origem');
+    if (COMUNIDADE) origem = 'comunidade'; // Black Friday: aparece no Suporte com a etiqueta BLACKFRIDAY (sem mensagem automática)
     return JSON.stringify({
       sessao: sessaoCarrinho, nome: campos.nome.value.trim(), email: email ? campos.email.value.trim() : '', whatsapp: whats ? campos.whatsapp.value : '',
       qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira }, valor: totalCent() / 100, origem: origem.slice(0, 120)
@@ -539,7 +540,6 @@ fbq('track', 'PageView');
   }
   function enviarRascunho() {
     clearTimeout(relogioRascunho);
-    if (COMUNIDADE) return; // promo da comunidade fica fora da recuperação de carrinho (Lucas, 30/10)
     var corpo = corpoRascunho();
     if (!corpo || corpo === ultimoRascunho) return;
     ultimoRascunho = corpo;
