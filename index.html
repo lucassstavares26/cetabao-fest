@@ -542,6 +542,12 @@ fbq('track', 'PageView');
     // De onde a pessoa veio (anúncio, link): vai junto pro pedido.
     if (!sessionStorage.getItem('cetabao_origem')) sessionStorage.setItem('cetabao_origem', (location.search.slice(1) || document.referrer || '').slice(0, 120));
   } catch (e) { /* sem armazenamento: segue */ }
+  // Link de agência apoiadora (?ag=<login>, 03/11): fica guardado 30 dias neste aparelho e vai
+  // junto na compra (o checkout manda). Entrou pelo link de outra agência = vale o mais recente.
+  try {
+    var ag = (new URLSearchParams(location.search).get('ag') || '').trim().toLowerCase();
+    if (/^[a-z0-9]{2,40}$/.test(ag)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: ag, ate: Date.now() + 30 * 86400000 }));
+  } catch (e) { /* sem armazenamento: segue */ }
 
   // ---------- dinheiro: sempre em centavos inteiros (regra igual à do servidor)
   var centavos = function (reais) { return Math.round(reais * 100); };

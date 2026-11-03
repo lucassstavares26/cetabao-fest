@@ -611,6 +611,9 @@ fbq('track', 'PageView');
     var fbc = cookie('_fbc');
     if (!fbc) { var clique = /(?:^|[?&])fbclid=([^&]+)/.exec(origem || location.search); if (clique) fbc = 'fb.1.' + Date.now() + '.' + clique[1]; }
     var meta = { fbp: cookie('_fbp'), fbc: fbc };
+    // Veio do link de uma agência apoiadora (guardado na página de compra): a compra fica marcada pra ela.
+    var agencia;
+    try { var ag = JSON.parse(localStorage.getItem('cetabao_agencia') || 'null'); if (ag && ag.s && ag.ate > Date.now()) agencia = ag.s; } catch (e) { /* tudo bem */ }
     (estado.metodo === 'cartao' ? dadosDoCartao() : Promise.resolve(null))
       .then(function (cartao) {
         return fetch(API + '/api/comprar', {
@@ -621,7 +624,7 @@ fbq('track', 'PageView');
             qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
             titulares: titulares.map(function (el) { return el.value.trim(); }),
             metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('zx_ref').value, origem: origem, carrinho: sessaoCarrinho, meta: meta,
-            comunidade: COMUNIDADE || undefined
+            comunidade: COMUNIDADE || undefined, agencia: agencia
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
