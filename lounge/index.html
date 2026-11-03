@@ -149,7 +149,6 @@
   var CATS = {
     ouro: { nome: 'Lounge Ouro', tipo: 'camarote', cor: '#f5c518', preco: 2500, consumo: 500 },
     prata: { nome: 'Lounge Prata', tipo: 'camarote', cor: '#c9d1db', preco: 2300, consumo: 350 },
-    bronze: { nome: 'Lounge Bronze', tipo: 'camarote', cor: '#d98c45', preco: 2100, consumo: 250 },
     mesa: { nome: 'Mesa Bistrô', tipo: 'mesa', cor: '#5b8cff', preco: 900, consumo: 150 }
   };
   // Desenho do mapa (igual ao painel e à arte do evento). Lounges: linhas de cima pra baixo (0 = vazio).
@@ -161,8 +160,9 @@
     [21, 12, 13, 14, 15, 16],
     [22, 23, 24, 25, 26, 27]
   ];
-  // Ouro 1–7, Prata 8–16, Bronze 17–27.
-  var catDoLounge = function (n) { return n <= 7 ? 'ouro' : n <= 16 ? 'prata' : 'bronze'; };
+  // Lucas, 03/11: o Bronze saiu — Ouro 1–16 (duas fileiras), Prata 17–27.
+  // O Lounge 25 (vendido como Bronze antes) aparece aqui como Prata vendido.
+  var catDoLounge = function (n) { return n <= 16 ? 'ouro' : 'prata'; };
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
