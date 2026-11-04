@@ -244,10 +244,10 @@ fbq('track', 'PageView');
   .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 16px; gap: 5px 12px; }
   .setor:not(.setor-promo) small { color: var(--cor-texto); letter-spacing: .16em; }
   .setor small .rot { opacity: 1; }
-  /* cupom do link do remarketing (04/11): faixa no topo dos ingressos + preço antigo riscado */
-  .cupom-faixa { padding: 12px 14px; border-radius: 12px; background: var(--sol); color: var(--engradado); font: 800 15px/1.3 var(--estreita); letter-spacing: .02em; text-align: center; box-shadow: 0 3px 0 var(--sol-sombra); }
-  .preco .de-cupom { margin-right: .35em; font-size: .7em; opacity: .75; }
   .lote-tag { background: #eef2f9; color: var(--tinta-suave); box-shadow: none; letter-spacing: .08em; }
+  /* cupom do link do remarketing (04/11): tag "10% OFF" ao lado do lote + preço antigo riscado EM CIMA do novo (assim o quadrado não passa do card) */
+  .setor small .lote-tag.cupom-tag { margin-left: 6px; background: var(--brasa); color: #fff; }
+  .setor .preco .de-cupom { display: block; margin-bottom: 3px; font-size: .62em; opacity: .7; text-align: center; }
   .setor:not(.setor-promo) .setor-topo strong { font: 800 clamp(23px, 6.6vw, 27px)/1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); }
   .setor .preco { background: none; box-shadow: none; padding: 0; color: var(--tinta); font: 800 clamp(21px, 6vw, 25px)/1 var(--estreita); letter-spacing: .01em; }
   .setor .preco.em-breve { color: var(--tinta-suave); }
@@ -699,12 +699,6 @@ fbq('track', 'PageView');
   function montar() {
     var box = $('setores');
     box.innerHTML = '';
-    if (estado.cupom) {
-      var faixa = document.createElement('div');
-      faixa.className = 'cupom-faixa';
-      faixa.textContent = '🎟️ Cupom ' + estado.cupom.codigo + ' aplicado: ' + estado.cupom.pct + '% OFF na Pista VIP e no Open Bar';
-      box.appendChild(faixa);
-    }
     var promo = cartaoPromo();
     if (promo) box.appendChild(promo);
     estado.setores.forEach(function (s) {
@@ -714,7 +708,7 @@ fbq('track', 'PageView');
       card.dataset.setor = s.id;
       card.innerHTML =
         '<div class="setor-topo">' +
-          '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + '</small>' +
+          '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + (estado.cupom && !esgotado ? '<span class="lote-tag cupom-tag">' + estado.cupom.pct + '% OFF</span>' : '') + '</small>' +
           '<strong>' + s.nome + '</strong>' +
           (esgotado ? '<span class="preco">Esgotado</span>'
             : s.preco ? '<span class="preco">' + (estado.cupom ? '<s class="de-cupom">' + moeda(centavos(s.preco)) + '</s>' : '') + moeda(comCupom(centavos(s.preco))) + '</span>'
