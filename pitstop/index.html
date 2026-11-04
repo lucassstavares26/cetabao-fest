@@ -53,7 +53,7 @@ fbq('track', 'PageView');
 
   .carro { margin: 18px auto 0; width: 100%; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .35)); }
 
-  .premio { margin: 4px var(--lado) 0; display: grid; gap: 8px; }
+  .premio { display: grid; gap: 8px; text-align: center; }
   .premio b { display: block; padding: 12px 14px; border-radius: 12px; font: 400 clamp(17px, 5.4vw, 23px)/1.05 var(--placa); text-transform: uppercase; }
   .premio .p1 { background: var(--brasa); color: #fff; box-shadow: 0 5px 0 var(--engradado-escuro); }
   .premio .p2 { background: var(--sol); color: var(--ceu); box-shadow: 0 5px 0 var(--sol-sombra); }
@@ -117,12 +117,6 @@ fbq('track', 'PageView');
   <img class="carro" src="/img/pitstop-carro.webp" alt="Carro adesivado com o vidro do Cê Tá Bão Fest" width="960" height="498">
 </section>
 
-<div class="premio">
-  <b class="p1">Ganhe 1 ingresso Pista VIP</b>
-  <b class="p2">+ 1 copo oficial</b>
-  <p>Adesivando seu carro!</p>
-</div>
-
 <main class="conteudo">
   <section class="bloco" id="cadastro" aria-label="Cadastro">
     <div id="formulario">
@@ -164,6 +158,12 @@ fbq('track', 'PageView');
       <a class="btn btn-sol" href="/#compra">Ver ingressos</a>
     </div>
   </section>
+
+  <div class="premio">
+    <b class="p1">Ganhe 1 ingresso Pista VIP</b>
+    <b class="p2">+ 1 copo oficial</b>
+    <p>Adesivando seu carro!</p>
+  </div>
 
   <p class="rodape">Cê Tá Bão Fest · Sábado 28/11 · Parque de Exposições · Passos-MG</p>
 </main>
