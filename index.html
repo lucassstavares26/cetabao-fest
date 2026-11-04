@@ -711,7 +711,7 @@ fbq('track', 'PageView');
           '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + (estado.cupom && !esgotado ? '<span class="lote-tag cupom-tag">' + estado.cupom.pct + '% OFF</span>' : '') + '</small>' +
           '<strong>' + s.nome + '</strong>' +
           (esgotado ? '<span class="preco">Esgotado</span>'
-            : s.preco ? '<span class="preco">' + (estado.cupom ? '<s class="de-cupom">' + moeda(centavos(s.preco)) + '</s>' : '') + moeda(comCupom(centavos(s.preco))) + '</span>'
+            : s.preco ? '<span class="preco">' + (estado.cupom ? '<span class="de-cupom">de <s>' + moeda(centavos(s.preco)) + '</s></span>' : '') + moeda(comCupom(centavos(s.preco))) + '</span>'
             : estado.carregou ? '<span class="preco em-breve">Valor<br>em breve</span>'
             : '<span class="preco em-breve" aria-label="Carregando o preço">…</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
