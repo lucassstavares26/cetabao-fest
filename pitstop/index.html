@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Pit Stop · Cê Tá Bão Fest</title>
+<meta name="description" content="Adesive seu carro no Pit Stop do Cê Tá Bão Fest e ganhe 1 ingresso + 1 copo oficial. Sexta 06/11, das 16h às 21h, em frente ao Parque de Exposições.">
+<meta name="theme-color" content="#003c86">
+<meta property="og:title" content="Pit Stop Cê Tá Bão · Adesive seu carro e ganhe 1 ingresso + 1 copo">
+<meta property="og:description" content="Sexta 06/11, das 16h às 21h, em frente ao Parque de Exposições. Escolha seu horário.">
+<meta property="og:image" content="https://www.cetabaofest.com.br/img/pitstop-compartilhar.jpg">
+<meta property="og:url" content="https://www.cetabaofest.com.br/pitstop/">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<!-- Pixel do Meta: PageView ao abrir; Lead quando o cadastro grava. -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1400962194832152');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt=""
+  src="https://www.facebook.com/tr?id=1400962194832152&ev=PageView&noscript=1"></noscript>
+<style>
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
+  .barra-topo img { width: 54px; }
+  .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
+  .barra-topo a { margin-left: auto; color: var(--ceu-texto); font: 700 14px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; }
+
+  /* bandeira quadriculada de corrida */
+  .xadrez { height: 16px; background: repeating-conic-gradient(#0b1d45 0 25%, #fff 0 50%) 0 0 / 16px 16px; }
+
+  .topo { padding: 24px var(--lado) 0; }
+  .topo h1 { font-size: clamp(46px, 15vw, 64px); line-height: .95; color: #fff; text-shadow: 0 4px 0 var(--ceu-noite); }
+  .local { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font: 800 17px/1.15 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--sol); }
+  .local svg { width: 18px; height: 18px; flex: none; }
+  .quando { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+  .quando span { padding: 9px 14px; border-radius: 12px; font: 800 18px/1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; }
+  .quando .dia { background: var(--sol); color: var(--ceu); box-shadow: 0 4px 0 var(--sol-sombra); }
+  .quando .hora { background: #fff; color: var(--ceu); box-shadow: 0 4px 0 #b9c6e3; }
+
+  .carro { margin: 18px auto 0; width: 100%; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .35)); }
+
+  .premio { margin: 4px var(--lado) 0; display: grid; gap: 8px; }
+  .premio b { display: block; padding: 12px 14px; border-radius: 12px; font: 400 clamp(17px, 5.4vw, 23px)/1.05 var(--placa); text-transform: uppercase; }
+  .premio .p1 { background: var(--brasa); color: #fff; box-shadow: 0 5px 0 var(--engradado-escuro); }
+  .premio .p2 { background: var(--sol); color: var(--ceu); box-shadow: 0 5px 0 var(--sol-sombra); }
+  .premio p { margin-top: 6px; font: 400 clamp(24px, 7.6vw, 32px)/1 var(--placa); color: #fff; }
+
+  .conteudo { padding: 26px var(--lado) 44px; display: grid; gap: 18px; text-align: left; }
+  .bloco { padding: 20px 16px; border-radius: 20px; background: #fff; color: var(--tinta); box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .28); }
+  .bloco h2 { font-size: clamp(22px, 6.6vw, 27px); color: var(--ceu); text-align: center; }
+  .bloco .sub { margin-top: 6px; text-align: center; font-size: 15px; color: var(--tinta-suave); }
+  .rot { display: block; margin-bottom: 7px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
+  form { display: grid; gap: 16px; margin-top: 16px; }
+  .campo input {
+    width: 100%; height: 54px; padding: 0 14px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff;
+    font: 500 17px/1.2 var(--texto); color: var(--tinta); transition: border-color .15s, box-shadow .15s;
+  }
+  .campo input::placeholder { color: #9aa6c2; }
+  .campo input:focus { outline: none; border-color: var(--ceu); box-shadow: 0 0 0 4px rgba(0, 60, 134, .12); }
+  .campo small { display: none; margin-top: 6px; font-size: 13.5px; font-weight: 600; color: var(--brasa); }
+  .campo.erro input { border-color: var(--brasa); background: #fff6f6; }
+  .campo.erro small { display: block; }
+  .campo.erro .horarios button { border-color: var(--brasa); }
+
+  .horarios { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .horarios button {
+    min-height: 52px; padding: 0 8px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff; cursor: pointer;
+    font: 800 18px/1 var(--estreita); letter-spacing: .04em; color: var(--tinta); touch-action: manipulation;
+  }
+  .horarios button:last-child { grid-column: 1 / -1; }
+  .horarios button[aria-pressed="true"] { border-color: var(--ceu); background: var(--ceu); color: #fff; box-shadow: 0 4px 0 var(--ceu-noite); }
+  .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .problema { padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
+
+  .feito { text-align: center; }
+  .feito .ok { width: 64px; height: 64px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--verde); color: #fff; font: 400 34px/1 var(--placa); box-shadow: 0 5px 0 var(--verde-escuro); }
+  .feito p { margin-top: 10px; font-size: 16.5px; color: var(--tinta); }
+  .feito .marcado { display: inline-block; margin-top: 12px; padding: 10px 16px; border-radius: 12px; background: var(--sol); color: var(--ceu); font: 800 19px/1.1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; box-shadow: 0 4px 0 var(--sol-sombra); }
+  .feito .btn { margin-top: 18px; }
+  .rodape { text-align: center; font-size: 13.5px; color: var(--ceu-texto); }
+</style>
+<script src="/suporte.js" defer></script>
+</head>
+<body data-suporte-msg="Oi! Tenho uma dúvida sobre o Pit Stop de adesivação do Cê Tá Bão Fest.">
+
+<header class="barra-topo">
+  <img src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+  <span>Pit Stop</span>
+  <a href="/">Site ›</a>
+</header>
+<div class="xadrez" aria-hidden="true"></div>
+
+<section class="topo">
+  <h1>Pit Stop</h1>
+  <div class="local">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+    Em frente ao Parque de Exposições
+  </div>
+  <div class="quando">
+    <span class="dia">Sexta-feira 06/11</span>
+    <span class="hora">Das 16h às 21h</span>
+  </div>
+  <img class="carro" src="/img/pitstop-carro.webp" alt="Carro adesivado com o vidro do Cê Tá Bão Fest" width="960" height="498">
+</section>
+
+<div class="premio">
+  <b class="p1">Ganhe 1 ingresso Pista VIP</b>
+  <b class="p2">+ 1 copo oficial</b>
+  <p>Adesivando seu carro!</p>
+</div>
+
+<main class="conteudo">
+  <section class="bloco" id="cadastro" aria-label="Cadastro">
+    <div id="formulario">
+      <h2>Garanta seu horário</h2>
+      <p class="sub">Preencha e escolha a hora que você vai passar lá.</p>
+      <form id="form" novalidate>
+        <div class="campo" id="c-nome">
+          <label class="rot" for="nome">Nome</label>
+          <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Seu nome" maxlength="80">
+          <small>Digite seu nome.</small>
+        </div>
+        <div class="campo" id="c-whats">
+          <label class="rot" for="whatsapp">WhatsApp</label>
+          <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="done" placeholder="(35) 99999-9999" maxlength="16">
+          <small>Digite o WhatsApp com DDD.</small>
+        </div>
+        <div class="campo" id="c-horario">
+          <span class="rot" id="rot-horario">Horário que você vai</span>
+          <div class="horarios" role="group" aria-labelledby="rot-horario">
+            <button type="button" data-h="16-17" aria-pressed="false">16h às 17h</button>
+            <button type="button" data-h="17-18" aria-pressed="false">17h às 18h</button>
+            <button type="button" data-h="18-19" aria-pressed="false">18h às 19h</button>
+            <button type="button" data-h="19-20" aria-pressed="false">19h às 20h</button>
+            <button type="button" data-h="20-21" aria-pressed="false">20h às 21h</button>
+          </div>
+          <small>Escolha um horário.</small>
+        </div>
+        <input class="isca" type="text" id="empresa" name="empresa" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="problema" id="problema" hidden></p>
+        <button class="btn btn-sol" type="submit" id="enviar">Quero adesivar</button>
+      </form>
+    </div>
+
+    <div class="feito" id="feito" hidden>
+      <div class="ok" aria-hidden="true">✓</div>
+      <h2 id="feito-titulo">Tá confirmado!</h2>
+      <p>Te esperamos na <strong>sexta-feira 06/11</strong>, em frente ao Parque de Exposições.</p>
+      <span class="marcado" id="feito-horario"></span>
+      <a class="btn btn-sol" href="/#compra">Ver ingressos</a>
+    </div>
+  </section>
+
+  <p class="rodape">Cê Tá Bão Fest · Sábado 28/11 · Parque de Exposições · Passos-MG</p>
+</main>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var $ = function (id) { return document.getElementById(id); };
+  var inicio = Date.now();
+  var horario = null;
+  var params = new URLSearchParams(location.search);
+
+  var botoes = document.querySelectorAll('.horarios button');
+  botoes.forEach(function (b) {
+    b.addEventListener('click', function () {
+      horario = b.getAttribute('data-h');
+      botoes.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      $('c-horario').classList.remove('erro');
+    });
+  });
+
+  // (35) 99999-9999 enquanto digita
+  $('whatsapp').addEventListener('input', function (e) {
+    var d = e.target.value.replace(/\D/g, '');
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    d = d.slice(0, 11);
+    var v = d.length <= 2 ? (d.length ? '(' + d : '') : d.length <= 6 ? '(' + d.slice(0, 2) + ') ' + d.slice(2)
+      : d.length <= 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6) : '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+    e.target.value = v;
+    $('c-whats').classList.remove('erro');
+  });
+  $('nome').addEventListener('input', function () { $('c-nome').classList.remove('erro'); });
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var nome = $('nome').value.trim().replace(/\s+/g, ' ');
+    var whats = $('whatsapp').value.replace(/\D/g, '');
+    var ok = true;
+    if (nome.length < 2) { $('c-nome').classList.add('erro'); ok = false; }
+    if (whats.length < 10 || whats.length > 11) { $('c-whats').classList.add('erro'); ok = false; }
+    if (!horario) { $('c-horario').classList.add('erro'); ok = false; }
+    if (!ok) { var p = document.querySelector('.campo.erro'); if (p) p.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+
+    var botao = $('enviar');
+    botao.disabled = true;
+    botao.textContent = 'Enviando…';
+    $('problema').hidden = true;
+
+    fetch(API + '/api/pitstop', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        nome: nome, whatsapp: whats, horario: horario,
+        empresa: $('empresa').value, ms_form: Date.now() - inicio,
+        utm_source: params.get('utm_source') || undefined,
+        utm_campaign: params.get('utm_campaign') || undefined,
+        utm_content: params.get('utm_content') || undefined
+      })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw j; }); })
+      .then(function () {
+        try { if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Pit Stop 06/11' }); } catch (x) { /* tudo bem */ }
+        var rotulo = document.querySelector('.horarios button[data-h="' + horario + '"]').textContent;
+        $('feito-titulo').textContent = 'Tá confirmado, ' + nome.split(' ')[0] + '!';
+        $('feito-horario').textContent = rotulo;
+        $('formulario').hidden = true;
+        $('feito').hidden = false;
+        $('cadastro').scrollIntoView({ block: 'start', behavior: 'smooth' });
+      })
+      .catch(function (j) {
+        var erro = j && j.erro;
+        if (erro === 'nome') $('c-nome').classList.add('erro');
+        else if (erro === 'whatsapp') $('c-whats').classList.add('erro');
+        else if (erro === 'horario') $('c-horario').classList.add('erro');
+        else { $('problema').textContent = 'Não deu pra enviar agora. Confira sua internet e toque de novo.'; $('problema').hidden = false; }
+        botao.disabled = false;
+        botao.textContent = 'Quero adesivar';
+      });
+  });
+})();
+</script>
+</body>
+</html>
