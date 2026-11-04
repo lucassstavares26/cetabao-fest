@@ -236,9 +236,9 @@ fbq('track', 'PageView');
   // Promo da comunidade (30/10): a página /blackfriday chega aqui com c=blackfriday. Preço da promo, só inteira.
   var COMUNIDADE = /^[a-z0-9]{6,40}$/.test(q.get('c') || '') ? q.get('c') : null;
   var VOLTAR = COMUNIDADE ? '/blackfriday/' : '/#compra';
-  // Cupom do link do remarketing (guardado só nesta aba pela página de compra, 04/11). O painel confirma se vale.
+  // Cupom do link do remarketing (guardado 24 h pela página de compra, 04/11). O painel confirma se vale.
   var CUPOM = null;
-  try { var cg = sessionStorage.getItem('cetabao_cupom') || ''; if (!COMUNIDADE && /^[A-Z0-9]{3,20}$/.test(cg)) CUPOM = cg; } catch (e) { /* tudo bem */ }
+  try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
   var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
