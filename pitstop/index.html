@@ -91,6 +91,10 @@ fbq('track', 'PageView');
   .feito p { margin-top: 10px; font-size: 16.5px; color: var(--tinta); }
   .feito .marcado { display: inline-block; margin-top: 12px; padding: 10px 16px; border-radius: 12px; background: var(--sol); color: var(--ceu); font: 800 19px/1.1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; box-shadow: 0 4px 0 var(--sol-sombra); }
   .feito .btn { margin-top: 18px; }
+  .regras ol { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 12px; }
+  .regras li { display: flex; gap: 12px; align-items: flex-start; }
+  .regras li span { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: var(--sol); color: var(--ceu); font: 400 16px/1 var(--placa); box-shadow: 0 3px 0 var(--sol-sombra); }
+  .regras li p { margin-top: 4px; font-size: 16px; line-height: 1.45; color: var(--tinta); }
   .assinatura { text-align: center; font-size: 13.5px; color: var(--ceu-texto); }
 </style>
 </head>
@@ -163,6 +167,15 @@ fbq('track', 'PageView');
     <b class="p2">+ 1 copo oficial</b>
     <p>Adesivando seu carro!</p>
   </div>
+
+  <section class="bloco regras" aria-label="Regras">
+    <h2>Regras</h2>
+    <ol>
+      <li><span>1</span><p>No dia da adesivação, <strong>sexta-feira 06/11</strong>, você já sai com o <strong>copo oficial</strong>.</p></li>
+      <li><span>2</span><p>Para ganhar o ingresso, o adesivo tem que ficar no carro <strong>até o dia 27/11</strong>.</p></li>
+      <li><span>3</span><p>No dia <strong>27/11</strong> você retira o adesivo e retira seu <strong>ingresso para a Pista VIP</strong>.</p></li>
+    </ol>
+  </section>
 
   <p class="assinatura">Cê Tá Bão Fest · Sábado 28/11 · Parque de Exposições · Passos-MG</p>
 
