@@ -236,6 +236,9 @@ fbq('track', 'PageView');
   // Promo da comunidade (30/10): a página /blackfriday chega aqui com c=blackfriday. Preço da promo, só inteira.
   var COMUNIDADE = /^[a-z0-9]{6,40}$/.test(q.get('c') || '') ? q.get('c') : null;
   var VOLTAR = COMUNIDADE ? '/blackfriday/' : '/#compra';
+  // Cupom do link do remarketing (guardado na página de compra, 04/11). O painel confirma se vale.
+  var CUPOM = null;
+  try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && cg && cg.c && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
   var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
@@ -262,11 +265,13 @@ fbq('track', 'PageView');
   var semPreco = function () { return SETORES.some(function (s) { return qtdSetor(s.id) > 0 && !estado.preco[s.id]; }); };
   // Promo da Pista (23/10): desconto só na inteira, com min..max inteiras; meia fora. Igual ao servidor e à página de compra.
   var naPromo = function () { return !!estado.promo && qtd.pista_inteira >= estado.promo.min && qtd.pista_inteira <= estado.promo.max; };
-  var inteiraPistaCent = function (p) { return naPromo() ? Math.round(centavos(p) * (100 - estado.promo.pct) / 100) : centavos(p); };
+  // Cupom: % em tudo (inteira, meia, Open Bar), igual a cupomEmCentavos do servidor. Não soma com a promo.
+  var comCupom = function (cent) { return estado.cupom ? Math.round(cent * (100 - estado.cupom.pct) / 100) : cent; };
+  var inteiraPistaCent = function (p) { return estado.cupom ? comCupom(centavos(p)) : naPromo() ? Math.round(centavos(p) * (100 - estado.promo.pct) / 100) : centavos(p); };
   function totalCent() {
     var p = estado.preco.pista, o = estado.preco.open;
-    return (qtd.pista_inteira ? inteiraPistaCent(p || 0) * qtd.pista_inteira : 0) + (qtd.pista_meia ? meiaCent(p || 0) * qtd.pista_meia : 0) +
-      (qtd.open_inteira ? centavos(o || 0) * qtd.open_inteira : 0);
+    return (qtd.pista_inteira ? inteiraPistaCent(p || 0) * qtd.pista_inteira : 0) + (qtd.pista_meia ? comCupom(meiaCent(p || 0)) * qtd.pista_meia : 0) +
+      (qtd.open_inteira ? comCupom(centavos(o || 0)) * qtd.open_inteira : 0);
   }
 
   function montarResumo() {
@@ -276,10 +281,12 @@ fbq('track', 'PageView');
     };
     var p = estado.preco.pista, o = estado.preco.open;
     var de = function (id, n) { return COMUNIDADE && estado.de[id] ? '<s>de ' + moeda(centavos(estado.de[id]) * n) + '</s>' : ''; };
+    // Cupom: preço cheio riscado + o cupom (cent = preço cheio de uma unidade)
+    var cup = function (cent, n) { return estado.cupom ? '<s>de ' + moeda(cent * n) + '</s> · Cupom ' + estado.cupom.codigo + ' ' + estado.cupom.pct + '% OFF' : ''; };
     $('itens').innerHTML =
-      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
-      (qtd.pista_meia ? linha(qtd.pista_meia, 'Pista VIP', 'Meia', meiaCent(p || 0) * qtd.pista_meia, !!p) : '') +
-      (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', centavos(o || 0) * qtd.open_inteira, !!o, de('open', qtd.open_inteira)) : '');
+      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.cupom ? cup(centavos(p || 0), qtd.pista_inteira) : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
+      (qtd.pista_meia ? linha(qtd.pista_meia, 'Pista VIP', 'Meia', comCupom(meiaCent(p || 0)) * qtd.pista_meia, !!p, cup(meiaCent(p || 0), qtd.pista_meia)) : '') +
+      (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', comCupom(centavos(o || 0)) * qtd.open_inteira, !!o, estado.cupom ? cup(centavos(o || 0), qtd.open_inteira) : de('open', qtd.open_inteira)) : '');
     var t = totalCent();
     $('subtotal').textContent = semPreco() ? (estado.carregou ? 'em breve' : '…') : moeda(t);
     $('nota-meia').hidden = !qtd.pista_meia;
@@ -307,7 +314,7 @@ fbq('track', 'PageView');
   function carregar() {
     if (buscando) return;
     buscando = true;
-    return fetch(API + '/api/site/publico' + (COMUNIDADE ? '?c=' + COMUNIDADE : ''), { cache: 'no-store' })
+    return fetch(API + '/api/site/publico' + (COMUNIDADE ? '?c=' + COMUNIDADE : CUPOM ? '?cupom=' + CUPOM : ''), { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
         buscando = false;
@@ -326,6 +333,8 @@ fbq('track', 'PageView');
           cfg.promo = null;
           cfg.lote = 'Promo Comunidade';
         }
+        estado.cupom = !COMUNIDADE && cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
+        if (estado.cupom) cfg.promo = null; // cupom não soma com a promo da Pista
         estado.lote = cfg.lote || null;
         estado.promo = cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null;
         estado.carregou = true;
@@ -624,7 +633,7 @@ fbq('track', 'PageView');
             qtds: { pista_inteira: qtd.pista_inteira, pista_meia: qtd.pista_meia, open_inteira: qtd.open_inteira, open_meia: 0 }, valor_total: total / 100,
             titulares: titulares.map(function (el) { return el.value.trim(); }),
             metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('zx_ref').value, origem: origem, carrinho: sessaoCarrinho, meta: meta,
-            comunidade: COMUNIDADE || undefined, agencia: agencia
+            comunidade: COMUNIDADE || undefined, agencia: agencia, cupom: estado.cupom ? estado.cupom.codigo : undefined
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
