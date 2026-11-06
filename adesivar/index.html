@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Adesivação · Cê Tá Bão Fest</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#003c86">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<style>
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
+  .barra-topo img { width: 54px; }
+  .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
+  .barra-topo b { margin-left: auto; font: 800 15px/1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--sol); }
+  .xadrez { height: 14px; background: repeating-conic-gradient(#0b1d45 0 25%, #fff 0 50%) 0 0 / 14px 14px; }
+  .conteudo { padding: 22px var(--lado) 44px; display: grid; gap: 16px; text-align: left; }
+  h1 { font-size: clamp(30px, 9vw, 38px); text-align: center; }
+  .bloco { padding: 20px 16px; border-radius: 20px; background: #fff; color: var(--tinta); box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .28); }
+  form { display: grid; gap: 16px; }
+  .rot { display: block; margin-bottom: 7px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
+  .campo input {
+    width: 100%; height: 56px; padding: 0 14px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff;
+    font: 600 19px/1.2 var(--texto); color: var(--tinta);
+  }
+  .campo input::placeholder { color: #9aa6c2; font-weight: 500; }
+  .campo input:focus { outline: none; border-color: var(--ceu); box-shadow: 0 0 0 4px rgba(0, 60, 134, .12); }
+  .campo.erro input { border-color: var(--brasa); background: #fff6f6; }
+  #placa { text-transform: uppercase; letter-spacing: .12em; }
+  .aviso { margin-top: 7px; font-size: 14.5px; font-weight: 700; }
+  .aviso.ok { color: var(--verde-escuro); }
+  .aviso.info { color: var(--tinta-suave); font-weight: 500; }
+  .aviso.atencao { color: #8a5a00; }
+  .problema { padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
+  .salvo { padding: 14px 16px; border-radius: 16px; background: var(--verde); color: #fff; font: 800 19px/1.25 var(--estreita); letter-spacing: .02em; text-align: center; box-shadow: 0 5px 0 var(--verde-escuro); }
+  .sem-chave { text-align: center; font-size: 16px; }
+</style>
+</head>
+<body>
+
+<header class="barra-topo">
+  <img src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+  <span>Pit Stop</span>
+  <b id="total"></b>
+</header>
+<div class="xadrez" aria-hidden="true"></div>
+
+<main class="conteudo">
+  <h1>Carro adesivado</h1>
+
+  <p class="salvo" id="salvo" hidden></p>
+
+  <section class="bloco" id="area">
+    <form id="form" novalidate>
+      <div class="campo" id="c-whats">
+        <label class="rot" for="whatsapp">WhatsApp</label>
+        <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="off" placeholder="(35) 99999-9999" maxlength="16">
+        <p class="aviso" id="aviso-whats" hidden></p>
+      </div>
+      <div class="campo" id="c-nome">
+        <label class="rot" for="nome">Nome</label>
+        <input id="nome" type="text" autocomplete="off" autocapitalize="words" placeholder="Nome da pessoa" maxlength="80">
+      </div>
+      <div class="campo" id="c-placa">
+        <label class="rot" for="placa">Placa</label>
+        <input id="placa" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABC1D23" maxlength="8">
+      </div>
+      <p class="problema" id="problema" hidden></p>
+      <button class="btn btn-sol" type="submit" id="salvar">Salvar</button>
+    </form>
+  </section>
+</main>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var $ = function (id) { return document.getElementById(id); };
+
+  // Chave do link (?k=…): fica guardada neste celular pra abrir de novo sem o link completo.
+  var K = '';
+  try {
+    var daUrl = new URLSearchParams(location.search).get('k');
+    if (daUrl) localStorage.setItem('cetabao_adesivar_k', daUrl);
+    K = daUrl || localStorage.getItem('cetabao_adesivar_k') || '';
+  } catch (e) { K = new URLSearchParams(location.search).get('k') || ''; }
+  if (!K) {
+    $('area').innerHTML = '<p class="sem-chave">Abra o link completo que o Lucas mandou.</p>';
+    return;
+  }
+
+  var digitos = function (v) { var d = String(v).replace(/\D/g, ''); if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2); return d.slice(0, 11); };
+  var mascara = function (d) {
+    return d.length <= 2 ? (d.length ? '(' + d : '') : d.length <= 6 ? '(' + d.slice(0, 2) + ') ' + d.slice(2)
+      : d.length <= 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6) : '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  };
+  var mostraPlaca = function (p) { return /^[A-Z]{3}[0-9]{4}$/.test(p) ? p.slice(0, 3) + '-' + p.slice(3) : p; };
+  var aviso = function (classe, texto) { var a = $('aviso-whats'); a.className = 'aviso ' + classe; a.textContent = texto; a.hidden = !texto; };
+  var ultima = '';
+  var nomeAutomatico = false;
+
+  function buscar(d) {
+    if (d === ultima) return;
+    ultima = d;
+    aviso('info', 'Procurando cadastro…');
+    fetch(API + '/api/pitstop/buscar?k=' + encodeURIComponent(K) + '&whatsapp=' + d, { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (ultima !== d) return;
+        if (!j.ok) { aviso('', ''); return; }
+        var extra = j.placas && j.placas.length ? ' Já adesivou: ' + j.placas.map(mostraPlaca).join(', ') + '.' : '';
+        if (j.nome) {
+          if (!$('nome').value.trim() || nomeAutomatico) { $('nome').value = j.nome; nomeAutomatico = true; }
+          aviso(extra ? 'atencao' : 'ok', '✓ Já cadastrado: ' + j.nome + '.' + extra);
+          $('placa').focus();
+        } else {
+          aviso('info', 'Sem cadastro. Digite o nome.');
+        }
+      })
+      .catch(function () { aviso('', ''); });
+  }
+
+  $('whatsapp').addEventListener('input', function (e) {
+    var d = digitos(e.target.value);
+    e.target.value = mascara(d);
+    $('c-whats').classList.remove('erro');
+    $('salvo').hidden = true;
+    if (d.length === 11) buscar(d);
+    else { ultima = ''; aviso('', ''); if (nomeAutomatico) { $('nome').value = ''; nomeAutomatico = false; } }
+  });
+  $('whatsapp').addEventListener('blur', function () { var d = digitos(this.value); if (d.length === 10) buscar(d); });
+  $('nome').addEventListener('input', function () { nomeAutomatico = false; $('c-nome').classList.remove('erro'); });
+  $('placa').addEventListener('input', function (e) {
+    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 8);
+    $('c-placa').classList.remove('erro');
+  });
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    $('problema').hidden = true;
+    var nome = $('nome').value.trim(), d = digitos($('whatsapp').value), placa = $('placa').value.replace(/-/g, '');
+    var ok = true;
+    if (d.length < 10) { $('c-whats').classList.add('erro'); ok = false; }
+    if (nome.length < 2) { $('c-nome').classList.add('erro'); ok = false; }
+    if (!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(placa)) { $('c-placa').classList.add('erro'); ok = false; }
+    if (!ok) { $('problema').textContent = 'Confira os campos em vermelho. Placa: ABC1234 ou ABC1D23.'; $('problema').hidden = false; return; }
+
+    var botao = $('salvar');
+    botao.disabled = true;
+    botao.textContent = 'Salvando…';
+    fetch(API + '/api/pitstop/adesivado', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ k: K, nome: nome, whatsapp: d, placa: placa })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw j; return j; }); })
+      .then(function (j) {
+        $('salvo').textContent = '✓ Salvo: ' + nome + ' · ' + mostraPlaca(j.placa);
+        $('salvo').hidden = false;
+        if (typeof j.total === 'number') $('total').textContent = j.total + (j.total === 1 ? ' carro' : ' carros');
+        $('form').reset();
+        ultima = ''; nomeAutomatico = false; aviso('', '');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        $('whatsapp').focus();
+      })
+      .catch(function (j) {
+        if (j && j.campo) $('c-' + (j.campo === 'whatsapp' ? 'whats' : j.campo)).classList.add('erro');
+        $('problema').textContent = (j && j.erro) || 'Não deu pra salvar. Confira a internet e toque de novo.';
+        $('problema').hidden = false;
+      })
+      .then(function () { botao.disabled = false; botao.textContent = 'Salvar'; });
+  });
+})();
+</script>
+</body>
+</html>
