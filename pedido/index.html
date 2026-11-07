@@ -29,6 +29,9 @@
   .cartao h2 { font-size: clamp(21px, 6vw, 25px); color: var(--ceu); }
   .cartao p { margin-top: 8px; color: var(--tinta-suave); }
   .cartao .btn { margin-top: 16px; }
+  /* recusado dentro do Instagram/Facebook (07/11): abrir o mesmo carrinho no Chrome/Safari */
+  .btn-fora { background: var(--ceu); color: #fff; box-shadow: 0 5px 0 var(--ceu-noite), 0 14px 28px rgba(0, 0, 0, .2); }
+  .dica-fora { margin-top: 10px !important; font-size: 14px; }
   .ok-icone { width: 64px; height: 64px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--verde); color: #fff; font: 900 32px/1 var(--texto); box-shadow: 0 0 0 8px rgba(30, 158, 77, .15); }
   .pix-qr { width: 240px; height: 240px; margin: 16px auto 0; image-rendering: pixelated; }
   .pix-codigo { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: var(--campo-fundo); border: 1.5px dashed #c9d6ee; font: 500 12.5px/1.35 ui-monospace, Menlo, Consolas, monospace; color: var(--tinta); word-break: break-all; max-height: 74px; overflow: hidden; text-align: left; }
@@ -104,6 +107,10 @@
   <div class="cartao" id="recusado" hidden>
     <h2>Pagamento não aprovado</h2>
     <p>O cartão não foi aprovado e nada foi cobrado. Seus dados ficam salvos: é só tentar de novo com outro cartão ou no Pix, que libera os ingressos na hora.</p>
+    <div id="fora" hidden>
+      <a class="btn btn-fora" id="abrir-fora" href="/">Abrir no navegador</a>
+      <p class="dica-fora">Dentro do Instagram o cartão é recusado com mais frequência. Se o botão não abrir: toque em <strong>⋯</strong> no canto da tela e escolha <strong>Abrir no navegador</strong>.</p>
+    </div>
     <a class="btn btn-sol" id="tentar-de-novo" href="/">Tentar de novo</a>
   </div>
 
@@ -145,6 +152,33 @@
   var $ = function (id) { return document.getElementById(id); };
   // /pedido/<token> (pela regra do vercel.json), /pedido/?t=<token>, ou — depois
   // do Purchase, que limpa o endereço — o token guardado nesta aba.
+  // Cartão recusado dentro do Instagram/Facebook (07/11): o navegador do app atrapalha o antifraude
+  // do Mercado Pago. Botão que abre o MESMO carrinho no Chrome (Android) ou no Safari (iPhone).
+  // Cupom e agência vão no link, porque o outro navegador não tem o que ficou guardado aqui.
+  function abrirFora(caminho) {
+    var ua = navigator.userAgent || '';
+    if (!/Instagram|FBAN|FBAV|FB_IAB|FBIOS/.test(ua)) return;
+    var extra = '';
+    try {
+      var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null');
+      if (cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) extra += '&cupom=' + cg.c;
+      var ag = JSON.parse(localStorage.getItem('cetabao_agencia') || 'null');
+      if (ag && /^[a-z0-9]{2,40}$/.test(ag.s) && ag.ate > Date.now()) extra += '&ag=' + ag.s;
+    } catch (e) { /* tudo bem */ }
+    var url = location.origin + caminho + extra;
+    var b = $('abrir-fora');
+    if (/iPhone|iPad|iPod/.test(ua)) {
+      b.href = 'x-safari-' + url; // iOS 17+: abre no Safari
+      b.textContent = 'Abrir no Safari';
+    } else if (/Android/.test(ua)) {
+      b.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+      b.textContent = 'Abrir no Chrome';
+    } else {
+      b.href = url;
+    }
+    $('fora').hidden = false;
+  }
+
   var token = (location.pathname.split('/')[2] || new URLSearchParams(location.search).get('t') || lerSessao() || '').toUpperCase();
   function lerSessao() { try { return sessionStorage.getItem('cetabao_pedido_token'); } catch (e) { return null; } }
   var inicio = Date.now();
@@ -166,6 +200,7 @@
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado' && p.recusado && p.qtds) {
           $('tentar-de-novo').href = '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0);
+          abrirFora($('tentar-de-novo').getAttribute('href'));
           mostrar('recusado'); return;
         }
         if (p.status === 'cancelado') { mostrar('cancelado'); return; }

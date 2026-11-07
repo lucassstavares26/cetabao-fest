@@ -238,6 +238,13 @@ fbq('track', 'PageView');
   var VOLTAR = COMUNIDADE ? '/blackfriday/' : '/#compra';
   // Cupom do link do remarketing (guardado 24 h pela página de compra, 04/11). O painel confirma se vale.
   var CUPOM = null;
+  // Veio do botão "Abrir no Chrome/Safari" da tela de cartão recusado (07/11): cupom e agência chegam no link.
+  try {
+    var cpLink = (q.get('cupom') || '').trim().toUpperCase();
+    if (/^[A-Z0-9]{3,20}$/.test(cpLink)) localStorage.setItem('cetabao_cupom', JSON.stringify({ c: cpLink, ate: Date.now() + 24 * 3600000 }));
+    var agLink = (q.get('ag') || '').trim().toLowerCase();
+    if (/^[a-z0-9]{2,40}$/.test(agLink)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: agLink, ate: Date.now() + 30 * 86400000 }));
+  } catch (e) { /* tudo bem */ }
   try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
