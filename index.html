@@ -608,6 +608,7 @@ fbq('track', 'PageView');
         estado.lote = cfg.lote || null;
         estado.cupom = cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
         estado.promo = !estado.cupom && cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null; // cupom não soma com a promo
+        if (estado.cupom) estado.q.pista_meia = 0; // link do cupom (07/11): só Pista VIP inteira, sem meia
         // promo desligou (ou pacote guardado inválido): o pacote volta a ser inteira comum da Pista
         if (estado.q.pacote && !naPromo(estado.q.pacote)) { estado.q.pista_inteira = estado.q.pacote; estado.q.pacote = 0; }
         estado.carregou = true;
@@ -715,13 +716,13 @@ fbq('track', 'PageView');
             : estado.carregou ? '<span class="preco em-breve">Valor<br>em breve</span>'
             : '<span class="preco em-breve" aria-label="Carregando o preço">…</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
-          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + s.tipo + '</span>' : '') + '</span>' +
+          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + (estado.cupom && s.meia ? 'Inteira' : s.tipo) + '</span>' : '') + '</span>' +
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
         '</div>' +
         (esgotado ? '' :
           '<div class="setor-opcoes">' +
-            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + linhaQtd('pista_meia', 'Meia-entrada') : linhaQtd('open_inteira', 'Inteira')) +
-            (s.meia ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
+            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (estado.cupom ? '' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
+            (s.meia && !estado.cupom ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
             (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Pista VIP por compra.</p>' : '') +
           '</div>');
       box.appendChild(card);

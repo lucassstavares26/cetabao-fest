@@ -341,6 +341,7 @@ fbq('track', 'PageView');
           cfg.lote = 'Promo Comunidade';
         }
         estado.cupom = !COMUNIDADE && cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
+        if (estado.cupom && qtd.pista_meia) estado.cupom = null; // cupom (07/11): só inteira. Com meia, preço normal
         if (estado.cupom) cfg.promo = null; // cupom não soma com a promo da Pista
         estado.lote = cfg.lote || null;
         estado.promo = cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null;
