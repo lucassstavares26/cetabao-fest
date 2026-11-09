@@ -242,12 +242,15 @@ fbq('track', 'PageView');
   .setor-camarote { --cor-setor: var(--brasa); --cor-texto: var(--brasa); --cor-preco: #fff; --cor-sombra: var(--engradado-escuro); }
   /* copo oficial vendido sozinho (09/11): laranja da logo, foto + botão que leva pra /copo/ (só Pix) */
   .setor-copo { --cor-setor: #fd5d34; --cor-texto: #c23d17; --cor-preco: #fff; --cor-sombra: #a8341a; }
-  .copo-home { display: flex; align-items: center; gap: 16px; }
-  .copo-home img { flex: none; width: clamp(80px, 25vw, 96px); height: auto; border-radius: 10px; }
-  /* escritas do card do copo centralizadas (Lucas, 09/11): título e preço lado a lado no meio, texto e "Pix" embaixo */
-  .setor.setor-copo .setor-topo { grid-template-columns: auto auto; justify-content: center; text-align: center; }
-  .setor.setor-copo .rodape-card { justify-content: center; }
-  .copo-home .btn { flex: 1; min-width: 0; min-height: 52px; padding: 12px 10px; font-size: clamp(14px, 4.4vw, 17px); white-space: nowrap; }
+  /* Lucas, 09/11: foto do copo ocupando o lado esquerdo inteiro; do lado direito, centralizados,
+     "Copo oficial" e o preço, embaixo a descrição e o botão */
+  .copo-card { display: grid; grid-template-columns: 40% minmax(0, 1fr); gap: 12px; align-items: center; padding: 14px 14px 14px 10px; }
+  .copo-foto { display: block; width: 100%; height: auto; }
+  .copo-lado { display: flex; flex-direction: column; align-items: center; gap: 9px; text-align: center; }
+  .copo-lado strong { font: 800 clamp(21px, 6.4vw, 26px)/1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); white-space: nowrap; }
+  .copo-lado .desc { font: 700 clamp(14px, 4vw, 15.5px)/1.3 var(--estreita); letter-spacing: .02em; color: var(--tinta); }
+  .copo-lado .tipo { font-size: 11px; }
+  .copo-lado .btn { width: 100%; min-height: 50px; padding: 12px 8px; font-size: clamp(14px, 4.4vw, 17px); white-space: nowrap; }
   /* faixa fina com a cor do setor, do lado esquerdo */
   .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 16px; gap: 5px 12px; }
   .setor:not(.setor-promo) small { color: var(--cor-texto); letter-spacing: .16em; }
@@ -716,16 +719,16 @@ fbq('track', 'PageView');
     copo.className = 'setor setor-copo expandido';
     copo.dataset.setor = 'copo';
     copo.innerHTML =
-      '<div class="setor-topo">' +
-        '<strong>Copo oficial</strong>' +
-        '<span class="preco">' + moeda(centavos(estado.copo)) + '</span>' +
-        '<span class="desc">Já tem ingresso? Garanta o seu copo oficial e retire no dia do evento.</span>' +
-        '<span class="rodape-card"><span class="tipo">Pagamento no Pix</span></span>' +
-      '</div>' +
-      '<div class="setor-opcoes"><div class="copo-home">' +
-        '<img src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416" loading="lazy">' +
-        '<a class="btn btn-sol" href="/copo/">Comprar copo</a>' +
-      '</div></div>';
+      '<div class="copo-card">' +
+        '<img class="copo-foto" src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416" loading="lazy">' +
+        '<div class="copo-lado">' +
+          '<strong>Copo oficial</strong>' +
+          '<span class="preco">' + moeda(centavos(estado.copo)) + '</span>' +
+          '<span class="desc">Já tem ingresso? Garanta o seu copo oficial e retire no dia do evento.</span>' +
+          '<span class="tipo">Pagamento no Pix</span>' +
+          '<a class="btn btn-sol" href="/copo/">Comprar copo</a>' +
+        '</div>' +
+      '</div>';
     return copo;
   }
 
