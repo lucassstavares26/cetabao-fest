@@ -79,7 +79,7 @@ fbq('track', 'PageView');
   .achou ul { list-style: none; margin-top: 8px; display: grid; gap: 3px; font-size: 14.5px; color: var(--tinta); }
   .achou .nota { margin-top: 9px; font-size: 14px; font-weight: 600; color: var(--verde-escuro); }
   .nao-achou { padding: 12px 14px; border-radius: 12px; background: #fff8df; border: 1.5px solid var(--sol); font-size: 14.5px; line-height: 1.4; color: var(--tinta); }
-  .dados { display: grid; gap: 16px; }
+  .nao-achou .btn { margin-top: 12px; min-height: 50px; }
 
   .so-pix { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--ceu); background: #f3f7ff; }
   .so-pix b { font: 800 17px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--ceu); }
@@ -111,7 +111,7 @@ fbq('track', 'PageView');
       <div class="produto-info">
         <p class="produto-tit">Copo oficial Cê Tá Bão Fest</p>
         <span class="produto-preco" id="preco">…</span>
-        <p class="produto-txt">Você retira no dia do evento. Já tem ingresso? O copo vai junto nele.</p>
+        <p class="produto-txt">Para quem já tem ingresso: o copo vai junto no seu ingresso e você retira no dia do evento.</p>
       </div>
     </div>
     <div class="qtd">
@@ -125,10 +125,10 @@ fbq('track', 'PageView');
     <div class="total-linha"><span>Total</span><b id="total">—</b></div>
   </section>
 
-  <section class="bloco" aria-label="Seus dados e pagamento" id="bloco-dados">
+  <section class="bloco" aria-label="Seu ingresso e pagamento" id="bloco-dados">
     <form id="form" novalidate>
       <p class="titulo-bloco">Já tem ingresso?</p>
-      <p class="explica">Digite seu CPF: se você já comprou o ingresso no site, a gente puxa seus dados e coloca o copo no seu ingresso.</p>
+      <p class="explica">Digite o CPF de quem comprou o ingresso no site: a gente puxa seus dados e coloca o copo no seu ingresso.</p>
       <div class="campo" id="c-cpf">
         <label class="rot" for="cpf">CPF</label>
         <input id="cpf" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="search" placeholder="000.000.000-00" maxlength="14">
@@ -146,24 +146,10 @@ fbq('track', 'PageView');
         <p class="nota">O copo vai aparecer junto no seu ingresso. É só mostrar o ingresso no dia pra retirar.</p>
       </div>
 
-      <p class="nao-achou" id="nao-achou" hidden>Não achamos ingresso comprado no site com esse CPF. Tudo bem: preencha seus dados e retire o copo no dia mostrando o pedido.</p>
-
-      <div class="dados" id="dados" hidden>
-        <div class="campo" id="c-nome">
-          <label class="rot" for="nome">Nome completo</label>
-          <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Como está no seu documento" maxlength="80">
-          <small>Digite seu nome completo.</small>
-        </div>
-        <div class="campo" id="c-whats">
-          <label class="rot" for="whatsapp">WhatsApp</label>
-          <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="next" placeholder="(35) 99999-9999" maxlength="16">
-          <small>WhatsApp com DDD.</small>
-        </div>
-        <div class="campo" id="c-email">
-          <label class="rot" for="email">E-mail</label>
-          <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="voce@email.com" maxlength="254">
-          <small>Digite um e-mail válido.</small>
-        </div>
+      <!-- Copo só pra quem já tem ingresso (Lucas, 09/11) -->
+      <div class="nao-achou" id="nao-achou" hidden>
+        <p>Não achamos ingresso comprado no site com esse CPF. O copo oficial é só para quem já tem ingresso.</p>
+        <a class="btn btn-sol" href="/#compra">Comprar ingresso</a>
       </div>
       <input class="isca" type="text" name="zx_ref" id="zx_ref" tabindex="-1" autocomplete="off" readonly aria-hidden="true">
 
@@ -190,24 +176,22 @@ fbq('track', 'PageView');
 (function () {
   var API = 'https://cetabao-painel.vercel.app';
   var COPO_MAX = 10;
-  var CHAVE_DADOS = 'cetabao_compra_dados_v1'; // mesmos dados guardados pelo checkout
+  var CHAVE_DADOS = 'cetabao_compra_dados_v1'; // dados guardados pelo checkout (só o CPF é usado aqui)
   var $ = function (id) { return document.getElementById(id); };
   var centavos = function (reais) { return Math.round(reais * 100); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var digitos = function (v) { return String(v || '').replace(/\D/g, ''); };
 
-  var estado = { preco: null, qtd: 1, cpfBuscado: '', achou: null, buscando: false, enviando: false, tentou: false };
+  // achou: null = ainda não procurou; true = tem ingresso; false = não tem (não pode comprar)
+  var estado = { preco: null, qtd: 1, cpfBuscado: '', achou: null, buscando: false, enviando: false };
 
-  // ---------- validação (mesmas regras do servidor e do checkout)
+  // Mesma regra do servidor e do checkout.
   function cpfValido(v) {
     var c = digitos(v);
     if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
     var dv = function (ate) { var s = 0; for (var i = 0; i < ate; i++) s += Number(c[i]) * (ate + 1 - i); var r = (s * 10) % 11; return r === 10 ? 0 : r; };
     return dv(9) === Number(c[9]) && dv(10) === Number(c[10]);
   }
-  var nomeValido = function (v) { var n = String(v || '').trim(); return n.length >= 2 && /\p{L}/u.test(n) && !/https?:|:\/\/|www\.|[<>]/i.test(n); };
-  var emailValido = function (v) { return /^[^\s@,;<>"']+@[^\s@,;<>"'.]+(\.[^\s@,;<>"'.]+)+$/.test(String(v || '').trim()); };
-  var whatsValido = function (v) { var d = digitos(v); if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2); return d.length === 10 || d.length === 11; };
   function mascaraCpf(v) {
     var d = digitos(v).slice(0, 11);
     if (d.length <= 3) return d;
@@ -215,22 +199,12 @@ fbq('track', 'PageView');
     if (d.length <= 9) return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6);
     return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6, 9) + '-' + d.slice(9);
   }
-  function mascaraFone(v) {
-    var d = digitos(v);
-    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
-    d = d.slice(0, 11);
-    if (d.length <= 2) return d.length ? '(' + d : '';
-    if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
-    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
-    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
-  }
 
-  var campos = { cpf: $('cpf'), nome: $('nome'), whatsapp: $('whatsapp'), email: $('email') };
-
-  // Quem já comprou neste aparelho: o CPF (e os dados) vêm preenchidos do checkout.
+  var cpf = $('cpf');
+  // Quem comprou o ingresso neste aparelho: o CPF já vem preenchido do checkout.
   try {
     var salvo = JSON.parse(localStorage.getItem(CHAVE_DADOS) || 'null');
-    if (salvo) Object.keys(campos).forEach(function (k) { if (salvo[k]) campos[k].value = salvo[k]; });
+    if (salvo && salvo.cpf) cpf.value = salvo.cpf;
   } catch (e) { /* sem armazenamento: segue */ }
 
   // ---------- quantidade e total
@@ -244,7 +218,8 @@ fbq('track', 'PageView');
     var b = $('pagar');
     if (estado.enviando) { b.disabled = true; b.textContent = 'Gerando o Pix…'; return; }
     if (!estado.preco) { b.disabled = true; b.textContent = 'Carregando…'; return; }
-    if (estado.achou === null) { b.disabled = !cpfValido(campos.cpf.value) || estado.buscando; b.textContent = estado.buscando ? 'Procurando…' : 'Continuar'; return; }
+    if (estado.achou === null) { b.disabled = !cpfValido(cpf.value) || estado.buscando; b.textContent = estado.buscando ? 'Procurando…' : 'Continuar'; return; }
+    if (estado.achou === false) { b.disabled = true; b.textContent = 'Só para quem tem ingresso'; return; }
     b.disabled = false;
     b.textContent = 'Pagar ' + moeda(totalCent()) + ' no Pix';
   }
@@ -268,83 +243,58 @@ fbq('track', 'PageView');
   }
 
   // ---------- CPF: procura o ingresso (o painel só devolve dados mascarados)
-  function limparBusca() {
-    estado.achou = null; estado.cpfBuscado = '';
-    $('achou').hidden = true; $('nao-achou').hidden = true; $('dados').hidden = true;
+  function mostrarResultado() {
+    $('achou').hidden = estado.achou !== true;
+    $('nao-achou').hidden = estado.achou !== false;
   }
   function buscar() {
-    var cpf = digitos(campos.cpf.value);
-    if (!cpfValido(cpf)) { $('c-cpf').classList.toggle('erro', cpf.length === 11); return; }
+    var d = digitos(cpf.value);
+    if (!cpfValido(d)) { $('c-cpf').classList.toggle('erro', d.length === 11); return; }
     $('c-cpf').classList.remove('erro');
-    if (estado.cpfBuscado === cpf || estado.buscando) return;
+    if (estado.cpfBuscado === d || estado.buscando) return;
     estado.buscando = true; $('buscando').hidden = false; erroGeral(''); atualizar();
-    fetch(API + '/api/copo/buscar', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ cpf: cpf }) })
+    fetch(API + '/api/copo/buscar', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ cpf: d }) })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
       .then(function (res) {
         estado.buscando = false; $('buscando').hidden = true;
-        if (digitos(campos.cpf.value) !== cpf) { atualizar(); return; } // mudou o CPF no meio
+        if (digitos(cpf.value) !== d) { atualizar(); return; } // mudou o CPF no meio
         if (res.status !== 200) { erroGeral(res.j.erro || 'Não consegui consultar agora. Tente de novo.'); atualizar(); return; }
-        estado.cpfBuscado = cpf;
+        estado.cpfBuscado = d;
         estado.achou = !!res.j.encontrado;
         if (estado.achou) {
           $('achou-nome').textContent = '👤 ' + res.j.nome;
           $('achou-ingressos').textContent = '🎟️ ' + res.j.ingressos;
           $('achou-contato').textContent = '✉️ ' + [res.j.email, res.j.whatsapp].filter(Boolean).join(' · ');
-          $('achou').hidden = false; $('nao-achou').hidden = true; $('dados').hidden = true;
-        } else {
-          $('achou').hidden = true; $('nao-achou').hidden = false; $('dados').hidden = false;
         }
+        mostrarResultado();
         atualizar();
       })
       .catch(function () { estado.buscando = false; $('buscando').hidden = true; erroGeral('Sem conexão. Confira a internet e tente de novo.'); atualizar(); });
   }
-  campos.cpf.addEventListener('input', function () {
-    campos.cpf.value = mascaraCpf(campos.cpf.value);
-    if (digitos(campos.cpf.value) !== estado.cpfBuscado) limparBusca();
-    if (digitos(campos.cpf.value).length === 11) buscar(); else $('c-cpf').classList.remove('erro');
+  cpf.addEventListener('input', function () {
+    cpf.value = mascaraCpf(cpf.value);
+    if (digitos(cpf.value) !== estado.cpfBuscado) { estado.achou = null; estado.cpfBuscado = ''; mostrarResultado(); }
+    if (digitos(cpf.value).length === 11) buscar(); else $('c-cpf').classList.remove('erro');
     atualizar();
   });
-  campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); if (estado.tentou) validar(); });
-  campos.nome.addEventListener('input', function () { if (estado.tentou) validar(); });
-  campos.email.addEventListener('input', function () { if (estado.tentou) validar(); });
 
-  function marcar(id, ok) { $(id).classList.toggle('erro', !ok); return ok; }
-  function validar() {
-    var ok = marcar('c-cpf', cpfValido(campos.cpf.value));
-    if (estado.achou === false) {
-      ok = marcar('c-nome', nomeValido(campos.nome.value)) && ok;
-      ok = marcar('c-whats', whatsValido(campos.whatsapp.value)) && ok;
-      ok = marcar('c-email', emailValido(campos.email.value)) && ok;
-    }
-    return ok;
-  }
   function erroGeral(msg) { $('erro-geral').textContent = msg; $('erro-geral').hidden = !msg; }
 
   $('form').addEventListener('submit', function (e) {
     e.preventDefault();
     if (estado.enviando || !estado.preco) return;
-    if (estado.achou === null) { buscar(); return; } // "Continuar": procura o ingresso primeiro
-    estado.tentou = true;
+    if (estado.achou !== true) { buscar(); return; } // "Continuar": procura o ingresso primeiro
     erroGeral('');
-    if (!validar()) {
-      var primeiro = document.querySelector('.campo.erro input');
-      if (primeiro) { primeiro.scrollIntoView({ behavior: 'smooth', block: 'center' }); primeiro.focus({ preventScroll: true }); }
-      return;
-    }
     var cookie = function (n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; };
-    var corpo = { cpf: campos.cpf.value, qtd_copo: estado.qtd, valor_total: totalCent() / 100, empresa: $('zx_ref').value, meta: { fbp: cookie('_fbp'), fbc: cookie('_fbc') } };
-    if (estado.achou === false) {
-      corpo.nome = campos.nome.value.trim(); corpo.whatsapp = campos.whatsapp.value; corpo.email = campos.email.value.trim();
-      try { localStorage.setItem(CHAVE_DADOS, JSON.stringify({ nome: corpo.nome, cpf: campos.cpf.value, email: corpo.email, whatsapp: corpo.whatsapp })); } catch (e2) { /* tudo bem */ }
-    }
+    var corpo = { cpf: cpf.value, qtd_copo: estado.qtd, valor_total: totalCent() / 100, empresa: $('zx_ref').value, meta: { fbp: cookie('_fbp'), fbc: cookie('_fbc') } };
     estado.enviando = true; atualizar();
     fetch(API + '/api/copo/comprar', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: JSON.stringify(corpo) })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
       .then(function (res) {
         if (res.status === 200 && res.j.pedido) { location.href = '/pedido/' + res.j.pedido; return; }
         estado.enviando = false;
+        if (res.j.semIngresso) { estado.achou = false; mostrarResultado(); atualizar(); return; }
         erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
-        if (res.j.faltaDados) { estado.achou = false; $('achou').hidden = true; $('dados').hidden = false; }
         if (res.status === 409) carregar(); // preço mudou ou fechou: atualiza
         atualizar();
       })
@@ -355,7 +305,7 @@ fbq('track', 'PageView');
 
   atualizar();
   carregar();
-  if (cpfValido(campos.cpf.value)) { campos.cpf.value = mascaraCpf(campos.cpf.value); buscar(); }
+  if (cpfValido(cpf.value)) { cpf.value = mascaraCpf(cpf.value); buscar(); }
 })();
 </script>
 </body>

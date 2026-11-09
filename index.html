@@ -706,12 +706,33 @@ fbq('track', 'PageView');
     atualizar();
   }
 
+  // Copo oficial (Lucas, 09/11): só pra quem já tem ingresso; compra em /copo/, só Pix. Fica em cima da Pista VIP.
+  function cartaoCopo() {
+    if (!estado.copo || !estado.vendendo) return null;
+    var copo = document.createElement('div');
+    copo.className = 'setor setor-copo expandido';
+    copo.dataset.setor = 'copo';
+    copo.innerHTML =
+      '<div class="setor-topo">' +
+        '<strong>Copo oficial</strong>' +
+        '<span class="preco">' + moeda(centavos(estado.copo)) + '</span>' +
+        '<span class="desc">Já tem ingresso? Garanta o seu copo oficial e retire no dia do evento.</span>' +
+        '<span class="rodape-card"><span class="tipo">Pagamento no Pix</span></span>' +
+      '</div>' +
+      '<div class="setor-opcoes"><div class="copo-home">' +
+        '<img src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416" loading="lazy">' +
+        '<a class="btn btn-sol" href="/copo/">Comprar copo</a>' +
+      '</div></div>';
+    return copo;
+  }
+
   function montar() {
     var box = $('setores');
     box.innerHTML = '';
     var promo = cartaoPromo();
     if (promo) box.appendChild(promo);
     estado.setores.forEach(function (s) {
+      if (s.id === 'pista') { var copo = cartaoCopo(); if (copo) box.appendChild(copo); }
       var esgotado = s.restam === 0;
       var card = document.createElement('div');
       card.className = 'setor setor-' + s.id + (esgotado ? ' esgotado' : ' expandido');
@@ -759,25 +780,6 @@ fbq('track', 'PageView');
       }).join('') + '</div>';
     box.appendChild(cam);
 
-    // Copo oficial sozinho (Lucas, 09/11): pra quem já tem ingresso (ou não). Compra em /copo/, só Pix.
-    if (estado.copo && estado.vendendo) {
-      var copo = document.createElement('div');
-      copo.className = 'setor setor-copo expandido';
-      copo.dataset.setor = 'copo';
-      copo.innerHTML =
-        '<div class="setor-topo">' +
-          '<small><span class="rot">Oficial do festival</span></small>' +
-          '<strong>Copo oficial</strong>' +
-          '<span class="preco">' + moeda(centavos(estado.copo)) + '</span>' +
-          '<span class="desc">Já tem ingresso? Garanta o seu copo oficial e retire no dia do evento.</span>' +
-          '<span class="rodape-card"><span class="tipo">Pagamento no Pix</span></span>' +
-        '</div>' +
-        '<div class="setor-opcoes"><div class="copo-home">' +
-          '<img src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416" loading="lazy">' +
-          '<a class="btn btn-sol" href="/copo/">Comprar copo</a>' +
-        '</div></div>';
-      box.appendChild(copo);
-    }
 
     box.querySelectorAll('[data-abrir]').forEach(function (b) {
       b.addEventListener('click', function () {
