@@ -241,22 +241,26 @@ fbq('track', 'PageView');
   .setor-open { --cor-setor: var(--open); --cor-texto: var(--open); --cor-preco: #fff; --cor-sombra: var(--open-escuro); }
   .setor-camarote { --cor-setor: var(--brasa); --cor-texto: var(--brasa); --cor-preco: #fff; --cor-sombra: var(--engradado-escuro); }
   /* copo oficial vendido sozinho (09/11): laranja da logo, foto + botão que leva pra /copo/ (só Pix) */
-  .setor-copo { --cor-setor: #fd5d34; --cor-texto: #c23d17; --cor-preco: #fff; --cor-sombra: #a8341a; }
+  /* preço do copo no quadro igual ao da Pista VIP, no amarelo do "Comprar ingressos" (Lucas, 09/11) */
+  .setor-copo { --cor-setor: var(--sol); --cor-texto: var(--engradado); --cor-preco: var(--engradado); --cor-sombra: var(--sol-sombra); }
   /* Card do copo no mesmo jeito do copo do checkout (Lucas, 09/11): fundo creme, borda tracejada amarela,
      copo recortado pequeno à esquerda e textos alinhados à esquerda. Baixinho, pra não tomar a tela. */
   .setores .setor.setor-copo { background: #fff8df; border: 2px dashed var(--sol); border-radius: 16px; box-shadow: none; }
-  .copo-card { display: flex; align-items: center; gap: 14px; padding: 12px 14px 12px 10px; }
+  /* topo = mesma estrutura do card da Pista VIP (título e preço com o mesmo tamanho e no mesmo lugar);
+     a borda do copo é 2px tracejada e a da Pista tem 8px à esquerda e 3px à direita: o padding compensa */
+  .setores .setor.setor-copo .setor-topo { padding: 16px 17px 4px 22px; }
+  .setores .setor.setor-copo .setor-topo strong { color: var(--ceu); }
+  /* celular bem pequeno: "COPO OFICIAL" é mais comprido que "PISTA VIP"; encolhe pra o preço ficar no lugar */
+  @media (max-width: 345px) { .setores .setor.setor-copo .setor-topo { padding-left: 14px; gap: 5px 8px; } .setores .setor.setor-copo .setor-topo strong { font-size: 18px; letter-spacing: 0; } }
+  .copo-card { display: flex; align-items: center; gap: 14px; padding: 4px 17px 14px 14px; }
   .copo-info { flex: 1; min-width: 0; text-align: left; }
-  .copo-tit { font: 800 17px/1.1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--ceu); }
-  .copo-preco { padding: 5px 9px 4px; border-radius: 8px; background: var(--sol); color: var(--engradado); font: 800 16px/1 var(--estreita); letter-spacing: .02em; white-space: nowrap; box-shadow: 0 3px 0 var(--sol-sombra); }
-  .copo-txt { margin-top: 6px; font-size: 13.5px; line-height: 1.3; color: var(--tinta-suave); }
+  .copo-txt { margin-top: 0; font-size: 13.5px; line-height: 1.3; color: var(--tinta-suave); }
   .copo-pix { margin-top: 3px; font: 700 11px/1 var(--estreita); letter-spacing: .12em; text-transform: uppercase; color: var(--brasa); }
   .copo-comprar { display: inline-block; margin-top: 10px; padding: 10px 16px; border-radius: 999px; background: var(--sol); color: var(--engradado); font: 800 15px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; touch-action: manipulation; box-shadow: 0 4px 0 var(--sol-sombra); }
   .copo-comprar:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--sol-sombra); }
   /* copo recortado (sem fundo), girando: frente → vira → verso → vira */
   .copo-card .copo-giro { width: 64px; } /* copo girando: estilo.css */
-  /* "Copo oficial" e o preço na mesma linha; preço e botão no amarelo do "Comprar ingressos" (Lucas, 09/11) */
-  .copo-linha { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; }
+
   /* faixa fina com a cor do setor, do lado esquerdo */
   .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 16px; gap: 5px 12px; }
   .setor:not(.setor-promo) small { color: var(--cor-texto); letter-spacing: .16em; }
@@ -725,10 +729,10 @@ fbq('track', 'PageView');
     copo.className = 'setor setor-copo expandido';
     copo.dataset.setor = 'copo';
     copo.innerHTML =
+      '<div class="setor-topo"><strong>Copo oficial</strong><span class="preco">' + moeda(centavos(estado.copo)) + '</span></div>' +
       '<div class="copo-card">' +
         '<span class="copo-giro"><span class="giro"><img class="frente" src="/img/copo-frente.webp" alt="Copo oficial do Cê Tá Bão Fest" width="271" height="492"><img class="verso" src="/img/copo-verso.webp" alt="" width="272" height="522"></span></span>' +
         '<div class="copo-info">' +
-          '<div class="copo-linha"><p class="copo-tit">Copo oficial</p><p class="copo-preco">' + moeda(centavos(estado.copo)) + '</p></div>' +
           '<p class="copo-txt">Garanta o seu copo oficial e retire no dia do evento.</p>' +
           '<p class="copo-pix">Poucas unidades</p>' +
           '<a class="copo-comprar" href="/copo/">Comprar copo</a>' +
