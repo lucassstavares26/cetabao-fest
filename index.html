@@ -247,13 +247,13 @@ fbq('track', 'PageView');
   /* modelo do Lucas (09/11): borda laranja em volta, copo à esquerda e textos à direita */
   .setor.setor-copo { border-width: 3px; border-left-width: 3px; overflow: hidden; }
   .copo-card { display: grid; grid-template-columns: 40% minmax(0, 1fr); align-items: center; }
-  /* copo recortado (sem fundo), inteiro, girando: frente → vira → verso → vira (Lucas, 09/11) */
-  .copo-giro { padding: 14px 4px 14px 10px; perspective: 900px; }
-  .copo-giro .giro { position: relative; width: 100%; max-width: 150px; margin: 0 auto; aspect-ratio: 272 / 522; transform-style: preserve-3d; animation: copo-gira 7s ease-in-out infinite; }
-  .copo-giro img { position: absolute; top: 0; left: 0; width: 100%; height: auto; -webkit-backface-visibility: hidden; backface-visibility: hidden; filter: drop-shadow(0 8px 10px rgba(11, 29, 69, .25)); }
-  .copo-giro .verso { transform: rotateY(180deg); }
-  @keyframes copo-gira { 0%, 38% { transform: rotateY(0deg); } 50%, 88% { transform: rotateY(180deg); } 100% { transform: rotateY(360deg); } }
-  @media (prefers-reduced-motion: reduce) { .copo-giro .giro { animation: none; } }
+  /* copo girando 360° sem parar (Lucas, 09/11): 8 fotos do copo de verdade, recortadas, uma
+     entrando por cima da outra (ver girarCopo). Quem pediu menos animação vê o copo parado. */
+  .copo-360 { position: relative; width: 100%; max-width: 170px; margin: 0 auto; aspect-ratio: 290 / 512; }
+  .copo-360-box { padding: 12px 2px 12px 8px; }
+  .copo-360 img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; z-index: 1; transition: opacity .22s linear; filter: drop-shadow(0 8px 10px rgba(11, 29, 69, .25)); }
+  .copo-360 img.ativo { opacity: 1; }
+  .copo-360 img.entrando { z-index: 2; }
   .copo-lado { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 18px 12px; text-align: center; }
   .copo-lado strong { font: 800 clamp(22px, 6.8vw, 34px)/.95 var(--estreita); letter-spacing: .01em; text-transform: uppercase; color: var(--tinta); white-space: nowrap; }
   /* preço e "Pagamento no Pix" com um traço laranja de cada lado */
@@ -724,6 +724,34 @@ fbq('track', 'PageView');
     atualizar();
   }
 
+  // Copo girando 360° (fotos em /img/copo360/0..7.webp, uma volta em ~3 s, sem parar).
+  // Um relógio só pra página: o card é remontado quando o preço chega e continua do quadro em que estava.
+  var COPO_QUADROS = 8, copoQuadro = 0, copoRelogio = null;
+  function quadrosCopo() {
+    var html = '';
+    for (var i = 0; i < COPO_QUADROS; i++) {
+      html += '<img src="/img/copo360/' + i + '.webp" width="290" height="512" alt="' + (i ? '' : 'Copo oficial do Cê Tá Bão Fest') + '"' +
+        (i === copoQuadro ? ' class="ativo"' : '') + (i ? ' aria-hidden="true"' : '') + '>';
+    }
+    return html;
+  }
+  function girarCopo() {
+    var box = document.querySelector('.copo-360');
+    if (!box || document.hidden) return;
+    var imgs = box.querySelectorAll('img');
+    var ant = imgs[copoQuadro];
+    copoQuadro = (copoQuadro + 1) % COPO_QUADROS;
+    var prox = imgs[copoQuadro];
+    // o próximo aparece POR CIMA do atual (que continua inteiro embaixo): nunca fica transparente no meio
+    prox.classList.add('entrando', 'ativo');
+    setTimeout(function () { ant.classList.remove('ativo'); prox.classList.remove('entrando'); }, 240);
+  }
+  function ligarGiroCopo() {
+    if (copoRelogio) return;
+    try { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) { /* segue */ }
+    copoRelogio = setInterval(girarCopo, 370);
+  }
+
   // Copo oficial (Lucas, 09/11): só pra quem já tem ingresso; compra em /copo/, só Pix. Fica em cima da Pista VIP.
   function cartaoCopo() {
     if (!estado.copo || !estado.vendendo) return null;
@@ -732,10 +760,7 @@ fbq('track', 'PageView');
     copo.dataset.setor = 'copo';
     copo.innerHTML =
       '<div class="copo-card">' +
-        '<div class="copo-giro"><div class="giro">' +
-          '<img class="frente" src="/img/copo-frente.webp" alt="Copo oficial do Cê Tá Bão Fest (frente)" width="271" height="492">' +
-          '<img class="verso" src="/img/copo-verso.webp" alt="Copo oficial do Cê Tá Bão Fest (verso)" width="272" height="522">' +
-        '</div></div>' +
+        '<div class="copo-360-box"><div class="copo-360">' + quadrosCopo() + '</div></div>' +
         '<div class="copo-lado">' +
           '<strong>Copo oficial</strong>' +
           '<span class="copo-traco"><span class="preco">' + moeda(centavos(estado.copo)) + '</span></span>' +
@@ -744,6 +769,7 @@ fbq('track', 'PageView');
           '<a class="btn btn-sol" href="/copo/">Comprar copo</a>' +
         '</div>' +
       '</div>';
+    ligarGiroCopo();
     return copo;
   }
 
