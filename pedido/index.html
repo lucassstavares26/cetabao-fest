@@ -78,7 +78,7 @@
     <ol class="passos-pix">
       <li>Abra o app do seu banco e escolha <strong>Pix</strong>.</li>
       <li>Leia o QR Code ou use o <strong>Pix copia e cola</strong>.</li>
-      <li>Pronto: os ingressos aparecem aqui na hora.</li>
+      <li id="pix-pronto">Pronto: os ingressos aparecem aqui na hora.</li>
     </ol>
     <img class="pix-qr" id="pix-qr" width="240" height="240" alt="QR Code do Pix">
     <p class="pix-codigo" id="pix-codigo"></p>
@@ -86,7 +86,7 @@
     <button class="btn btn-sol" type="button" id="pix-copiar">Copiar código Pix</button>
     <p class="pix-dica" id="pix-dica" hidden>Não copiou? Toque e segure no código acima e escolha <strong>Copiar</strong>.</p>
     <p class="pix-tempo">O Pix vence em <b id="pix-tempo">30:00</b></p>
-    <p>Esta página atualiza sozinha. Os ingressos também chegam no seu e-mail.</p>
+    <p id="pix-rodape">Esta página atualiza sozinha. Os ingressos também chegam no seu e-mail.</p>
   </div>
 
   <div class="cartao" id="pendente" hidden>
@@ -97,8 +97,8 @@
 
   <div class="cartao" id="expirou" hidden>
     <h2>O prazo pra pagar acabou</h2>
-    <p>Os ingressos desse pedido voltaram pra venda. Se quiser, é só fazer um pedido novo.</p>
-    <a class="btn btn-sol" href="/">Comprar de novo</a>
+    <p id="expirou-texto">Os ingressos desse pedido voltaram pra venda. Se quiser, é só fazer um pedido novo.</p>
+    <a class="btn btn-sol" id="expirou-link" href="/">Comprar de novo</a>
   </div>
 
   <div class="cartao" id="divergente" hidden>
@@ -134,7 +134,7 @@
       <h2 id="pago-titulo">Pagamento aprovado!</h2>
       <p id="pago-texto">Seus ingressos estão aqui embaixo e também foram pro seu e-mail.</p>
     </div>
-    <ul class="instrucoes">
+    <ul class="instrucoes" id="instrucoes">
       <li>Na entrada, mostre o <strong>QR Code de cada pessoa</strong> — pode ser na tela do celular.</li>
       <li>Cada QR vale <strong>uma entrada só</strong>. Não poste a imagem nas redes.</li>
       <li>Comprou pra outra pessoa? Toque em <strong>Enviar pelo WhatsApp</strong> embaixo do ingresso dela e escolha o contato.</li>
@@ -201,7 +201,17 @@
         $('resumo').textContent = (p.reserva ? '' : 'Pedido ') + p.codigo + ' · ' + p.descricao + (p.valor == null ? '' : ' · ' + moeda(p.valor));
         // Copo oficial pago: lembra de retirar no evento (só no pedido pago)
         $('copo-aviso').hidden = !(p.copo > 0 && p.status === 'pago');
-        if (p.copo > 0) $('copo-aviso').textContent = '🥤 ' + p.copo + (p.copo === 1 ? ' copo oficial' : ' copos oficiais') + ': retire no dia do evento mostrando este pedido.';
+        if (p.copo > 0) $('copo-aviso').textContent = '🥤 ' + p.copo + (p.copo === 1 ? ' copo oficial' : ' copos oficiais') +
+          (p.no_ingresso ? (p.copo === 1 ? ': já está' : ': já estão') + ' no seu ingresso. Mostre o ingresso no dia do evento pra retirar.' : ': retire no dia do evento mostrando este pedido.');
+        // Copo comprado sozinho na página /copo/ (09/11): sem ingresso neste pedido, só Pix.
+        if (p.so_copo) {
+          $('titulo').innerHTML = 'Seu <span>copo</span>';
+          $('pix-pronto').textContent = 'Pronto: o copo fica garantido na hora.';
+          $('pix-rodape').textContent = 'Esta página atualiza sozinha. A confirmação também chega no seu e-mail.';
+          $('expirou-texto').textContent = 'Este Pix venceu e nada foi cobrado. Se quiser, é só fazer um pedido novo.';
+          $('expirou-link').href = '/copo/';
+          $('pendente-texto').textContent = 'Pix costuma cair em segundos. Esta página atualiza sozinha.';
+        }
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado' && p.recusado && p.qtds) {
@@ -258,6 +268,17 @@
 
   function pago(p) {
     if (pixRelogio) clearInterval(pixRelogio);
+    if (p.so_copo) {
+      // Pedido só de copo: nada de ingresso, PDF nem Purchase (copo sozinho não é compra de ingresso).
+      var um = p.copo === 1;
+      $('pago-texto').textContent = p.no_ingresso
+        ? (um ? 'O copo já está' : 'Os copos já estão') + ' no seu ingresso. No dia do evento, é só mostrar o ingresso pra retirar.'
+        : 'No dia do evento, mostre esta página (pedido ' + p.codigo + ') pra retirar ' + (um ? 'o copo.' : 'os copos.');
+      $('instrucoes').hidden = true;
+      $('ingressos').innerHTML = '';
+      mostrar('pago');
+      return;
+    }
     $('titulo').innerHTML = 'Seus <span>ingressos</span>';
     // Camarote/mesa emitido no painel: não teve pagamento pelo site.
     if (p.cortesia) {

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Copo oficial · Cê Tá Bão Fest</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#003c86">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<!-- Pixel do Meta: só PageView. Copo comprado sozinho não conta como compra de ingresso. -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1400962194832152');
+fbq('track', 'PageView');
+</script>
+<style>
+  body { text-align: left; }
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .conteudo > *, form > * { min-width: 0; max-width: 100%; }
+  .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
+  .barra-topo img { width: 54px; }
+  .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
+  .barra-topo a { margin-left: auto; color: var(--ceu-texto); font: 700 14px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; }
+  .conteudo { padding: 22px var(--lado) 40px; display: grid; gap: 18px; }
+  h1 { font-size: clamp(30px, 9vw, 38px); }
+  h1 span { color: var(--sol); }
+  .bloco { padding: 20px 18px; border-radius: 20px; background: #fff; color: var(--tinta); box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .28); }
+
+  /* produto */
+  .produto { display: flex; gap: 16px; align-items: center; }
+  .produto img { flex: none; width: 88px; height: auto; border-radius: 10px; }
+  .produto-info { flex: 1; min-width: 0; }
+  .produto-tit { font: 800 21px/1.05 var(--estreita); letter-spacing: .03em; text-transform: uppercase; color: var(--tinta); }
+  .produto-preco { margin-top: 6px; display: inline-block; padding: 5px 9px 4px; border-radius: 9px; background: #fd5d34; color: #fff; font: 400 17px/1 var(--placa); box-shadow: 0 2px 0 #a8341a; }
+  .produto-txt { margin-top: 7px; font-size: 14px; line-height: 1.35; color: var(--tinta-suave); }
+  .qtd { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1.5px dashed #d5dcec; }
+  .qtd > span { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; }
+  .qtd-ctrl { display: inline-flex; align-items: center; gap: 6px; }
+  .qtd-ctrl button { width: 42px; height: 42px; border: 2px solid var(--ceu); border-radius: 12px; background: #fff; color: var(--ceu); font: 700 22px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
+  .qtd-ctrl button:disabled { opacity: .35; cursor: default; }
+  .qtd-ctrl output { min-width: 34px; text-align: center; font: 800 21px/1 var(--estreita); }
+  .total-linha { display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px; }
+  .total-linha span { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; }
+  .total-linha b { font: 400 24px/1 var(--placa); color: var(--ceu); }
+
+  /* formulário (mesmo visual do checkout) */
+  .rot { display: block; margin-bottom: 7px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
+  form { display: grid; gap: 16px; }
+  .titulo-bloco { font: 800 20px/1.1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); }
+  .explica { margin-top: -8px; font-size: 14.5px; line-height: 1.4; color: var(--tinta-suave); }
+  .campo input {
+    width: 100%; height: 54px; padding: 0 14px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff;
+    font: 500 17px/1.2 var(--texto); color: var(--tinta); transition: border-color .15s, box-shadow .15s;
+  }
+  .campo input::placeholder { color: #9aa6c2; }
+  .campo input:focus { outline: none; border-color: var(--ceu); box-shadow: 0 0 0 4px rgba(0, 60, 134, .12); }
+  .campo small { display: none; margin-top: 6px; font-size: 13.5px; font-weight: 600; color: var(--brasa); }
+  .campo.erro input { border-color: var(--brasa); background: #fff6f6; }
+  .campo.erro small { display: block; }
+  .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .buscando { font-size: 14px; color: var(--tinta-suave); }
+
+  .achou { padding: 14px 15px; border-radius: 14px; background: #eefaf2; border: 2px solid var(--verde); }
+  .achou p:first-child { font: 800 16px/1.2 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--verde-escuro); }
+  .achou ul { list-style: none; margin-top: 8px; display: grid; gap: 3px; font-size: 14.5px; color: var(--tinta); }
+  .achou .nota { margin-top: 9px; font-size: 14px; font-weight: 600; color: var(--verde-escuro); }
+  .nao-achou { padding: 12px 14px; border-radius: 12px; background: #fff8df; border: 1.5px solid var(--sol); font-size: 14.5px; line-height: 1.4; color: var(--tinta); }
+  .dados { display: grid; gap: 16px; }
+
+  .so-pix { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--ceu); background: #f3f7ff; }
+  .so-pix b { font: 800 17px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--ceu); }
+  .so-pix span { font-size: 14px; color: var(--tinta-suave); }
+  .pagar { margin-top: 4px; }
+  .pagar:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+  .erro-geral { padding: 12px 14px; border-radius: 12px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
+  .letras { font-size: 13px; line-height: 1.45; color: var(--tinta-suave); }
+  .fechado { text-align: center; }
+  .fechado p { margin-top: 8px; color: var(--tinta-suave); }
+  .fechado .btn { margin-top: 16px; }
+</style>
+<script src="/suporte.js" defer></script>
+</head>
+<body data-suporte-msg="Oi! Tenho uma dúvida sobre o copo oficial do Cê Tá Bão Fest.">
+
+<header class="barra-topo">
+  <img src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+  <span>Compra oficial</span>
+  <a href="/#compra">‹ Voltar</a>
+</header>
+
+<main class="conteudo">
+  <h1>Copo <span>oficial</span></h1>
+
+  <section class="bloco" aria-label="Copo oficial">
+    <div class="produto">
+      <img src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416">
+      <div class="produto-info">
+        <p class="produto-tit">Copo oficial Cê Tá Bão Fest</p>
+        <span class="produto-preco" id="preco">…</span>
+        <p class="produto-txt">Você retira no dia do evento. Já tem ingresso? O copo vai junto nele.</p>
+      </div>
+    </div>
+    <div class="qtd">
+      <span>Quantidade</span>
+      <div class="qtd-ctrl">
+        <button type="button" id="menos" aria-label="Um copo a menos">−</button>
+        <output id="n" aria-live="polite">1</output>
+        <button type="button" id="mais" aria-label="Um copo a mais">+</button>
+      </div>
+    </div>
+    <div class="total-linha"><span>Total</span><b id="total">—</b></div>
+  </section>
+
+  <section class="bloco" aria-label="Seus dados e pagamento" id="bloco-dados">
+    <form id="form" novalidate>
+      <p class="titulo-bloco">Já tem ingresso?</p>
+      <p class="explica">Digite seu CPF: se você já comprou o ingresso no site, a gente puxa seus dados e coloca o copo no seu ingresso.</p>
+      <div class="campo" id="c-cpf">
+        <label class="rot" for="cpf">CPF</label>
+        <input id="cpf" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="search" placeholder="000.000.000-00" maxlength="14">
+        <small>CPF inválido.</small>
+      </div>
+      <p class="buscando" id="buscando" hidden>Procurando seu ingresso…</p>
+
+      <div class="achou" id="achou" hidden>
+        <p>✓ Encontramos seu ingresso!</p>
+        <ul>
+          <li id="achou-nome"></li>
+          <li id="achou-ingressos"></li>
+          <li id="achou-contato"></li>
+        </ul>
+        <p class="nota">O copo vai aparecer junto no seu ingresso. É só mostrar o ingresso no dia pra retirar.</p>
+      </div>
+
+      <p class="nao-achou" id="nao-achou" hidden>Não achamos ingresso comprado no site com esse CPF. Tudo bem: preencha seus dados e retire o copo no dia mostrando o pedido.</p>
+
+      <div class="dados" id="dados" hidden>
+        <div class="campo" id="c-nome">
+          <label class="rot" for="nome">Nome completo</label>
+          <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Como está no seu documento" maxlength="80">
+          <small>Digite seu nome completo.</small>
+        </div>
+        <div class="campo" id="c-whats">
+          <label class="rot" for="whatsapp">WhatsApp</label>
+          <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="next" placeholder="(35) 99999-9999" maxlength="16">
+          <small>WhatsApp com DDD.</small>
+        </div>
+        <div class="campo" id="c-email">
+          <label class="rot" for="email">E-mail</label>
+          <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="voce@email.com" maxlength="254">
+          <small>Digite um e-mail válido.</small>
+        </div>
+      </div>
+      <input class="isca" type="text" name="zx_ref" id="zx_ref" tabindex="-1" autocomplete="off" readonly aria-hidden="true">
+
+      <div class="so-pix"><b>Pix</b><span>Pagamento só no Pix · liberado na hora</span></div>
+      <button class="btn btn-sol pagar" type="submit" id="pagar" disabled>Digite seu CPF</button>
+      <p class="erro-geral" id="erro-geral" role="alert" hidden></p>
+      <p class="letras">Realização: <strong>ROY ENTRETENIMENTO</strong>. O copo é retirado no dia do evento (28/11, Parque de Exposições, Passos-MG). Pagamento processado pelo Mercado Pago.</p>
+      <div id="suporte-inline"></div>
+    </form>
+  </section>
+
+  <section class="bloco fechado" id="fechado" hidden>
+    <p class="titulo-bloco">Copo indisponível no momento</p>
+    <p>A venda do copo oficial pelo site está fechada agora.</p>
+    <a class="btn btn-sol" href="/#compra">Ver ingressos</a>
+  </section>
+</main>
+
+<footer class="rodape" style="padding-bottom:30px;text-align:center">
+  <p>Cê Tá Bão Fest · Sábado, 28/11 · 16h · Parque de Exposições · Passos-MG</p>
+</footer>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var COPO_MAX = 10;
+  var CHAVE_DADOS = 'cetabao_compra_dados_v1'; // mesmos dados guardados pelo checkout
+  var $ = function (id) { return document.getElementById(id); };
+  var centavos = function (reais) { return Math.round(reais * 100); };
+  var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+  var digitos = function (v) { return String(v || '').replace(/\D/g, ''); };
+
+  var estado = { preco: null, qtd: 1, cpfBuscado: '', achou: null, buscando: false, enviando: false, tentou: false };
+
+  // ---------- validação (mesmas regras do servidor e do checkout)
+  function cpfValido(v) {
+    var c = digitos(v);
+    if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
+    var dv = function (ate) { var s = 0; for (var i = 0; i < ate; i++) s += Number(c[i]) * (ate + 1 - i); var r = (s * 10) % 11; return r === 10 ? 0 : r; };
+    return dv(9) === Number(c[9]) && dv(10) === Number(c[10]);
+  }
+  var nomeValido = function (v) { var n = String(v || '').trim(); return n.length >= 2 && /\p{L}/u.test(n) && !/https?:|:\/\/|www\.|[<>]/i.test(n); };
+  var emailValido = function (v) { return /^[^\s@,;<>"']+@[^\s@,;<>"'.]+(\.[^\s@,;<>"'.]+)+$/.test(String(v || '').trim()); };
+  var whatsValido = function (v) { var d = digitos(v); if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2); return d.length === 10 || d.length === 11; };
+  function mascaraCpf(v) {
+    var d = digitos(v).slice(0, 11);
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return d.slice(0, 3) + '.' + d.slice(3);
+    if (d.length <= 9) return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6);
+    return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6, 9) + '-' + d.slice(9);
+  }
+  function mascaraFone(v) {
+    var d = digitos(v);
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    d = d.slice(0, 11);
+    if (d.length <= 2) return d.length ? '(' + d : '';
+    if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  }
+
+  var campos = { cpf: $('cpf'), nome: $('nome'), whatsapp: $('whatsapp'), email: $('email') };
+
+  // Quem já comprou neste aparelho: o CPF (e os dados) vêm preenchidos do checkout.
+  try {
+    var salvo = JSON.parse(localStorage.getItem(CHAVE_DADOS) || 'null');
+    if (salvo) Object.keys(campos).forEach(function (k) { if (salvo[k]) campos[k].value = salvo[k]; });
+  } catch (e) { /* sem armazenamento: segue */ }
+
+  // ---------- quantidade e total
+  function totalCent() { return estado.preco ? centavos(estado.preco) * estado.qtd : 0; }
+  function atualizar() {
+    $('n').textContent = estado.qtd;
+    $('menos').disabled = estado.qtd <= 1;
+    $('mais').disabled = estado.qtd >= COPO_MAX;
+    $('preco').textContent = estado.preco ? moeda(centavos(estado.preco)) + ' cada' : '…';
+    $('total').textContent = estado.preco ? moeda(totalCent()) : '—';
+    var b = $('pagar');
+    if (estado.enviando) { b.disabled = true; b.textContent = 'Gerando o Pix…'; return; }
+    if (!estado.preco) { b.disabled = true; b.textContent = 'Carregando…'; return; }
+    if (estado.achou === null) { b.disabled = !cpfValido(campos.cpf.value) || estado.buscando; b.textContent = estado.buscando ? 'Procurando…' : 'Continuar'; return; }
+    b.disabled = false;
+    b.textContent = 'Pagar ' + moeda(totalCent()) + ' no Pix';
+  }
+  $('menos').addEventListener('click', function () { if (estado.qtd > 1) { estado.qtd--; atualizar(); } });
+  $('mais').addEventListener('click', function () { if (estado.qtd < COPO_MAX) { estado.qtd++; atualizar(); } });
+
+  // ---------- preço do copo (do painel; sem copo à venda, a página avisa)
+  var tentativas = 0;
+  function carregar() {
+    fetch(API + '/api/site/publico', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (cfg) {
+        tentativas = 0;
+        var preco = cfg.copo && cfg.copo.preco > 0 ? cfg.copo.preco : null;
+        if (!preco || !cfg.vendendo) { $('fechado').hidden = false; $('bloco-dados').hidden = true; estado.preco = null; atualizar(); return; }
+        $('fechado').hidden = true; $('bloco-dados').hidden = false;
+        estado.preco = preco;
+        atualizar();
+      })
+      .catch(function () { tentativas++; setTimeout(carregar, Math.min(2000 * tentativas, 15000)); });
+  }
+
+  // ---------- CPF: procura o ingresso (o painel só devolve dados mascarados)
+  function limparBusca() {
+    estado.achou = null; estado.cpfBuscado = '';
+    $('achou').hidden = true; $('nao-achou').hidden = true; $('dados').hidden = true;
+  }
+  function buscar() {
+    var cpf = digitos(campos.cpf.value);
+    if (!cpfValido(cpf)) { $('c-cpf').classList.toggle('erro', cpf.length === 11); return; }
+    $('c-cpf').classList.remove('erro');
+    if (estado.cpfBuscado === cpf || estado.buscando) return;
+    estado.buscando = true; $('buscando').hidden = false; erroGeral(''); atualizar();
+    fetch(API + '/api/copo/buscar', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ cpf: cpf }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        estado.buscando = false; $('buscando').hidden = true;
+        if (digitos(campos.cpf.value) !== cpf) { atualizar(); return; } // mudou o CPF no meio
+        if (res.status !== 200) { erroGeral(res.j.erro || 'Não consegui consultar agora. Tente de novo.'); atualizar(); return; }
+        estado.cpfBuscado = cpf;
+        estado.achou = !!res.j.encontrado;
+        if (estado.achou) {
+          $('achou-nome').textContent = '👤 ' + res.j.nome;
+          $('achou-ingressos').textContent = '🎟️ ' + res.j.ingressos;
+          $('achou-contato').textContent = '✉️ ' + [res.j.email, res.j.whatsapp].filter(Boolean).join(' · ');
+          $('achou').hidden = false; $('nao-achou').hidden = true; $('dados').hidden = true;
+        } else {
+          $('achou').hidden = true; $('nao-achou').hidden = false; $('dados').hidden = false;
+        }
+        atualizar();
+      })
+      .catch(function () { estado.buscando = false; $('buscando').hidden = true; erroGeral('Sem conexão. Confira a internet e tente de novo.'); atualizar(); });
+  }
+  campos.cpf.addEventListener('input', function () {
+    campos.cpf.value = mascaraCpf(campos.cpf.value);
+    if (digitos(campos.cpf.value) !== estado.cpfBuscado) limparBusca();
+    if (digitos(campos.cpf.value).length === 11) buscar(); else $('c-cpf').classList.remove('erro');
+    atualizar();
+  });
+  campos.whatsapp.addEventListener('input', function () { campos.whatsapp.value = mascaraFone(campos.whatsapp.value); if (estado.tentou) validar(); });
+  campos.nome.addEventListener('input', function () { if (estado.tentou) validar(); });
+  campos.email.addEventListener('input', function () { if (estado.tentou) validar(); });
+
+  function marcar(id, ok) { $(id).classList.toggle('erro', !ok); return ok; }
+  function validar() {
+    var ok = marcar('c-cpf', cpfValido(campos.cpf.value));
+    if (estado.achou === false) {
+      ok = marcar('c-nome', nomeValido(campos.nome.value)) && ok;
+      ok = marcar('c-whats', whatsValido(campos.whatsapp.value)) && ok;
+      ok = marcar('c-email', emailValido(campos.email.value)) && ok;
+    }
+    return ok;
+  }
+  function erroGeral(msg) { $('erro-geral').textContent = msg; $('erro-geral').hidden = !msg; }
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (estado.enviando || !estado.preco) return;
+    if (estado.achou === null) { buscar(); return; } // "Continuar": procura o ingresso primeiro
+    estado.tentou = true;
+    erroGeral('');
+    if (!validar()) {
+      var primeiro = document.querySelector('.campo.erro input');
+      if (primeiro) { primeiro.scrollIntoView({ behavior: 'smooth', block: 'center' }); primeiro.focus({ preventScroll: true }); }
+      return;
+    }
+    var cookie = function (n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; };
+    var corpo = { cpf: campos.cpf.value, qtd_copo: estado.qtd, valor_total: totalCent() / 100, empresa: $('zx_ref').value, meta: { fbp: cookie('_fbp'), fbc: cookie('_fbc') } };
+    if (estado.achou === false) {
+      corpo.nome = campos.nome.value.trim(); corpo.whatsapp = campos.whatsapp.value; corpo.email = campos.email.value.trim();
+      try { localStorage.setItem(CHAVE_DADOS, JSON.stringify({ nome: corpo.nome, cpf: campos.cpf.value, email: corpo.email, whatsapp: corpo.whatsapp })); } catch (e2) { /* tudo bem */ }
+    }
+    estado.enviando = true; atualizar();
+    fetch(API + '/api/copo/comprar', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: JSON.stringify(corpo) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        if (res.status === 200 && res.j.pedido) { location.href = '/pedido/' + res.j.pedido; return; }
+        estado.enviando = false;
+        erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
+        if (res.j.faltaDados) { estado.achou = false; $('achou').hidden = true; $('dados').hidden = false; }
+        if (res.status === 409) carregar(); // preço mudou ou fechou: atualiza
+        atualizar();
+      })
+      .catch(function () { estado.enviando = false; erroGeral('Sem conexão. Confira a internet e tente de novo.'); atualizar(); });
+  });
+
+  window.addEventListener('pageshow', function (e) { if (e.persisted) { estado.enviando = false; atualizar(); } });
+
+  atualizar();
+  carregar();
+  if (cpfValido(campos.cpf.value)) { campos.cpf.value = mascaraCpf(campos.cpf.value); buscar(); }
+})();
+</script>
+</body>
+</html>

@@ -240,6 +240,11 @@ fbq('track', 'PageView');
   .setor-pista { --cor-setor: var(--sol); --cor-texto: #8a6400; --cor-preco: #3b2300; --cor-sombra: var(--sol-sombra); }
   .setor-open { --cor-setor: var(--open); --cor-texto: var(--open); --cor-preco: #fff; --cor-sombra: var(--open-escuro); }
   .setor-camarote { --cor-setor: var(--brasa); --cor-texto: var(--brasa); --cor-preco: #fff; --cor-sombra: var(--engradado-escuro); }
+  /* copo oficial vendido sozinho (09/11): laranja da logo, foto + botão que leva pra /copo/ (só Pix) */
+  .setor-copo { --cor-setor: #fd5d34; --cor-texto: #c23d17; --cor-preco: #fff; --cor-sombra: #a8341a; }
+  .copo-home { display: flex; align-items: center; gap: 14px; }
+  .copo-home img { flex: none; width: 62px; height: auto; border-radius: 8px; }
+  .copo-home .btn { flex: 1; min-width: 0; min-height: 52px; padding: 12px; font-size: 17px; }
   /* faixa fina com a cor do setor, do lado esquerdo */
   .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 16px; gap: 5px 12px; }
   .setor:not(.setor-promo) small { color: var(--cor-texto); letter-spacing: .16em; }
@@ -534,6 +539,8 @@ fbq('track', 'PageView');
     tentativas: 0,
     // pacote = pacote da promo escolhido no cartão da promo (2, 3 ou 4 inteiras da Pista). Fica SEPARADO do
     // contador da Pista VIP (Lucas, 23/10: escolher na promo não marca a Pista); os dois nunca valem juntos.
+    copo: null, // copo oficial à venda sozinho (preço do painel); null = não aparece
+    vendendo: false,
     q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0, pacote: 0 },
     expandido: { camarote: false } // Pista e Open Bar ficam sempre abertos; só o Lounge e Mesas abre no clique
   };
@@ -606,6 +613,8 @@ fbq('track', 'PageView');
           if (s) { s.preco = c.preco || null; s.restam = c.restam; }
         });
         estado.lote = cfg.lote || null;
+        estado.copo = cfg.copo && cfg.copo.preco > 0 ? cfg.copo.preco : null;
+        estado.vendendo = !!cfg.vendendo;
         estado.cupom = cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
         estado.promo = !estado.cupom && cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null; // cupom não soma com a promo
         if (estado.cupom) estado.q.pista_meia = 0; // link do cupom (07/11): só Pista VIP inteira, sem meia
@@ -749,6 +758,26 @@ fbq('track', 'PageView');
           '<a class="btn btn-zap' + (premiumVendendo ? ' secundario' : '') + '" target="_blank" rel="noopener" href="' + reservar(p) + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Reservar no WhatsApp</span></a></div>';
       }).join('') + '</div>';
     box.appendChild(cam);
+
+    // Copo oficial sozinho (Lucas, 09/11): pra quem já tem ingresso (ou não). Compra em /copo/, só Pix.
+    if (estado.copo && estado.vendendo) {
+      var copo = document.createElement('div');
+      copo.className = 'setor setor-copo expandido';
+      copo.dataset.setor = 'copo';
+      copo.innerHTML =
+        '<div class="setor-topo">' +
+          '<small><span class="rot">Oficial do festival</span></small>' +
+          '<strong>Copo oficial</strong>' +
+          '<span class="preco">' + moeda(centavos(estado.copo)) + '</span>' +
+          '<span class="desc">Já tem ingresso? Garanta o seu copo oficial e retire no dia do evento.</span>' +
+          '<span class="rodape-card"><span class="tipo">Pagamento no Pix</span></span>' +
+        '</div>' +
+        '<div class="setor-opcoes"><div class="copo-home">' +
+          '<img src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416" loading="lazy">' +
+          '<a class="btn btn-sol" href="/copo/">Comprar copo</a>' +
+        '</div></div>';
+      box.appendChild(copo);
+    }
 
     box.querySelectorAll('[data-abrir]').forEach(function (b) {
       b.addEventListener('click', function () {
