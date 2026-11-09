@@ -23,6 +23,9 @@
       '<p class="codigo">' + esc(i.codigo) + '</p>' +
       '<p class="rot-titular">Nome no ingresso</p>' +
       '<p class="titular">' + esc(i.nome) + '</p>' +
+      // Copo oficial comprado junto (09/11): fica no próprio ingresso, pra retirar no evento.
+      (i.copo > 0 ? '<div class="ing-copo"><img src="/img/copo.webp" alt="" width="240" height="416">' +
+        '<div><b>+ ' + i.copo + (i.copo === 1 ? ' copo oficial' : ' copos oficiais') + '</b><span>Retire no dia do evento mostrando este ingresso</span></div></div>' : '') +
       (i.cancelado ? '<p class="selo" style="color:var(--brasa)">Cancelado</p>' : i.usado ? '<p class="selo" style="color:var(--verde)">Já utilizado na entrada</p>' : '') +
       '<p class="ing-rodape">Cada QR Code vale uma entrada' + (i.meia ? ' · Meia-entrada: leve o documento' : '') + '</p>' +
       '</article>';
@@ -31,7 +34,8 @@
   /** Mensagem pronta pro WhatsApp de quem vai usar o ingresso. */
   function textoWhats(i) {
     return '🎟️ Seu ingresso do *Cê Tá Bão Fest* — ' + (i.rotulo.indexOf(' — ') > 0 ? i.rotulo.replace(' — ', ' (') + ')' : i.rotulo) + '\n' +
-      'Nome: ' + i.nome + '\n\n' +
+      'Nome: ' + i.nome + '\n' +
+      (i.copo > 0 ? '🥤 + ' + i.copo + (i.copo === 1 ? ' copo oficial' : ' copos oficiais') + ' (retire no evento)\n' : '') + '\n' +
       'Abra o link e mostre o QR Code na entrada:\n' + SITE + '/ingresso/' + i.codigo + '\n\n' +
       '📅 ' + EVENTO.data + '\n📍 ' + EVENTO.local;
   }
