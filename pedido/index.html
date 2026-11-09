@@ -25,6 +25,8 @@
   h1 { font-size: clamp(28px, 8.4vw, 36px); }
   h1 span { color: var(--sol); }
   .resumo { margin-top: -6px; color: var(--ceu-texto); font-size: 15px; }
+  /* copo oficial (09/11): lembrete de retirar no evento */
+  .copo-aviso { display: inline-block; margin-top: 10px; padding: 7px 12px; border-radius: 10px; background: rgba(255, 198, 26, .16); border: 1.5px solid var(--sol); color: var(--ceu-texto); font-size: 14px; font-weight: 600; }
   .cartao { text-align: center; }
   .cartao h2 { font-size: clamp(21px, 6vw, 25px); color: var(--ceu); }
   .cartao p { margin-top: 8px; color: var(--tinta-suave); }
@@ -66,6 +68,7 @@
   <div>
     <h1 id="titulo">Seu <span>pedido</span></h1>
     <p class="resumo" id="resumo"></p>
+    <p class="copo-aviso" id="copo-aviso" hidden></p>
   </div>
 
   <div class="cartao" id="carregando"><span class="espera" aria-hidden="true"></span><p>Carregando seu pedido…</p></div>
@@ -196,10 +199,13 @@
         if (p.naoAchou) { mostrar('nao-achou'); return; }
         if (window.CetabaoSuporte) CetabaoSuporte.mensagem('Oi! Tenho uma dúvida sobre meu pedido ' + p.codigo + ' do Cê Tá Bão Fest.');
         $('resumo').textContent = (p.reserva ? '' : 'Pedido ') + p.codigo + ' · ' + p.descricao + (p.valor == null ? '' : ' · ' + moeda(p.valor));
+        // Copo oficial pago: lembra de retirar no evento (só no pedido pago)
+        $('copo-aviso').hidden = !(p.copo > 0 && p.status === 'pago');
+        if (p.copo > 0) $('copo-aviso').textContent = '🥤 ' + p.copo + (p.copo === 1 ? ' copo oficial' : ' copos oficiais') + ': retire no dia do evento mostrando este pedido.';
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado' && p.recusado && p.qtds) {
-          $('tentar-de-novo').href = '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0);
+          $('tentar-de-novo').href = '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
           abrirFora($('tentar-de-novo').getAttribute('href'));
           mostrar('recusado'); return;
         }
