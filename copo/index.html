@@ -42,7 +42,7 @@ fbq('track', 'PageView');
 
   /* produto */
   .produto { display: flex; gap: 16px; align-items: center; }
-  .produto img { flex: none; width: 88px; height: auto; border-radius: 10px; }
+  .produto .copo-giro { width: 88px; } /* copo girando: estilo.css */
   .produto-info { flex: 1; min-width: 0; }
   .produto-tit { font: 800 21px/1.05 var(--estreita); letter-spacing: .03em; text-transform: uppercase; color: var(--tinta); }
   .produto-preco { margin-top: 6px; display: inline-block; padding: 5px 9px 4px; border-radius: 9px; background: #fd5d34; color: #fff; font: 400 17px/1 var(--placa); box-shadow: 0 2px 0 #a8341a; }
@@ -107,7 +107,7 @@ fbq('track', 'PageView');
 
   <section class="bloco" aria-label="Copo oficial">
     <div class="produto">
-      <img src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416">
+      <span class="copo-giro"><span class="giro"><img class="frente" src="/img/copo-frente.webp" alt="Copo oficial do Cê Tá Bão Fest" width="271" height="492"><img class="verso" src="/img/copo-verso.webp" alt="" width="272" height="522"></span></span>
       <div class="produto-info">
         <p class="produto-tit">Copo oficial Cê Tá Bão Fest</p>
         <span class="produto-preco" id="preco">…</span>

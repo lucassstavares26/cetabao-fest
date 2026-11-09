@@ -42,7 +42,11 @@
       // Um de cada vez: celular fraco não aguenta desenhar todos juntos.
       return elementos.reduce(function (anterior, el) {
         return anterior.then(function () { return imagensProntas(el); }).then(function () {
-          return window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false });
+          return window.html2canvas(el, {
+            scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false,
+            // copo oficial girando: no PDF sai parado, de frente (ver .pdf-captura no estilo.css)
+            onclone: function (copia) { copia.documentElement.classList.add('pdf-captura'); }
+          });
         }).then(function (tela) { telas.push(tela); });
       }, Promise.resolve()).then(function () {
         var JsPDF = window.jspdf.jsPDF, doc = null;

@@ -24,7 +24,7 @@
       '<p class="rot-titular">Nome no ingresso</p>' +
       '<p class="titular">' + esc(i.nome) + '</p>' +
       // Copo oficial comprado junto (09/11): fica no próprio ingresso, pra retirar no evento.
-      (i.copo > 0 ? '<div class="ing-copo"><img src="/img/copo.webp" alt="" width="240" height="416">' +
+      (i.copo > 0 ? '<div class="ing-copo"><span class="copo-giro"><span class="giro"><img class="frente" src="/img/copo-frente.webp" alt="" width="271" height="492"><img class="verso" src="/img/copo-verso.webp" alt="" width="272" height="522"></span></span>' +
         '<div><b>+ ' + i.copo + (i.copo === 1 ? ' copo oficial' : ' copos oficiais') + '</b><span>Retire no dia do evento mostrando este ingresso</span></div></div>' : '') +
       (i.cancelado ? '<p class="selo" style="color:var(--brasa)">Cancelado</p>' : i.usado ? '<p class="selo" style="color:var(--verde)">Já utilizado na entrada</p>' : '') +
       '<p class="ing-rodape">Cada QR Code vale uma entrada' + (i.meia ? ' · Meia-entrada: leve o documento' : '') + '</p>' +

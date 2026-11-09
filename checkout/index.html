@@ -54,7 +54,7 @@ fbq('track', 'PageView');
   .item span:last-child { white-space: nowrap; }
   /* copo oficial (upsell, 09/11): logo abaixo dos ingressos */
   .copo { display: flex; gap: 14px; align-items: center; margin-top: 14px; padding: 12px 14px 12px 10px; border-radius: 16px; background: #fff8df; border: 2px dashed var(--sol); }
-  .copo img { flex: none; width: 64px; height: auto; border-radius: 8px; }
+  .copo .copo-giro { width: 64px; } /* copo girando: estilo.css */
   .copo-info { flex: 1; min-width: 0; }
   .copo-tit { font: 800 17px/1.1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--ceu); }
   .copo-preco { margin-top: 3px; font: 700 16px/1.1 var(--texto); color: var(--tinta); }
@@ -150,7 +150,7 @@ fbq('track', 'PageView');
     <p class="divisor" aria-hidden="true">✦</p>
     <div id="itens"></div>
     <div class="copo" id="copo" hidden>
-      <img src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416">
+      <span class="copo-giro"><span class="giro"><img class="frente" src="/img/copo-frente.webp" alt="Copo oficial do Cê Tá Bão Fest" width="271" height="492"><img class="verso" src="/img/copo-verso.webp" alt="" width="272" height="522"></span></span>
       <div class="copo-info">
         <p class="copo-tit">Leve o copo oficial</p>
         <p class="copo-preco" id="copo-preco">+ R$ 20,00</p>
