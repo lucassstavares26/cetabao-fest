@@ -244,13 +244,19 @@ fbq('track', 'PageView');
   .setor-copo { --cor-setor: #fd5d34; --cor-texto: #c23d17; --cor-preco: #fff; --cor-sombra: #a8341a; }
   /* Lucas, 09/11: foto do copo ocupando o lado esquerdo inteiro; do lado direito, centralizados,
      "Copo oficial" e o preço, embaixo a descrição e o botão */
-  .copo-card { display: grid; grid-template-columns: 40% minmax(0, 1fr); gap: 12px; align-items: center; padding: 14px 14px 14px 10px; }
-  .copo-foto { display: block; width: 100%; height: auto; }
-  .copo-lado { display: flex; flex-direction: column; align-items: center; gap: 9px; text-align: center; }
-  .copo-lado strong { font: 800 clamp(21px, 6.4vw, 26px)/1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); white-space: nowrap; }
-  .copo-lado .desc { font: 700 clamp(14px, 4vw, 15.5px)/1.3 var(--estreita); letter-spacing: .02em; color: var(--tinta); }
-  .copo-lado .tipo { font-size: 11px; }
-  .copo-lado .btn { width: 100%; min-height: 50px; padding: 12px 8px; font-size: clamp(14px, 4.4vw, 17px); white-space: nowrap; }
+  /* modelo do Lucas (09/11): borda laranja em volta, painel azul com o copo de ponta a ponta à esquerda */
+  .setor.setor-copo { border-width: 3px; border-left-width: 3px; overflow: hidden; }
+  .copo-card { display: grid; grid-template-columns: 40% minmax(0, 1fr); align-items: stretch; }
+  .copo-foto { display: block; width: 100%; height: 100%; min-height: 230px; object-fit: cover; object-position: center 40%; background: #0b2a72; }
+  .copo-lado { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 18px 12px; text-align: center; }
+  .copo-lado strong { font: 800 clamp(22px, 6.8vw, 34px)/.95 var(--estreita); letter-spacing: .01em; text-transform: uppercase; color: var(--tinta); white-space: nowrap; }
+  /* preço e "Pagamento no Pix" com um traço laranja de cada lado */
+  .copo-traco { display: flex; align-items: center; gap: 8px; width: 100%; }
+  .copo-traco::before, .copo-traco::after { content: ""; flex: 1; min-width: 8px; border-top: 2px solid #fd5d34; }
+  .setor.setor-copo .copo-lado .preco:not(.em-breve) { padding: 6px 12px 5px; border-radius: 10px; background: #fd5d34; color: #fff; font: 800 clamp(21px, 6.4vw, 30px)/1 var(--estreita); letter-spacing: .01em; box-shadow: 0 3px 0 #a8341a; }
+  .copo-lado .desc { font: 500 clamp(13.5px, 3.9vw, 16px)/1.3 var(--texto); letter-spacing: 0; color: var(--tinta); }
+  .copo-pix { font: 800 clamp(11px, 3.2vw, 13px)/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--tinta); white-space: nowrap; }
+  .copo-lado .btn { width: 100%; min-height: 52px; padding: 12px 8px; font-size: clamp(15px, 4.8vw, 21px); white-space: nowrap; }
   /* faixa fina com a cor do setor, do lado esquerdo */
   .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 16px; gap: 5px 12px; }
   .setor:not(.setor-promo) small { color: var(--cor-texto); letter-spacing: .16em; }
@@ -720,12 +726,12 @@ fbq('track', 'PageView');
     copo.dataset.setor = 'copo';
     copo.innerHTML =
       '<div class="copo-card">' +
-        '<img class="copo-foto" src="/img/copo.webp" alt="Copo oficial do Cê Tá Bão Fest" width="240" height="416" loading="lazy">' +
+        '<img class="copo-foto" src="/img/copo-painel.webp" alt="Copo oficial do Cê Tá Bão Fest" width="480" height="696" loading="lazy">' +
         '<div class="copo-lado">' +
           '<strong>Copo oficial</strong>' +
-          '<span class="preco">' + moeda(centavos(estado.copo)) + '</span>' +
+          '<span class="copo-traco"><span class="preco">' + moeda(centavos(estado.copo)) + '</span></span>' +
           '<span class="desc">Já tem ingresso? Garanta o seu copo oficial e retire no dia do evento.</span>' +
-          '<span class="tipo">Pagamento no Pix</span>' +
+          '<span class="copo-traco"><span class="copo-pix">Pagamento no Pix</span></span>' +
           '<a class="btn btn-sol" href="/copo/">Comprar copo</a>' +
         '</div>' +
       '</div>';
