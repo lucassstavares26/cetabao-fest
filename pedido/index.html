@@ -219,10 +219,12 @@
           $('expirou-link').href = '/copo/';
           $('pendente-texto').textContent = 'Pix costuma cair em segundos. Esta página atualiza sozinha.';
         }
+        // Open Bar das influenciadoras (10/11): comprar de novo volta pro link delas (preço de 50%), não pro site.
+        if (p.influencer) $('expirou-link').href = '/influencer/';
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado' && p.recusado && p.qtds) {
-          $('tentar-de-novo').href = '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
+          $('tentar-de-novo').href = p.influencer ? '/influencer/' : '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
           abrirFora($('tentar-de-novo').getAttribute('href'));
           mostrar('recusado'); return;
         }

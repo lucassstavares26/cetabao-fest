@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Open Bar das Influencers · Cê Tá Bão Fest</title>
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Open Bar das Influencers · Cê Tá Bão Fest">
+<meta property="og:description" content="Seu Open Bar com 50% de desconto. Sábado, 28/11 · Passos-MG.">
+<meta property="og:image" content="https://www.cetabaofest.com.br/img/compartilhar.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="1052">
+<meta name="theme-color" content="#003c86">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<style>
+  /* Open Bar das influenciadoras (Lucas, 10/11): 50% do Open Bar, 1 por pessoa, só quem está na lista.
+     A influencer digita o WhatsApp; o painel (/api/influencer) devolve o nome dela e o preço. O checkout
+     abre com inf=1 e lê { w, nome } da aba (sessionStorage cetabao_influencer). Quem cobra é o /api/comprar,
+     que confere a lista de novo. Topo igual ao do site oficial (copiado da /blackfriday). */
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  :root { --faixa-h: 58px; }
+  .faixa {
+    position: sticky; top: 0; z-index: 60; height: var(--faixa-h);
+    display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px;
+    background: rgba(0, 37, 96, .94); border-bottom: 3px solid var(--sol);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  .faixa-marca { flex: none; display: block; }
+  .faixa-marca img { width: auto; height: 38px; }
+  .faixa-oficial {
+    display: inline-flex; align-items: center; gap: 5px; min-width: 0;
+    padding: 5px 9px 4px 6px; border-radius: 999px; border: 1.5px solid rgba(37, 211, 102, .55); background: rgba(37, 211, 102, .12);
+    font: 800 13px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; color: #fff; white-space: nowrap;
+  }
+  .faixa-oficial svg { width: 16px; height: 16px; flex: none; color: #25d366; }
+  @media (max-width: 370px) { .faixa { gap: 7px; padding-left: 10px; } .faixa-marca img { height: 32px; } .faixa-oficial { font-size: 11.5px; } }
+  .artistas { position: relative; overflow: hidden; background: var(--ceu-foto, #004697); }
+  .artistas img { width: 100%; }
+  .artistas::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; background: linear-gradient(180deg, rgba(180, 18, 18, 0), var(--engradado)); }
+  .porteira {
+    padding: 4px var(--lado) 28px;
+    background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e);
+  }
+  .nomes { padding-top: 2px; }
+  .cabeca { font: 400 clamp(20px, 7.2vw, 32px)/1.05 var(--placa); color: #fff; text-wrap: balance; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  .e-comercial { font: 800 1.12em/1 var(--estreita); vertical-align: -.02em; }
+  .mais { margin-top: 6px; font: 400 clamp(19px, 6.6vw, 30px)/1 var(--placa); color: #fff; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  .demais { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 9px; margin-top: 14px; padding-inline: 6px; }
+  .demais li { font: 400 clamp(11px, 3.3vw, 15px)/1.25 var(--placa); color: var(--sol); text-shadow: 0 2px 0 var(--engradado-escuro); }
+  .demais li:not(:last-child)::after { content: "/"; margin-left: 9px; color: rgba(255, 255, 255, .45); text-shadow: none; }
+  .destaque { padding: 0 var(--lado); background: linear-gradient(180deg, #9c0e0e 50%, var(--engradado) 50%); }
+  .placa {
+    position: relative; display: block; padding: 18px 16px 15px; border-radius: 16px; transform: rotate(-1.5deg);
+    background: repeating-linear-gradient(90deg, transparent 0 15px, rgba(0, 0, 0, .04) 15px 17px), var(--sol);
+    box-shadow: 0 6px 0 var(--sol-sombra), 0 18px 34px rgba(0, 0, 0, .45);
+    font: 400 clamp(26px, 8.4vw, 36px)/1.05 var(--placa); color: var(--engradado); text-align: center;
+  }
+  .placa span { display: block; font-size: .7em; color: var(--engradado-escuro); }
+  .placa::before, .placa::after { content: ""; position: absolute; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--sol-sombra); box-shadow: inset 0 1px 1px rgba(0, 0, 0, .35); }
+  .placa::before { left: 9px; }
+  .placa::after { right: 9px; }
+  .compra { padding: 40px var(--lado) 44px; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e); }
+  .cartao h2 { font-size: clamp(22px, 6.4vw, 26px); color: var(--ceu); }
+  .cartao .sub { margin-top: 8px; font-size: 15px; line-height: 1.45; color: var(--tinta-suave); }
+  .campo { display: grid; gap: 6px; margin-top: 20px; text-align: left; }
+  .campo label { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--campo-rotulo, #5b6b8c); }
+  .campo input {
+    width: 100%; padding: 14px 14px; border-radius: 12px; border: 1.5px solid #cfd8ea; background: #f6f8fc;
+    font: 600 20px/1.2 var(--texto); color: var(--tinta); letter-spacing: .02em;
+  }
+  .campo input:focus { outline: none; border-color: var(--ceu); background: #fff; box-shadow: 0 0 0 3px rgba(0, 70, 151, .15); }
+  .erro { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: #fdecec; color: #b3261e; font-size: 14.5px; line-height: 1.4; text-align: left; }
+  .cartao .btn { margin-top: 18px; }
+  .cartao .btn:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
+  .ola { font: 800 15px/1.2 var(--estreita); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-suave); }
+  .oferta { position: relative; margin-top: 18px; text-align: left; border: 3px solid var(--open); border-left-width: 8px; border-radius: 18px; padding: 16px 14px 14px 16px; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
+  .oferta small { display: block; font: 800 11.5px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--open); }
+  .oferta h3 { margin-top: 6px; font: 800 clamp(23px, 6.6vw, 27px)/1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); }
+  .oferta .off { position: absolute; top: 14px; right: 12px; padding: 6px 9px 5px; border-radius: 10px; background: var(--engradado); color: #fff; font: 400 17px/1 var(--placa); }
+  .de-por { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+  .de-por s { font: 700 16px/1 var(--estreita); color: var(--tinta-suave); }
+  .de-por b { font: 400 clamp(26px, 7.8vw, 32px)/1 var(--placa); color: var(--engradado); }
+  .oferta .desc { margin-top: 8px; font-size: 14.5px; line-height: 1.45; color: var(--tinta-suave); }
+  .regras { margin-top: 14px; font-size: 13.5px; line-height: 1.45; color: var(--tinta-suave); }
+  .trocar { display: inline-block; margin-top: 14px; font: 700 14px/1 var(--texto); color: var(--ceu); text-decoration: underline; background: none; border: 0; cursor: pointer; }
+  .ficha { display: grid; gap: 6px; padding: 26px var(--lado) 30px; background: var(--ceu-fundo); color: var(--ceu-texto); font-size: 15px; }
+  .ficha b { color: #fff; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8.5V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.5a2.5 2.5 0 0 0 0 5V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4.5a2.5 2.5 0 0 0 0-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 5v14" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2.2"/></symbol>
+</svg>
+<header class="faixa">
+  <span class="faixa-marca"><img src="/img/logo-horizontal.webp" alt="Cê Tá Bão Fest" width="243" height="96" fetchpriority="high"></span>
+  <span class="faixa-oficial"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>Site oficial</span>
+</header>
+<main>
+  <figure class="artistas">
+    <img src="/img/topo-artistas.webp" alt="Artistas do Cê Tá Bão Fest: Henrique e Diego, Kamisa 10 e as demais atrações" width="800" height="762" fetchpriority="high">
+  </figure>
+
+  <section class="porteira" aria-label="Atrações">
+    <div class="nomes">
+      <p class="sr">Cê Tá Bão Fest · Passos-MG · sábado, 28/11</p>
+      <p class="cabeca">Henrique <span class="e-comercial">&amp;</span> Diego</p>
+      <p class="mais">+ Kamisa 10</p>
+      <ul class="demais">
+        <li>Luan e Rafael</li>
+        <li>DJ Sarah Leonel</li>
+        <li>DJ Dion Dion</li>
+        <li>Grupo Atitude Mais</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="destaque">
+    <h1 class="placa">Área da Influencer <span>Open Bar 50% OFF</span></h1>
+  </div>
+
+  <section class="compra" aria-label="Open Bar das influencers">
+    <!-- 1) WhatsApp -->
+    <form class="cartao" id="passo-numero" novalidate>
+      <span class="etiqueta">Só pra influencers</span>
+      <h2>Seu Open Bar com 50% OFF</h2>
+      <p class="sub">Digite o seu WhatsApp, o mesmo que você passou pra produção.</p>
+      <div class="campo">
+        <label for="whatsapp">Seu WhatsApp</label>
+        <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="(35) 99999-9999" maxlength="16">
+      </div>
+      <p class="erro" id="erro-numero" role="alert" hidden></p>
+      <button class="btn btn-sol" type="submit" id="consultar"><svg><use href="#i-ticket"/></svg><span>Continuar</span></button>
+    </form>
+
+    <!-- 2) Oferta -->
+    <div class="cartao" id="passo-oferta" hidden>
+      <span class="etiqueta">Só pra influencers</span>
+      <p class="ola" id="ola"></p>
+      <div class="oferta">
+        <small>Ingresso</small>
+        <h3>Open Bar</h3>
+        <span class="off" id="off">50% OFF</span>
+        <div class="de-por"><s id="de"></s><b id="por"></b></div>
+        <p class="desc">Bebidas à vontade: cerveja, vodka, energético, gin, tônica, água e refrigerante.</p>
+      </div>
+      <button class="btn btn-sol" type="button" id="garantir"><svg><use href="#i-ticket"/></svg><span>Garantir meu Open Bar</span></button>
+      <p class="regras">1 ingresso por pessoa, no seu nome. Pix ou cartão. Na próxima tela você confere o nome e completa CPF e e-mail.</p>
+      <button class="trocar" type="button" id="trocar">Não é você? Trocar o número</button>
+    </div>
+
+    <!-- 3) Já comprou / vendas fechadas -->
+    <div class="cartao" id="passo-aviso" hidden>
+      <span class="etiqueta">Cê Tá Bão Fest</span>
+      <h2 id="aviso-titulo"></h2>
+      <p class="sub" id="aviso-texto"></p>
+      <button class="trocar" type="button" id="trocar2">Usar outro número</button>
+    </div>
+  </section>
+
+  <section class="ficha" aria-label="Quando e onde">
+    <p><b>Sábado, 28/11 · 16h</b></p>
+    <p>Parque de Exposições · Passos-MG</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var $ = function (id) { return document.getElementById(id); };
+  var moeda = function (reais) { return Number(reais).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+  function mascaraFone(v) {
+    var d = String(v).replace(/\D/g, '');
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    d = d.slice(0, 11);
+    if (d.length <= 2) return d ? '(' + d : '';
+    if (d.length <= 7) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  }
+  var achada = null;
+
+  function passo(qual) {
+    ['passo-numero', 'passo-oferta', 'passo-aviso'].forEach(function (id) { $(id).hidden = id !== qual; });
+  }
+  function erro(texto) { $('erro-numero').textContent = texto; $('erro-numero').hidden = !texto; }
+  function aviso(titulo, texto) { $('aviso-titulo').textContent = titulo; $('aviso-texto').textContent = texto; passo('passo-aviso'); }
+  function trocar() { achada = null; erro(''); passo('passo-numero'); $('whatsapp').focus(); }
+  $('trocar').addEventListener('click', trocar);
+  $('trocar2').addEventListener('click', trocar);
+
+  $('whatsapp').addEventListener('input', function () { $('whatsapp').value = mascaraFone($('whatsapp').value); erro(''); });
+  // Voltou do checkout: já sabe o número desta aba.
+  try { var salvo = JSON.parse(sessionStorage.getItem('cetabao_influencer') || 'null'); if (salvo && salvo.w) $('whatsapp').value = mascaraFone(salvo.w); } catch (e) { /* tudo bem */ }
+
+  $('passo-numero').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var digitos = $('whatsapp').value.replace(/\D/g, '');
+    if (digitos.length < 10) { erro('Digite o WhatsApp com DDD.'); return; }
+    var b = $('consultar');
+    b.disabled = true; b.querySelector('span').textContent = 'Conferindo…';
+    erro('');
+    fetch(API + '/api/influencer?w=' + encodeURIComponent(digitos), { cache: 'no-store' })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        b.disabled = false; b.querySelector('span').textContent = 'Continuar';
+        if (res.status !== 200 || !res.j.ok) { erro(res.j.erro || 'Não consegui conferir agora. Tente de novo.'); return; }
+        var j = res.j;
+        if (j.jaComprou) { aviso('Você já garantiu o seu! 🎉', 'Seu Open Bar já está pago. O ingresso foi pro seu e-mail. Qualquer dúvida, fale com a produção.'); return; }
+        if (!j.vendendo || !j.preco) { aviso('Vendas fechadas no momento', 'As vendas pelo site estão pausadas. Tente de novo mais tarde ou fale com a produção.'); return; }
+        achada = { w: j.whatsapp, nome: j.nome };
+        $('ola').textContent = 'Oi, ' + j.nome.split(' ')[0] + '! Este é o seu:';
+        $('de').textContent = 'de ' + moeda(j.de);
+        $('por').textContent = 'por ' + moeda(j.preco);
+        $('off').textContent = j.pct + '% OFF';
+        passo('passo-oferta');
+      })
+      .catch(function () { b.disabled = false; b.querySelector('span').textContent = 'Continuar'; erro('Sem conexão. Confira a internet e tente de novo.'); });
+  });
+
+  $('garantir').addEventListener('click', function () {
+    if (!achada) return;
+    try { sessionStorage.setItem('cetabao_influencer', JSON.stringify(achada)); } catch (e) {
+      aviso('Não deu pra continuar', 'Seu navegador bloqueou o armazenamento desta página. Abra o link no Chrome ou no Safari.');
+      return;
+    }
+    location.href = '/checkout/?oi=1&inf=1';
+  });
+})();
+</script>
+</body>
+</html>
