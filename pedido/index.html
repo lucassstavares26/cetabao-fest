@@ -140,6 +140,12 @@
       <li>Comprou pra outra pessoa? Toque em <strong>Enviar pelo WhatsApp</strong> embaixo do ingresso dela e escolha o contato.</li>
       <li id="instr-meia" hidden><strong>Meia-entrada:</strong> leve o documento que comprova o direito.</li>
     </ul>
+    <!-- copo sem ingresso no nosso site (09/11): QR Code pra retirar o copo no evento -->
+    <div class="cartao" id="copo-qr" hidden>
+      <h2>QR Code de retirada</h2>
+      <img class="pix-qr" id="copo-qr-img" width="240" height="240" alt="QR Code de retirada do copo">
+      <p id="copo-qr-texto"></p>
+    </div>
     <div id="ingressos" style="display:grid;gap:22px"></div>
     <div id="pdf" class="nao-imprime" style="display:grid;gap:8px"></div>
   </div>
@@ -202,7 +208,8 @@
         // Copo oficial pago: lembra de retirar no evento (só no pedido pago)
         $('copo-aviso').hidden = !(p.copo > 0 && p.status === 'pago');
         if (p.copo > 0) $('copo-aviso').textContent = '🥤 ' + p.copo + (p.copo === 1 ? ' copo oficial' : ' copos oficiais') +
-          (p.no_ingresso ? (p.copo === 1 ? ': já está' : ': já estão') + ' no seu ingresso. Mostre o ingresso no dia do evento pra retirar.' : ': retire no dia do evento mostrando este pedido.');
+          (p.no_ingresso ? (p.copo === 1 ? ': já está' : ': já estão') + ' no seu ingresso. Mostre o ingresso no dia do evento pra retirar.'
+            : p.qr_retirada ? ': retire no dia do evento mostrando o QR Code abaixo.' : ': retire no dia do evento mostrando este pedido.');
         // Copo comprado sozinho na página /copo/ (09/11): sem ingresso neste pedido, só Pix.
         if (p.so_copo) {
           $('titulo').innerHTML = 'Seu <span>copo</span>';
@@ -273,7 +280,14 @@
       var um = p.copo === 1;
       $('pago-texto').textContent = p.no_ingresso
         ? (um ? 'O copo já está' : 'Os copos já estão') + ' no seu ingresso. No dia do evento, é só mostrar o ingresso pra retirar.'
-        : 'No dia do evento, mostre esta página (pedido ' + p.codigo + ') pra retirar ' + (um ? 'o copo.' : 'os copos.');
+        : p.qr_retirada
+          ? 'No dia do evento, mostre o QR Code abaixo pra retirar ' + (um ? 'o copo.' : 'os copos.') + ' Ele também foi pro seu e-mail.'
+          : 'No dia do evento, mostre esta página (pedido ' + p.codigo + ') pra retirar ' + (um ? 'o copo.' : 'os copos.');
+      if (p.qr_retirada) {
+        $('copo-qr-img').src = p.qr_retirada;
+        $('copo-qr-texto').textContent = (um ? '1 copo oficial' : p.copo + ' copos oficiais') + ' · Pedido ' + p.codigo;
+        $('copo-qr').hidden = false;
+      }
       $('instrucoes').hidden = true;
       $('ingressos').innerHTML = '';
       mostrar('pago');

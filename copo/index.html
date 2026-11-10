@@ -79,7 +79,7 @@ fbq('track', 'PageView');
   .achou ul { list-style: none; margin-top: 8px; display: grid; gap: 3px; font-size: 14.5px; color: var(--tinta); }
   .achou .nota { margin-top: 9px; font-size: 14px; font-weight: 600; color: var(--verde-escuro); }
   .nao-achou { padding: 12px 14px; border-radius: 12px; background: #fff8df; border: 1.5px solid var(--sol); font-size: 14.5px; line-height: 1.4; color: var(--tinta); }
-  .nao-achou .btn { margin-top: 12px; min-height: 50px; }
+  .dados { display: grid; gap: 16px; }
 
   .so-pix { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--ceu); background: #f3f7ff; }
   .so-pix b { font: 800 17px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--ceu); }
@@ -111,7 +111,7 @@ fbq('track', 'PageView');
       <div class="produto-info">
         <p class="produto-tit">Copo oficial Cê Tá Bão Fest</p>
         <span class="produto-preco" id="preco">…</span>
-        <p class="produto-txt">Para quem já tem ingresso: o copo vai junto no seu ingresso e você retira no dia do evento.</p>
+        <p class="produto-txt">Comprou o ingresso no nosso site? O copo vai junto nele. Se não, você recebe um QR Code pra retirar no dia do evento.</p>
       </div>
     </div>
     <div class="qtd">
@@ -127,8 +127,8 @@ fbq('track', 'PageView');
 
   <section class="bloco" aria-label="Seu ingresso e pagamento" id="bloco-dados">
     <form id="form" novalidate>
-      <p class="titulo-bloco">Já tem ingresso?</p>
-      <p class="explica">Digite o CPF de quem comprou o ingresso no site: a gente puxa seus dados e coloca o copo no seu ingresso.</p>
+      <p class="titulo-bloco">Seu CPF</p>
+      <p class="explica">Se você comprou o ingresso no nosso site, a gente puxa seus dados e coloca o copo no seu ingresso.</p>
       <div class="campo" id="c-cpf">
         <label class="rot" for="cpf">CPF</label>
         <input id="cpf" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="search" placeholder="000.000.000-00" maxlength="14">
@@ -146,10 +146,25 @@ fbq('track', 'PageView');
         <p class="nota">O copo vai aparecer junto no seu ingresso. É só mostrar o ingresso no dia pra retirar.</p>
       </div>
 
-      <!-- Copo só pra quem já tem ingresso (Lucas, 09/11) -->
-      <div class="nao-achou" id="nao-achou" hidden>
-        <p>Não achamos ingresso comprado no site com esse CPF. O copo oficial é só para quem já tem ingresso.</p>
-        <a class="btn btn-sol" href="/#compra">Comprar ingresso</a>
+      <!-- Liberado pra todo mundo (Lucas, 09/11): sem ingresso no nosso site, preenche os dados e recebe QR de retirada -->
+      <p class="nao-achou" id="nao-achou" hidden>Não achamos ingresso comprado no nosso site com esse CPF. Sem problema: preencha seus dados e você recebe um <strong>QR Code</strong> pra retirar o copo no dia do evento.</p>
+
+      <div class="dados" id="dados" hidden>
+        <div class="campo" id="c-nome">
+          <label class="rot" for="nome">Nome completo</label>
+          <input id="nome" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Como está no seu documento" maxlength="80">
+          <small>Digite seu nome completo.</small>
+        </div>
+        <div class="campo" id="c-whats">
+          <label class="rot" for="whatsapp">WhatsApp</label>
+          <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" enterkeyhint="next" placeholder="(35) 99999-9999" maxlength="16">
+          <small>WhatsApp com DDD.</small>
+        </div>
+        <div class="campo" id="c-email">
+          <label class="rot" for="email">E-mail</label>
+          <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="done" placeholder="voce@email.com" maxlength="254">
+          <small>Digite um e-mail válido. O QR Code de retirada também chega por aqui.</small>
+        </div>
       </div>
       <input class="isca" type="text" name="zx_ref" id="zx_ref" tabindex="-1" autocomplete="off" readonly aria-hidden="true">
 
@@ -176,14 +191,14 @@ fbq('track', 'PageView');
 (function () {
   var API = 'https://cetabao-painel.vercel.app';
   var COPO_MAX = 10;
-  var CHAVE_DADOS = 'cetabao_compra_dados_v1'; // dados guardados pelo checkout (só o CPF é usado aqui)
+  var CHAVE_DADOS = 'cetabao_compra_dados_v1'; // dados guardados pelo checkout
   var $ = function (id) { return document.getElementById(id); };
   var centavos = function (reais) { return Math.round(reais * 100); };
   var moeda = function (cent) { return (cent / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var digitos = function (v) { return String(v || '').replace(/\D/g, ''); };
 
-  // achou: null = ainda não procurou; true = tem ingresso; false = não tem (não pode comprar)
-  var estado = { preco: null, qtd: 1, cpfBuscado: '', achou: null, buscando: false, enviando: false };
+  // achou: null = ainda não procurou; true = tem ingresso no nosso site; false = não tem (preenche os dados, recebe QR)
+  var estado = { preco: null, qtd: 1, cpfBuscado: '', achou: null, buscando: false, enviando: false, tentou: false };
 
   // Mesma regra do servidor e do checkout.
   function cpfValido(v) {
@@ -191,6 +206,18 @@ fbq('track', 'PageView');
     if (c.length !== 11 || /^(\d)\1{10}$/.test(c)) return false;
     var dv = function (ate) { var s = 0; for (var i = 0; i < ate; i++) s += Number(c[i]) * (ate + 1 - i); var r = (s * 10) % 11; return r === 10 ? 0 : r; };
     return dv(9) === Number(c[9]) && dv(10) === Number(c[10]);
+  }
+  var nomeValido = function (v) { var n = String(v || '').trim(); return n.length >= 2 && /\p{L}/u.test(n) && !/https?:|:\/\/|www\.|[<>]/i.test(n); };
+  var emailValido = function (v) { return /^[^\s@,;<>"']+@[^\s@,;<>"'.]+(\.[^\s@,;<>"'.]+)+$/.test(String(v || '').trim()); };
+  var whatsValido = function (v) { var d = digitos(v); if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2); return d.length === 10 || d.length === 11; };
+  function mascaraFone(v) {
+    var d = digitos(v);
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    d = d.slice(0, 11);
+    if (d.length <= 2) return d.length ? '(' + d : '';
+    if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
   }
   function mascaraCpf(v) {
     var d = digitos(v).slice(0, 11);
@@ -205,6 +232,7 @@ fbq('track', 'PageView');
   try {
     var salvo = JSON.parse(localStorage.getItem(CHAVE_DADOS) || 'null');
     if (salvo && salvo.cpf) cpf.value = salvo.cpf;
+    if (salvo) ['nome', 'whatsapp', 'email'].forEach(function (k) { if (salvo[k]) $(k).value = salvo[k]; });
   } catch (e) { /* sem armazenamento: segue */ }
 
   // ---------- quantidade e total
@@ -219,7 +247,6 @@ fbq('track', 'PageView');
     if (estado.enviando) { b.disabled = true; b.textContent = 'Gerando o Pix…'; return; }
     if (!estado.preco) { b.disabled = true; b.textContent = 'Carregando…'; return; }
     if (estado.achou === null) { b.disabled = !cpfValido(cpf.value) || estado.buscando; b.textContent = estado.buscando ? 'Procurando…' : 'Continuar'; return; }
-    if (estado.achou === false) { b.disabled = true; b.textContent = 'Só para quem tem ingresso'; return; }
     b.disabled = false;
     b.textContent = 'Pagar ' + moeda(totalCent()) + ' no Pix';
   }
@@ -246,6 +273,16 @@ fbq('track', 'PageView');
   function mostrarResultado() {
     $('achou').hidden = estado.achou !== true;
     $('nao-achou').hidden = estado.achou !== false;
+    $('dados').hidden = estado.achou !== false;
+  }
+  $('whatsapp').addEventListener('input', function () { $('whatsapp').value = mascaraFone($('whatsapp').value); if (estado.tentou) validar(); });
+  $('nome').addEventListener('input', function () { if (estado.tentou) validar(); });
+  $('email').addEventListener('input', function () { if (estado.tentou) validar(); });
+  function marcar(id, ok) { $(id).classList.toggle('erro', !ok); return ok; }
+  function validar() {
+    var ok = marcar('c-nome', nomeValido($('nome').value));
+    ok = marcar('c-whats', whatsValido($('whatsapp').value)) && ok;
+    return marcar('c-email', emailValido($('email').value)) && ok;
   }
   function buscar() {
     var d = digitos(cpf.value);
@@ -283,17 +320,25 @@ fbq('track', 'PageView');
   $('form').addEventListener('submit', function (e) {
     e.preventDefault();
     if (estado.enviando || !estado.preco) return;
-    if (estado.achou !== true) { buscar(); return; } // "Continuar": procura o ingresso primeiro
+    if (estado.achou === null) { buscar(); return; } // "Continuar": procura o ingresso primeiro
     erroGeral('');
+    if (estado.achou === false) {
+      estado.tentou = true;
+      if (!validar()) { var errado = document.querySelector('.campo.erro input'); if (errado) errado.focus(); return; }
+    }
     var cookie = function (n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; };
     var corpo = { cpf: cpf.value, qtd_copo: estado.qtd, valor_total: totalCent() / 100, empresa: $('zx_ref').value, meta: { fbp: cookie('_fbp'), fbc: cookie('_fbc') } };
+    if (estado.achou === false) {
+      corpo.nome = $('nome').value.trim(); corpo.whatsapp = $('whatsapp').value; corpo.email = $('email').value.trim();
+      try { localStorage.setItem(CHAVE_DADOS, JSON.stringify({ nome: corpo.nome, cpf: cpf.value, email: corpo.email, whatsapp: corpo.whatsapp })); } catch (e2) { /* tudo bem */ }
+    }
     estado.enviando = true; atualizar();
     fetch(API + '/api/copo/comprar', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: JSON.stringify(corpo) })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
       .then(function (res) {
         if (res.status === 200 && res.j.pedido) { location.href = '/pedido/' + res.j.pedido; return; }
         estado.enviando = false;
-        if (res.j.semIngresso) { estado.achou = false; mostrarResultado(); atualizar(); return; }
+        if (res.j.faltaDados) { estado.achou = false; mostrarResultado(); }
         erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
         if (res.status === 409) carregar(); // preço mudou ou fechou: atualiza
         atualizar();
