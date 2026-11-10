@@ -288,6 +288,14 @@
         $('copo-qr-texto').textContent = (um ? '1 copo oficial' : p.copo + ' copos oficiais') + ' · Pedido ' + p.codigo;
         $('copo-qr').hidden = false;
       }
+      // Já retirado (marcado no leitor da portaria): some o QR e fica o carimbo de retirado.
+      if (p.copo_retirado_em) {
+        var quando = new Date(p.copo_retirado_em).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(', ', ' às ');
+        $('pago-titulo').textContent = um ? 'Copo retirado!' : 'Copos retirados!';
+        $('pago-texto').textContent = (um ? 'O copo foi retirado' : 'Os copos foram retirados') + ' em ' + quando + '. Bom evento! 🍻';
+        $('copo-aviso').textContent = '🥤 ' + (um ? '1 copo oficial: retirado.' : p.copo + ' copos oficiais: retirados.');
+        $('copo-qr').hidden = true;
+      }
       $('instrucoes').hidden = true;
       $('ingressos').innerHTML = '';
       mostrar('pago');
