@@ -558,7 +558,7 @@ fbq('track', 'PageView');
     copo: null, // copo oficial à venda sozinho (preço do painel); null = não aparece
     vendendo: false,
     q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0, pacote: 0 },
-    expandido: { camarote: false } // Pista e Open Bar ficam sempre abertos; só o Lounge e Mesas abre no clique
+    expandido: { camarote: true } // Lounge e Mesas também já começa aberto (Lucas, 10/11); o botão "Fechar" ainda recolhe
   };
 
   // Escolha guardada na aba: quem volta do checkout encontra o que tinha escolhido.
