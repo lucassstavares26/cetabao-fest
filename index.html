@@ -614,7 +614,10 @@ fbq('track', 'PageView');
   // o celular pausa a aba em segundo plano e corta a internet dela, e antes eram só 3 tentativas.
   // Agora tenta até conseguir e busca de novo quando a pessoa volta pra aba ou a internet volta.
   // "Valor em breve" só quando o painel RESPONDE sem preço; sem resposta, fica o "…".
-  var buscando = false, carregadoEm = 0;
+  // 10/11 (Lucas: de novo "Valor em breve" ao voltar pro site): uma resposta SEM NENHUM preço pode ser
+  // soluço do painel. Ela não apaga o preço da tela: confere de novo em 5 s e só aceita "em breve" depois
+  // de 3 respostas seguidas sem preço. Ficando sem preço, continua conferindo a cada 30 s, sem precisar atualizar.
+  var buscando = false, carregadoEm = 0, semPrecoSeguidas = 0;
   function carregar() {
     if (buscando) return;
     buscando = true;
@@ -622,6 +625,10 @@ fbq('track', 'PageView');
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (cfg) {
         buscando = false;
+        var temPreco = (cfg.setores || []).some(function (c) { return c.preco; });
+        if (temPreco) semPrecoSeguidas = 0;
+        else if (++semPrecoSeguidas < 3) { setTimeout(carregar, 5000); return; }
+        else setTimeout(carregar, 30000);
         carregadoEm = Date.now();
         estado.tentativas = 0;
         (cfg.setores || []).forEach(function (c) {
