@@ -524,10 +524,11 @@ fbq('track', 'PageView');
   // ganha "Comprar agora" (escolhe o número no mapa em /lounge/ e paga no site);
   // o WhatsApp continua. O preço que vale é o do painel (/api/site/premium).
   // A consumação também está em lounge/ e pagar/ — mudou aqui, muda lá.
+  // Ordem na tela: Mesa Bistrô primeiro (Lucas, 11/11: começar pelo valor menor).
   var PREMIUM = [
+    { cat: 'mesa', nome: 'Mesa Bistrô', artigo: 'a', pessoas: 6, preco: 900, consumo: 150 },
     { cat: 'ouro', nome: 'Lounge Ouro', artigo: 'o', pessoas: 10, preco: 2500, consumo: 500 },
-    { cat: 'prata', nome: 'Lounge Prata', artigo: 'o', pessoas: 10, preco: 2300, consumo: 350 },
-    { cat: 'mesa', nome: 'Mesa Bistrô', artigo: 'a', pessoas: 6, preco: 900, consumo: 150 }
+    { cat: 'prata', nome: 'Lounge Prata', artigo: 'o', pessoas: 10, preco: 2300, consumo: 350 }
   ];
   var premiumVendendo = false;
   // Setores vendidos no site. Preço, lote e estoque vêm do painel (/api/site/publico).
