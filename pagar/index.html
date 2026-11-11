@@ -346,6 +346,7 @@
     qtdCopo = Math.max(0, Math.min(max, n));
     estado.custos = null; // o valor mudou: as parcelas do cartão são outras
     if (estado.metodo === 'cartao') prepararCartao(); // o brick monta de novo com o valor certo
+    mostrarCopo();
     botao();
   }
   $('copo-add').addEventListener('click', function () { mudarCopo(1); });
