@@ -283,7 +283,8 @@ fbq('track', 'PageView');
     var cpLink = (q.get('cupom') || '').trim().toUpperCase();
     if (/^[A-Z0-9]{3,20}$/.test(cpLink)) localStorage.setItem('cetabao_cupom', JSON.stringify({ c: cpLink, ate: Date.now() + 24 * 3600000 }));
     var agLink = (q.get('ag') || '').trim().toLowerCase();
-    if (/^[a-z0-9]{2,40}$/.test(agLink)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: agLink, ate: Date.now() + 30 * 86400000 }));
+    // Aline e Camila: 24 h; agências: 30 dias (igual ao index.html)
+    if (/^[a-z0-9]{2,40}$/.test(agLink)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: agLink, ate: Date.now() + (['aline', 'camila'].indexOf(agLink) >= 0 ? 24 * 3600000 : 30 * 86400000) }));
   } catch (e) { /* tudo bem */ }
   try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && !INFLU && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
