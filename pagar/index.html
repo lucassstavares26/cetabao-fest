@@ -44,6 +44,23 @@
   .total-linha span { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; }
   .total-linha b { font: 400 30px/1 var(--placa); color: var(--ceu); }
 
+  /* copo oficial junto do lugar (11/11) — mesmo quadro do checkout */
+  .copo { display: flex; gap: 14px; align-items: center; margin-top: 14px; padding: 12px 14px 12px 10px; border-radius: 16px; background: #fff8df; border: 2px dashed var(--sol); }
+  .copo .copo-giro { width: 64px; }
+  .copo-info { flex: 1; min-width: 0; }
+  .copo-tit { font: 800 17px/1.1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--ceu); }
+  .copo-preco { margin-top: 3px; font: 700 16px/1.1 var(--texto); color: var(--tinta); }
+  .copo-txt { margin-top: 3px; font-size: 13.5px; line-height: 1.3; color: var(--tinta-suave); }
+  .copo-poucas { margin-top: 3px; font: 700 11px/1 var(--estreita); letter-spacing: .12em; text-transform: uppercase; color: var(--brasa); }
+  .copo-acao { margin-top: 9px; }
+  .copo-add { padding: 9px 14px; border: 0; border-radius: 10px; background: var(--ceu); color: #fff; font: 800 14px/1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
+  .copo-qtd { display: inline-flex; align-items: center; gap: 4px; }
+  .copo-qtd button { width: 36px; height: 36px; border: 2px solid var(--ceu); border-radius: 10px; background: #fff; color: var(--ceu); font: 700 20px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
+  .copo-qtd button:disabled { opacity: .35; cursor: default; }
+  .copo-qtd span { min-width: 30px; text-align: center; font: 800 18px/1 var(--estreita); color: var(--tinta); }
+  .copo-qtd small { margin-left: 6px; font-size: 13px; color: var(--tinta-suave); }
+  #linha-copo { margin-top: 10px; }
+
   .rot { display: block; margin-bottom: 7px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
   .dados { display: grid; gap: 16px; }
   .campo input {
@@ -128,6 +145,25 @@
     <p class="evento-info">Sábado, 28 de novembro · 16h<br>Parque de Exposições · Passos-MG</p>
     <p class="divisor" aria-hidden="true">✦</p>
     <div class="item"><span><b id="lugar"></b><small id="lugar-info"></small></span><span id="valor"></span></div>
+    <div class="item" id="linha-copo" hidden><span><b id="copo-linha-tit"></b><small>Retire no dia do evento</small></span><span id="copo-linha-valor"></span></div>
+    <div class="copo" id="copo" hidden>
+      <span class="copo-giro"><span class="giro"><img class="frente" src="/img/copo-frente.webp" alt="Copo oficial do Cê Tá Bão Fest" width="271" height="492"><img class="verso" src="/img/copo-verso.webp" alt="" width="272" height="522"></span></span>
+      <div class="copo-info">
+        <p class="copo-tit">Leve o copo oficial</p>
+        <p class="copo-preco" id="copo-preco">+ R$ 20,00</p>
+        <p class="copo-txt">Você retira no dia do evento.</p>
+        <p class="copo-poucas">Poucas unidades</p>
+        <div class="copo-acao">
+          <button type="button" class="copo-add" id="copo-add">Adicionar copo</button>
+          <div class="copo-qtd" id="copo-qtd" hidden>
+            <button type="button" id="copo-menos" aria-label="Um copo a menos">−</button>
+            <span id="copo-n" aria-live="polite">1</span>
+            <button type="button" id="copo-mais" aria-label="Um copo a mais">+</button>
+            <small id="copo-rot">copo</small>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="contas">
       <div><span>Taxa de serviço</span><span class="sem-taxa">SEM TAXA</span></div>
       <div id="linha-juros" hidden><span id="juros-rot">Juros do cartão</span><span id="juros">—</span></div>
@@ -257,19 +293,64 @@
   // /pagar/<token> (pela regra do vercel.json) ou /pagar/?t=<token>
   var token = (location.pathname.split('/')[2] || new URLSearchParams(location.search).get('t') || '').toUpperCase();
   var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
-  var estado = { c: null, metodo: 'pix', enviando: false, brick: null, brickCriando: false, brickEmail: '', mp: null, custos: null, parcelas: 1, montado: false, tentou: false };
+  var estado = { c: null, metodo: 'pix', enviando: false, brick: null, brickCriando: false, brickEmail: '', brickValor: 0, mp: null, custos: null, parcelas: 1, montado: false, tentou: false, telaAtual: '' };
+  // Copo oficial junto do lugar (11/11): 0 a copo_max, preço vem do painel (null = não oferece).
+  var qtdCopo = 0;
+  var centavos = function (v) { return Math.round(Number(v) * 100); };
+  // Copos que entram na conta: no formulário, os escolhidos; com o Pix aberto, os que estão nele.
+  function coposNaConta() { var c = estado.c; if (!c) return 0; return estado.telaAtual === 'form' ? (c.copo_preco ? qtdCopo : 0) : (c.copos_pix || 0); }
+  function valorCopos() { var c = estado.c; var n = coposNaConta(); return n && c.copo_preco ? (centavos(c.copo_preco) * n) / 100 : 0; }
+  function valorTotal() { return estado.c ? (centavos(estado.c.valor) + centavos(valorCopos())) / 100 : 0; }
   var inicio = Date.now();
   var relogio = null, relogioGuardado = null;
 
   var SECOES = ['carregando', 'pix', 'analise', 'pago', 'divergente', 'fechado', 'nao-achou'];
   function mostrar(qual) {
+    estado.telaAtual = qual;
     SECOES.forEach(function (id) { $(id).hidden = id !== qual; });
     var form = qual === 'form';
     $('resumo').hidden = !(form || qual === 'pix' || qual === 'analise');
     $('dados').hidden = !form;
     $('pagamento').hidden = !form;
     $('guardado').hidden = !(form && estado.c && estado.c.origem === 'site');
+    mostrarCopo();
   }
+
+  // ---------- copo oficial: "Adicionar copo" vira o +/− (0 volta pro botão)
+  function mostrarCopo() {
+    var c = estado.c;
+    var oferece = !!(c && c.copo_preco) && estado.telaAtual === 'form';
+    $('copo').hidden = !oferece;
+    var n = coposNaConta();
+    $('linha-copo').hidden = !n;
+    if (n) {
+      $('copo-linha-tit').textContent = n + '× Copo oficial';
+      $('copo-linha-valor').textContent = moeda(valorCopos());
+    }
+    if (oferece) {
+      var max = c.copo_max || 10;
+      $('copo-preco').textContent = '+ ' + moeda(c.copo_preco) + (qtdCopo > 1 ? ' cada' : '');
+      $('copo-add').hidden = qtdCopo > 0;
+      $('copo-qtd').hidden = qtdCopo === 0;
+      $('copo-n').textContent = qtdCopo;
+      $('copo-rot').textContent = qtdCopo === 1 ? 'copo' : 'copos';
+      $('copo-mais').disabled = qtdCopo >= max;
+    }
+    if (c) {
+      $('valor').textContent = moeda(c.valor);
+      mostrarTotal();
+    }
+  }
+  function mudarCopo(n) {
+    var max = (estado.c && estado.c.copo_max) || 10;
+    qtdCopo = Math.max(0, Math.min(max, n));
+    estado.custos = null; // o valor mudou: as parcelas do cartão são outras
+    if (estado.metodo === 'cartao') prepararCartao(); // o brick monta de novo com o valor certo
+    botao();
+  }
+  $('copo-add').addEventListener('click', function () { mudarCopo(1); });
+  $('copo-mais').addEventListener('click', function () { mudarCopo(qtdCopo + 1); });
+  $('copo-menos').addEventListener('click', function () { mudarCopo(qtdCopo - 1); });
 
   function zapSuporte(texto) { return 'https://wa.me/' + SUPORTE + '?text=' + encodeURIComponent(texto); }
 
@@ -418,6 +499,7 @@
     if (relogio) clearInterval(relogio);
     pixMontado = false;
     estado.preferiuCartao = true;
+    if (estado.c && estado.c.copos_pix && estado.c.copo_preco) qtdCopo = estado.c.copos_pix; // mantém os copos do Pix
     escolher('cartao');
     mostrar('form');
   });
@@ -430,14 +512,15 @@
     if (!c || !c.mp_chave_publica) { erroGeral('O pagamento com cartão não está disponível agora. Pague no Pix ou fale com o suporte.'); return; }
     var email = emailDoBrick();
     $('cartao-aviso').hidden = !!email;
-    if (estado.brick && estado.brickEmail !== email) { try { estado.brick.unmount(); } catch (e) { /* já saiu */ } estado.brick = null; estado.custos = null; estado.parcelas = 1; botao(); }
+    if (estado.brick && (estado.brickEmail !== email || estado.brickValor !== valorTotal())) { try { estado.brick.unmount(); } catch (e) { /* já saiu */ } estado.brick = null; estado.custos = null; estado.parcelas = 1; botao(); }
     if (!email || estado.brick || estado.brickCriando) return;
     estado.brickCriando = true;
     estado.brickEmail = email;
+    estado.brickValor = valorTotal();
     carregarSdk().then(function () {
       var mp = estado.mp = new window.MercadoPago(c.mp_chave_publica, { locale: 'pt-BR' });
       return mp.bricks().create('cardPayment', 'brick-cartao', {
-        initialization: { amount: c.valor, payer: { email: email } },
+        initialization: { amount: estado.brickValor, payer: { email: email } },
         customization: {
           paymentMethods: { minInstallments: 1, maxInstallments: c.parcelas_max || 4 },
           visual: { hidePaymentButton: true, style: { theme: 'default', customVariables: { baseColor: '#003c86' } } }
@@ -455,7 +538,7 @@
       erroGeral('Não consegui carregar o pagamento com cartão. Tente de novo ou pague no Pix.');
     }).then(function () {
       estado.brickCriando = false;
-      if (estado.metodo === 'cartao' && estado.brickEmail !== emailDoBrick()) prepararCartao(); // e-mail mudou enquanto carregava
+      if (estado.metodo === 'cartao' && (estado.brickEmail !== emailDoBrick() || estado.brickValor !== valorTotal())) prepararCartao(); // e-mail ou copo mudou enquanto carregava
     });
   }
   // Parcelado, o cartão cobra juros por cima: com o BIN a gente pergunta o total de cada opção.
@@ -463,7 +546,7 @@
     estado.custos = null;
     botao();
     if (!bin || !estado.mp) return;
-    estado.mp.getInstallments({ amount: String(estado.c.valor), bin: bin }).then(function (r) {
+    estado.mp.getInstallments({ amount: String(valorTotal()), bin: bin }).then(function (r) {
       if (r && r[0]) { estado.custos = r[0].payer_costs || null; botao(); }
     }).catch(function () { /* sem a tabela: o botão fica com o valor do link */ });
   }
@@ -483,9 +566,9 @@
     $('linha-juros').hidden = noCartao === null;
     if (noCartao !== null) {
       $('juros-rot').textContent = 'Juros do cartão (' + estado.parcelas + 'x)';
-      $('juros').textContent = moeda(noCartao - estado.c.valor);
+      $('juros').textContent = moeda(noCartao - valorTotal());
     }
-    $('total').textContent = moeda(noCartao === null ? estado.c.valor : noCartao);
+    $('total').textContent = moeda(noCartao === null ? valorTotal() : noCartao);
   }
   function carregarSdk() {
     if (window.MercadoPago) return Promise.resolve();
@@ -508,8 +591,8 @@
     if (!c) return;
     if (!c.mp_chave_publica) { b.textContent = 'Pagamento indisponível agora'; return; }
     var noCartao = totalCartao();
-    b.textContent = estado.metodo === 'pix' ? 'Pagar ' + moeda(c.valor) + ' no Pix'
-      : noCartao === null ? 'Pagar ' + moeda(c.valor) + ' no cartão'
+    b.textContent = estado.metodo === 'pix' ? 'Pagar ' + moeda(valorTotal()) + ' no Pix'
+      : noCartao === null ? 'Pagar ' + moeda(valorTotal()) + ' no cartão'
       : 'Pagar ' + moeda(noCartao) + ' em ' + estado.parcelas + 'x no cartão';
   }
   function ocupado(sim) { estado.enviando = sim; botao(); }
@@ -541,7 +624,8 @@
           body: JSON.stringify({
             nome: campos.nome.value.trim(), cpf: campos.cpf.value, whatsapp: campos.whatsapp.value, email: campos.email.value.trim(),
             nomes: titulares.map(function (el) { return el.value.trim(); }),
-            metodo: estado.metodo, cartao: cartao, empresa: $('zx_ref').value
+            metodo: estado.metodo, cartao: cartao, empresa: $('zx_ref').value,
+            qtd_copo: estado.c.copo_preco ? qtdCopo : 0, valor_copo: estado.c.copo_preco ? valorCopos() : 0
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })
