@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Pit Stop · Cê Tá Bão Fest</title>
-<meta name="description" content="Adesive seu carro no Pit Stop do Cê Tá Bão Fest e ganhe 1 ingresso + 1 copo oficial. Sexta 06/11, das 16h às 21h, em frente ao Parque de Exposições.">
+<meta name="description" content="Adesive seu carro no Pit Stop do Cê Tá Bão Fest e ganhe 1 ingresso + 1 copo oficial. Quinta 12/11, das 19h às 21h, no Bar do Gustavinho.">
 <meta name="theme-color" content="#003c86">
 <meta property="og:title" content="Pit Stop Cê Tá Bão · Adesive seu carro e ganhe 1 ingresso + 1 copo">
-<meta property="og:description" content="Sexta 06/11, das 16h às 21h, em frente ao Parque de Exposições. Escolha seu horário.">
+<meta property="og:description" content="Quinta 12/11, das 19h às 21h, no Bar do Gustavinho. Escolha seu horário.">
 <meta property="og:image" content="https://www.cetabaofest.com.br/img/pitstop-compartilhar.jpg">
 <meta property="og:url" content="https://www.cetabaofest.com.br/pitstop/">
 <link rel="icon" type="image/png" href="/img/favicon.png">
@@ -81,8 +81,7 @@ fbq('track', 'PageView');
     min-height: 52px; padding: 0 8px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff; cursor: pointer;
     font: 800 18px/1 var(--estreita); letter-spacing: .04em; color: var(--tinta); touch-action: manipulation;
   }
-  .horarios button:last-child { grid-column: 1 / -1; }
-  .horarios button[aria-pressed="true"] { border-color: var(--ceu); background: var(--ceu); color: #fff; box-shadow: 0 4px 0 var(--ceu-noite); }
+    .horarios button[aria-pressed="true"] { border-color: var(--ceu); background: var(--ceu); color: #fff; box-shadow: 0 4px 0 var(--ceu-noite); }
   .isca { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
   .problema { padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
 
@@ -111,11 +110,11 @@ fbq('track', 'PageView');
   <h1>Pit Stop</h1>
   <div class="local">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
-    Em frente ao Parque de Exposições
+    No Bar do Gustavinho
   </div>
   <div class="quando">
-    <span class="dia">Sexta-feira 06/11</span>
-    <span class="hora">Das 16h às 21h</span>
+    <span class="dia">Quinta-feira 12/11</span>
+    <span class="hora">Das 19h às 21h</span>
   </div>
   <img class="carro" src="/img/pitstop-carro.webp" alt="Carro adesivado com o vidro do Cê Tá Bão Fest" width="960" height="498">
 </section>
@@ -139,9 +138,6 @@ fbq('track', 'PageView');
         <div class="campo" id="c-horario">
           <span class="rot" id="rot-horario">Horário que você vai</span>
           <div class="horarios" role="group" aria-labelledby="rot-horario">
-            <button type="button" data-h="16-17" aria-pressed="false">16h às 17h</button>
-            <button type="button" data-h="17-18" aria-pressed="false">17h às 18h</button>
-            <button type="button" data-h="18-19" aria-pressed="false">18h às 19h</button>
             <button type="button" data-h="19-20" aria-pressed="false">19h às 20h</button>
             <button type="button" data-h="20-21" aria-pressed="false">20h às 21h</button>
           </div>
@@ -156,7 +152,7 @@ fbq('track', 'PageView');
     <div class="feito" id="feito" hidden>
       <div class="ok" aria-hidden="true">✓</div>
       <h2 id="feito-titulo">Tá confirmado!</h2>
-      <p>Te esperamos na <strong>sexta-feira 06/11</strong>, em frente ao Parque de Exposições.</p>
+      <p>Te esperamos na <strong>quinta-feira 12/11</strong>, no Bar do Gustavinho.</p>
       <span class="marcado" id="feito-horario"></span>
       <a class="btn btn-sol" href="/#compra">Ver ingressos</a>
     </div>
@@ -171,7 +167,7 @@ fbq('track', 'PageView');
   <section class="bloco regras" aria-label="Regras">
     <h2>Regras</h2>
     <ol>
-      <li><span>1</span><p>No dia da adesivação, <strong>sexta-feira 06/11</strong>, você já sai com o <strong>COPO OFICIAL</strong>.</p></li>
+      <li><span>1</span><p>No dia da adesivação, <strong>quinta-feira 12/11</strong>, você já sai com o <strong>COPO OFICIAL</strong>.</p></li>
       <li><span>2</span><p>Para ganhar o ingresso, o adesivo tem que ficar no carro <strong>até o dia 27/11</strong>.</p></li>
       <li><span>3</span><p>No dia <strong>27/11</strong> você retira o adesivo e ganha o seu <strong>ingresso para a Pista VIP</strong>.</p></li>
     </ol>
@@ -238,7 +234,7 @@ fbq('track', 'PageView');
     })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw j; }); })
       .then(function () {
-        try { if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Pit Stop 06/11' }); } catch (x) { /* tudo bem */ }
+        try { if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Pit Stop 12/11' }); } catch (x) { /* tudo bem */ }
         var rotulo = document.querySelector('.horarios button[data-h="' + horario + '"]').textContent;
         $('feito-titulo').textContent = 'Tá confirmado, ' + nome.split(' ')[0] + '!';
         $('feito-horario').textContent = rotulo;
