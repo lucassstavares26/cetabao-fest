@@ -229,6 +229,8 @@ fbq('track', 'PageView');
   .opcao span { display: block; margin-top: 2px; font-size: 16.5px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; color: var(--tinta-suave); }
   .opcao button { width: 44px; height: 44px; flex: none; border-radius: 12px; border: 0; background: var(--ceu); color: #fff; font: 700 24px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
   .opcao button:disabled { opacity: .22; cursor: not-allowed; }
+  .opcao.esgotada b { opacity: .5; text-decoration: line-through; }
+  .opcao.esgotada em { flex: none; font: 800 15px/1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; font-style: normal; color: var(--brasa, #c0392b); padding-right: 6px; }
   .opcao output { width: 30px; text-align: center; font: 400 24px/1 var(--placa); color: var(--ceu); }
   /* ===================== CARTÕES "CLEAN" (modelo de 22/10, aprovado pelo Lucas em 23/10) =====================
      Brancos, com uma faixa fina na cor do setor à esquerda. O cartão da PROMO fica de fora (visual que ele aprovou à parte). */
@@ -543,6 +545,7 @@ fbq('track', 'PageView');
   // muda pro 3º"). Enquanto carrega, o cartão mostra "…".
   var PARCELAS = 4;
   var QTD_MAX = 10; // por pedido, somando os setores
+  var MEIA_ESGOTADA = true; // meia-entrada da Pista VIP esgotada (Lucas, 13/11). Igual ao servidor (MEIA_PISTA_ESGOTADA) e ao checkout.
   var PISTA_MAX = 4; // Pista VIP: no máximo 4 por compra, somando inteira, meia e pacote da promo (Lucas, 23/10). Igual ao servidor.
   /* ================================================ */
 
@@ -645,7 +648,7 @@ fbq('track', 'PageView');
         estado.vendendo = !!cfg.vendendo;
         estado.cupom = cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
         estado.promo = !estado.cupom && cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null; // cupom não soma com a promo
-        if (estado.cupom) estado.q.pista_meia = 0; // link do cupom (07/11): só Pista VIP inteira, sem meia
+        if (estado.cupom || MEIA_ESGOTADA) estado.q.pista_meia = 0; // link do cupom (07/11): só Pista VIP inteira, sem meia
         // promo desligou (ou pacote guardado inválido): o pacote volta a ser inteira comum da Pista
         if (estado.q.pacote && !naPromo(estado.q.pacote)) { estado.q.pista_inteira = estado.q.pacote; estado.q.pacote = 0; }
         estado.carregou = true;
@@ -778,8 +781,8 @@ fbq('track', 'PageView');
         '</div>' +
         (esgotado ? '' :
           '<div class="setor-opcoes">' +
-            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (estado.cupom ? '' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
-            (s.meia && !estado.cupom ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
+            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (estado.cupom ? '' : MEIA_ESGOTADA ? '<div class="opcao esgotada"><div><b>Meia-entrada</b></div><em>Esgotado</em></div>' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
+            (s.meia && !estado.cupom && !MEIA_ESGOTADA ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
             (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Pista VIP por compra.</p>' : '') +
           '</div>');
       box.appendChild(card);
