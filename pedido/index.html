@@ -117,7 +117,6 @@
     <p>O cartão não foi aprovado e nada foi cobrado. Tente de novo pela página do Mercado Pago: seu pedido já vai pronto, e lá você paga com o mesmo cartão, outro cartão ou Pix.</p>
     <button class="btn btn-sol" type="button" id="tentar-mp">Tentar de novo</button>
     <p class="dica-fora" id="tentar-mp-erro" role="alert" hidden></p>
-    <a class="alt-fora" id="tentar-de-novo" href="/">Prefere voltar pro site?</a>
   </div>
 
   <div class="cartao" id="cancelado" hidden>
@@ -167,6 +166,7 @@
   // Cartão recusado (14/11): "Tentar de novo" pede ao painel um pedido novo igual, já ligado à página
   // do Mercado Pago, e abre essa página. Lá vale qualquer cartão ou Pix; pagou → ingressos saem sozinhos.
   // Preço mudou (virou o lote) ou pedido antigo → volta pro checkout do site, com o preço de agora.
+  var voltarSite = '/'; // checkout do site com o mesmo carrinho (lote virou ou pedido antigo)
   function tentarPeloMp() {
     var b = $('tentar-mp'), erro = $('tentar-mp-erro');
     b.disabled = true; b.textContent = 'Abrindo o Mercado Pago…'; erro.hidden = true;
@@ -174,7 +174,7 @@
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (j) {
         if (j.url) { location.href = j.url; return; }
-        if (j.motivo === 'lote' || j.motivo === 'antigo') { location.href = $('tentar-de-novo').href; return; }
+        if (j.motivo === 'lote' || j.motivo === 'antigo') { location.href = voltarSite; return; }
         throw new Error(j.erro || '');
       })
       .catch(function (e) {
@@ -221,7 +221,7 @@
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado' && p.recusado && p.qtds) {
-          $('tentar-de-novo').href = p.influencer ? '/influencer/' : '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
+          voltarSite = p.influencer ? '/influencer/' : '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
           mostrar('recusado'); return;
         }
         if (p.status === 'cancelado') { mostrar('cancelado'); return; }
