@@ -312,7 +312,7 @@
     }
     $('titulo').innerHTML = 'Seus <span>ingressos</span>';
     // Camarote/mesa emitido no painel: não teve pagamento pelo site.
-    if (p.cortesia) {
+    if (p.cortesia && !p.cortesia_como_compra) { // cortesia_como_compra (14/11): pagou por fora, mostra como compra
       $('pago-titulo').textContent = 'Sua cortesia chegou!';
       $('pago-texto').textContent = 'Seus ingressos estão aqui embaixo e também foram pro seu e-mail.';
     }
