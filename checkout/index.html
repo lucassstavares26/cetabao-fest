@@ -105,6 +105,12 @@ fbq('track', 'PageView');
   .metodo span { display: block; margin-top: 6px; font-size: 13px; color: var(--tinta-suave); }
   .metodo[aria-pressed="true"] { border-color: var(--ceu); background: #e8eefb; box-shadow: 0 0 0 3px rgba(0, 60, 134, .12); }
   #area-cartao { min-height: 20px; }
+  .fora-insta { margin-bottom: 14px; padding: 14px; border-radius: 14px; background: #fff4c2; border: 2px solid var(--sol); text-align: center; }
+  .fora-insta p { font-size: 14.5px; line-height: 1.4; color: var(--tinta); }
+  .fora-insta .btn { margin-top: 12px; width: 100%; }
+  .fora-alt { display: inline-block; margin-top: 12px; font: 700 15px/1.2 var(--estreita); letter-spacing: .04em; color: var(--ceu); text-decoration: underline; }
+  .fora-insta .fora-dica { margin-top: 10px; font-size: 13px; color: var(--tinta-suave); }
+  .fora-pix { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--ceu); text-decoration: underline; cursor: pointer; }
   .cartao-aviso { padding: 12px 14px; border-radius: 12px; background: var(--campo-fundo); font-size: 14px; color: var(--tinta-suave); }
 
   .pagar { margin-top: 4px; }
@@ -122,6 +128,7 @@ fbq('track', 'PageView');
   .seguranca .letras { margin-top: 10px; padding-top: 10px; border-top: 1px solid #dbe3f2; font-size: 12.5px; line-height: 1.45; }
 </style>
 <script src="/suporte.js" defer></script>
+<script src="/abrir-fora.js"></script>
 <!-- Device ID do Mercado Pago (MP_DEVICE_SESSION_ID): vai junto no pagamento com cartão e ajuda a aprovar -->
 <script src="https://www.mercadopago.com/v2/security.js" view="checkout" defer></script>
 <script src="/desafio-3ds.js" defer></script>
@@ -219,6 +226,13 @@ fbq('track', 'PageView');
         </div>
       </div>
       <div id="area-cartao" hidden>
+        <!-- Cartão dentro do Instagram/Facebook (14/11): o formulário e o antifraude falham ali; manda pro Chrome -->
+        <div class="fora-insta" id="fora-insta" hidden>
+          <p><b>📱 Você está no navegador do Instagram.</b> Aqui o cartão costuma dar erro ou ser recusado. Pra pagar no cartão, <b>abra no Chrome</b>: seu carrinho vai junto.</p>
+          <a class="btn btn-sol" id="fora-chrome" href="/">Abrir no Chrome</a>
+          <a class="fora-alt" id="fora-safari" href="/" hidden>Não tem o Chrome? Abrir no Safari</a>
+          <p class="fora-dica">Se não abrir: toque em <b>⋯</b> no canto da tela → <b>Abrir no navegador</b>. Ou <button type="button" class="fora-pix" id="fora-pix">pague no Pix</button>, que aprova na hora.</p>
+        </div>
         <div id="brick-cartao"></div>
         <p class="cartao-aviso" id="cartao-aviso" hidden>Os campos do cartão aparecem aqui quando as vendas pelo site abrirem.</p>
       </div>
@@ -444,12 +458,27 @@ fbq('track', 'PageView');
       });
   }
 
+  // ---------- cartão dentro do Instagram/Facebook (14/11): botão pro Chrome (Safari de reserva no iPhone)
+  // Mesmo carrinho na URL; influencer volta pro /influencer/ (a verificação do WhatsApp fica nesta aba).
+  function mostrarForaInsta() {
+    if (!window.CetabaoFora || !CetabaoFora.dentro) return;
+    var l = CetabaoFora.links(INFLU ? '/influencer/' : location.pathname + location.search);
+    $('fora-chrome').href = l.chrome;
+    if (l.safari) { $('fora-safari').href = l.safari; $('fora-safari').hidden = false; }
+    $('fora-insta').hidden = false;
+  }
+  $('fora-pix').addEventListener('click', function () {
+    var pix = document.querySelector('.metodo[data-metodo="pix"]');
+    if (pix) { pix.click(); pix.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  });
+
   // ---------- forma de pagamento
   document.querySelectorAll('.metodo').forEach(function (b) {
     b.addEventListener('click', function () {
       estado.metodo = b.dataset.metodo;
       document.querySelectorAll('.metodo').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
       $('area-cartao').hidden = estado.metodo !== 'cartao';
+      if (estado.metodo === 'cartao') mostrarForaInsta();
       if (estado.metodo === 'cartao') prepararCartao();
       erroGeral('');
       botao();

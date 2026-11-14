@@ -17,6 +17,7 @@
 <script src="/copiar.js"></script>
 <script src="/ingresso-cartao.js"></script>
 <script src="/ingresso-pdf.js"></script>
+<script src="/abrir-fora.js"></script>
 <!-- Sem Pixel no carregamento: o endereço desta página é o link secreto dos
      ingressos, e o Pixel manda a URL pro Meta. Ele só carrega na hora do
      Purchase, com o endereço já limpo (ver pago()). -->
@@ -31,9 +32,11 @@
   .cartao h2 { font-size: clamp(21px, 6vw, 25px); color: var(--ceu); }
   .cartao p { margin-top: 8px; color: var(--tinta-suave); }
   .cartao .btn { margin-top: 16px; }
-  /* recusado dentro do Instagram/Facebook (07/11): abrir o mesmo carrinho no Chrome/Safari */
+  /* recusado dentro do Instagram/Facebook (07/11; 14/11: Chrome em destaque, "Tentar de novo" vira secundário) */
   .btn-fora { background: var(--ceu); color: #fff; box-shadow: 0 5px 0 var(--ceu-noite), 0 14px 28px rgba(0, 0, 0, .2); }
   .dica-fora { margin-top: 10px !important; font-size: 14px; }
+  .alt-fora { display: inline-block; margin-top: 12px; font: 700 15px/1.2 var(--estreita); letter-spacing: .04em; color: var(--ceu); text-decoration: underline; }
+  .aviso-insta { margin-top: 12px !important; padding: 10px 12px; border-radius: 12px; background: #fff4c2; border: 1.5px solid var(--sol); color: var(--tinta) !important; font-size: 14.5px; line-height: 1.35; }
   .ok-icone { width: 64px; height: 64px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 50%; background: var(--verde); color: #fff; font: 900 32px/1 var(--texto); box-shadow: 0 0 0 8px rgba(30, 158, 77, .15); }
   .pix-qr { width: 240px; height: 240px; margin: 16px auto 0; image-rendering: pixelated; }
   .pix-codigo { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: var(--campo-fundo); border: 1.5px dashed #c9d6ee; font: 500 12.5px/1.35 ui-monospace, Menlo, Consolas, monospace; color: var(--tinta); word-break: break-all; max-height: 74px; overflow: hidden; text-align: left; }
@@ -111,8 +114,10 @@
     <h2>Pagamento não aprovado</h2>
     <p>O cartão não foi aprovado e nada foi cobrado. Seus dados ficam salvos: é só tentar de novo com outro cartão ou no Pix, que libera os ingressos na hora.</p>
     <div id="fora" hidden>
-      <a class="btn btn-fora" id="abrir-fora" href="/">Abrir no navegador</a>
-      <p class="dica-fora">Dentro do Instagram o cartão é recusado com mais frequência. Se o botão não abrir: toque em <strong>⋯</strong> no canto da tela e escolha <strong>Abrir no navegador</strong>.</p>
+      <p class="aviso-insta">📱 Você está no navegador do Instagram, e aqui o cartão costuma dar erro. <strong>Abra no Chrome pra pagar</strong>: seu carrinho vai junto.</p>
+      <a class="btn btn-sol" id="abrir-fora" href="/">Abrir no Chrome</a>
+      <a class="alt-fora" id="abrir-safari" href="/" hidden>Não tem o Chrome? Abrir no Safari</a>
+      <p class="dica-fora">Se o botão não abrir: toque em <strong>⋯</strong> no canto da tela e escolha <strong>Abrir no navegador</strong>.</p>
     </div>
     <a class="btn btn-sol" id="tentar-de-novo" href="/">Tentar de novo</a>
   </div>
@@ -164,27 +169,16 @@
   // Cartão recusado dentro do Instagram/Facebook (07/11): o navegador do app atrapalha o antifraude
   // do Mercado Pago. Botão que abre o MESMO carrinho no Chrome (Android) ou no Safari (iPhone).
   // Cupom e agência vão no link, porque o outro navegador não tem o que ficou guardado aqui.
+  // 14/11: o principal é o Chrome (no Safari também dá erro às vezes); Safari fica de reserva no iPhone.
+  // Dentro do app, "Tentar de novo" vira botão secundário: tentar de novo ali dentro é o que falha.
   function abrirFora(caminho) {
-    var ua = navigator.userAgent || '';
-    if (!/Instagram|FBAN|FBAV|FB_IAB|FBIOS/.test(ua)) return;
-    var extra = '';
-    try {
-      var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null');
-      if (cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) extra += '&cupom=' + cg.c;
-      var ag = JSON.parse(localStorage.getItem('cetabao_agencia') || 'null');
-      if (ag && /^[a-z0-9]{2,40}$/.test(ag.s) && ag.ate > Date.now()) extra += '&ag=' + ag.s;
-    } catch (e) { /* tudo bem */ }
-    var url = location.origin + caminho + extra;
-    var b = $('abrir-fora');
-    if (/iPhone|iPad|iPod/.test(ua)) {
-      b.href = 'x-safari-' + url; // iOS 17+: abre no Safari
-      b.textContent = 'Abrir no Safari';
-    } else if (/Android/.test(ua)) {
-      b.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
-      b.textContent = 'Abrir no Chrome';
-    } else {
-      b.href = url;
-    }
+    if (!window.CetabaoFora || !CetabaoFora.dentro) return;
+    var l = CetabaoFora.links(caminho);
+    $('abrir-fora').href = l.chrome;
+    if (l.safari) { $('abrir-safari').href = l.safari; $('abrir-safari').hidden = false; }
+    var t = $('tentar-de-novo');
+    t.className = 'alt-fora';
+    t.textContent = 'Tentar de novo aqui mesmo';
     $('fora').hidden = false;
   }
 
