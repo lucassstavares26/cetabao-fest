@@ -115,6 +115,9 @@ fbq('track', 'PageView');
 
   .pagar { margin-top: 4px; }
   .pagar:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+  .tentar-mp { padding: 14px; border-radius: 14px; background: #fff4c2; border: 2px solid var(--sol); text-align: center; }
+  .tentar-mp p { font-size: 14.5px; line-height: 1.4; color: var(--tinta); }
+  .tentar-mp .btn { margin-top: 12px; width: 100%; }
   .erro-geral { padding: 12px 14px; border-radius: 12px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
   .aviso-pagar { font: 700 15px/1.35 var(--estreita); color: var(--tinta-suave); text-align: center; }
 
@@ -240,6 +243,11 @@ fbq('track', 'PageView');
       <button class="btn btn-sol pagar" type="submit" id="pagar" disabled>Carregando…</button>
       <p class="aviso-pagar" id="aviso-pagar" hidden>As vendas pelo site abrem em breve.</p>
       <p class="erro-geral" id="erro-geral" role="alert" hidden></p>
+      <!-- Cartão recusado (14/11): tentar de novo pela página do Mercado Pago, com o mesmo pedido -->
+      <div class="tentar-mp" id="tentar-mp" hidden>
+        <p>Tente de novo pela <b>página do Mercado Pago</b>: seu pedido já vai pronto, e lá você paga com o mesmo cartão, outro cartão ou Pix.</p>
+        <button class="btn btn-sol" type="button" id="tentar-mp-btn">Tentar de novo</button>
+      </div>
 
       <div class="seguranca">
         <p class="titulo"><svg aria-hidden="true"><use href="#i-cadeado"/></svg>Compra 100% segura</p>
@@ -698,7 +706,27 @@ fbq('track', 'PageView');
   }
 
   // ---------- pagar
-  function erroGeral(texto) { $('erro-geral').textContent = texto; $('erro-geral').hidden = !texto; }
+  function erroGeral(texto) { $('erro-geral').textContent = texto; $('erro-geral').hidden = !texto; if (!texto) $('tentar-mp').hidden = true; }
+
+  // Cartão recusado (14/11): o painel abre um pedido novo igual, ligado à página do Mercado Pago.
+  var tokenRecusado = null;
+  $('tentar-mp-btn').addEventListener('click', function () {
+    var b = this;
+    if (!tokenRecusado) return;
+    b.disabled = true; b.textContent = 'Abrindo o Mercado Pago…';
+    fetch(API + '/api/pedido/' + tokenRecusado + '/mercadopago', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: '{}' })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (j) {
+        if (j.url) { location.href = j.url; return; }
+        b.disabled = false; b.textContent = 'Tentar de novo';
+        $('erro-geral').textContent = j.erro || 'Não deu certo agora. Tente de novo.'; $('erro-geral').hidden = false;
+        if (j.motivo === 'lote') { $('tentar-mp').hidden = true; carregar(); }
+      })
+      .catch(function () {
+        b.disabled = false; b.textContent = 'Tentar de novo';
+        $('erro-geral').textContent = 'Sem conexão. Confira a internet e tente de novo.'; $('erro-geral').hidden = false;
+      });
+  });
   function botao() {
     var b = $('pagar');
     mostrarTotal();
@@ -779,6 +807,7 @@ fbq('track', 'PageView');
         }
         ocupado(false);
         erroGeral(res.j.erro || 'Não deu certo agora. Tente de novo.');
+        if (res.j.recusado && res.j.pedido) { tokenRecusado = res.j.pedido; $('tentar-mp').hidden = false; }
         if (res.status === 409) carregar(); // virou o lote, esgotou ou fechou: atualiza o resumo
       })
       .catch(function (e) { ocupado(false); erroGeral(e && e.doCartao ? e.message : 'Sem conexão. Confira a internet e tente de novo.'); });

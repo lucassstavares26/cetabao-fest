@@ -17,7 +17,6 @@
 <script src="/copiar.js"></script>
 <script src="/ingresso-cartao.js"></script>
 <script src="/ingresso-pdf.js"></script>
-<script src="/abrir-fora.js"></script>
 <!-- Sem Pixel no carregamento: o endereço desta página é o link secreto dos
      ingressos, e o Pixel manda a URL pro Meta. Ele só carrega na hora do
      Purchase, com o endereço já limpo (ver pago()). -->
@@ -96,6 +95,8 @@
     <span class="espera" aria-hidden="true"></span>
     <h2 id="pendente-titulo">Esperando a confirmação do pagamento</h2>
     <p id="pendente-texto">Se você pagou com Pix, costuma cair em segundos. Esta página atualiza sozinha e os ingressos aparecem aqui — e chegam no seu e-mail.</p>
+    <!-- pedido aberto pela página do Mercado Pago (14/11): voltou sem pagar → abre de novo -->
+    <a class="btn btn-sol" id="pendente-mp" href="/" hidden>Pagar no Mercado Pago</a>
   </div>
 
   <div class="cartao" id="expirou" hidden>
@@ -109,17 +110,14 @@
     <p>Em breve a equipe do evento fala com você pelo WhatsApp. Guarde o código do pedido: <strong id="cod-div"></strong>.</p>
   </div>
 
-  <!-- Cartão não aprovado (na hora ou depois da análise): um toque gera um pedido novo com as mesmas quantidades -->
+  <!-- Cartão não aprovado (na hora ou depois da análise). 14/11: "Tentar de novo" abre a página do
+       Mercado Pago com o mesmo pedido (qualquer cartão ou Pix); pagou lá → ingressos saem sozinhos. -->
   <div class="cartao" id="recusado" hidden>
     <h2>Pagamento não aprovado</h2>
-    <p>O cartão não foi aprovado e nada foi cobrado. Seus dados ficam salvos: é só tentar de novo com outro cartão ou no Pix, que libera os ingressos na hora.</p>
-    <div id="fora" hidden>
-      <p class="aviso-insta">📱 Você está no navegador do Instagram, e aqui o cartão costuma dar erro. <strong>Abra no Chrome pra pagar</strong>: seu carrinho vai junto.</p>
-      <a class="btn btn-sol" id="abrir-fora" href="/">Abrir no Chrome</a>
-      <a class="alt-fora" id="abrir-safari" href="/" hidden>Não tem o Chrome? Abrir no Safari</a>
-      <p class="dica-fora">Se o botão não abrir: toque em <strong>⋯</strong> no canto da tela e escolha <strong>Abrir no navegador</strong>.</p>
-    </div>
-    <a class="btn btn-sol" id="tentar-de-novo" href="/">Tentar de novo</a>
+    <p>O cartão não foi aprovado e nada foi cobrado. Tente de novo pela página do Mercado Pago: seu pedido já vai pronto, e lá você paga com o mesmo cartão, outro cartão ou Pix.</p>
+    <button class="btn btn-sol" type="button" id="tentar-mp">Tentar de novo</button>
+    <p class="dica-fora" id="tentar-mp-erro" role="alert" hidden></p>
+    <a class="alt-fora" id="tentar-de-novo" href="/">Prefere voltar pro site?</a>
   </div>
 
   <div class="cartao" id="cancelado" hidden>
@@ -166,21 +164,26 @@
   var $ = function (id) { return document.getElementById(id); };
   // /pedido/<token> (pela regra do vercel.json), /pedido/?t=<token>, ou — depois
   // do Purchase, que limpa o endereço — o token guardado nesta aba.
-  // Cartão recusado dentro do Instagram/Facebook (07/11): o navegador do app atrapalha o antifraude
-  // do Mercado Pago. Botão que abre o MESMO carrinho no Chrome (Android) ou no Safari (iPhone).
-  // Cupom e agência vão no link, porque o outro navegador não tem o que ficou guardado aqui.
-  // 14/11: o principal é o Chrome (no Safari também dá erro às vezes); Safari fica de reserva no iPhone.
-  // Dentro do app, "Tentar de novo" vira botão secundário: tentar de novo ali dentro é o que falha.
-  function abrirFora(caminho) {
-    if (!window.CetabaoFora || !CetabaoFora.dentro) return;
-    var l = CetabaoFora.links(caminho);
-    $('abrir-fora').href = l.chrome;
-    if (l.safari) { $('abrir-safari').href = l.safari; $('abrir-safari').hidden = false; }
-    var t = $('tentar-de-novo');
-    t.className = 'alt-fora';
-    t.textContent = 'Tentar de novo aqui mesmo';
-    $('fora').hidden = false;
+  // Cartão recusado (14/11): "Tentar de novo" pede ao painel um pedido novo igual, já ligado à página
+  // do Mercado Pago, e abre essa página. Lá vale qualquer cartão ou Pix; pagou → ingressos saem sozinhos.
+  // Preço mudou (virou o lote) ou pedido antigo → volta pro checkout do site, com o preço de agora.
+  function tentarPeloMp() {
+    var b = $('tentar-mp'), erro = $('tentar-mp-erro');
+    b.disabled = true; b.textContent = 'Abrindo o Mercado Pago…'; erro.hidden = true;
+    fetch(API + '/api/pedido/' + token + '/mercadopago', { method: 'POST', headers: { 'content-type': 'text/plain;charset=UTF-8' }, body: '{}' })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (j) {
+        if (j.url) { location.href = j.url; return; }
+        if (j.motivo === 'lote' || j.motivo === 'antigo') { location.href = $('tentar-de-novo').href; return; }
+        throw new Error(j.erro || '');
+      })
+      .catch(function (e) {
+        b.disabled = false; b.textContent = 'Tentar de novo';
+        erro.textContent = (e && e.message) || 'Sem conexão. Confira a internet e tente de novo.';
+        erro.hidden = false;
+      });
   }
+  $('tentar-mp').addEventListener('click', tentarPeloMp);
 
   var token = (location.pathname.split('/')[2] || new URLSearchParams(location.search).get('t') || lerSessao() || '').toUpperCase();
   function lerSessao() { try { return sessionStorage.getItem('cetabao_pedido_token'); } catch (e) { return null; } }
@@ -219,7 +222,6 @@
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado' && p.recusado && p.qtds) {
           $('tentar-de-novo').href = p.influencer ? '/influencer/' : '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
-          abrirFora($('tentar-de-novo').getAttribute('href'));
           mostrar('recusado'); return;
         }
         if (p.status === 'cancelado') { mostrar('cancelado'); return; }
@@ -236,6 +238,17 @@
         if (p.mp_status === 'rejected') {
           $('pendente-titulo').textContent = 'Pagamento recusado';
           $('pendente-texto').textContent = 'O cartão foi recusado. Volte pro pagamento e tente outro cartão ou Pix — o pedido fica reservado por alguns minutos.';
+        }
+        // Pedido aberto pela página do Mercado Pago (14/11): voltou sem pagar → botão pra pagar lá.
+        $('pendente-mp').hidden = !p.link_mp;
+        if (p.link_mp) {
+          $('pendente-mp').href = p.link_mp;
+          if (!p.mp_status) {
+            $('pendente-titulo').textContent = 'Falta finalizar o pagamento';
+            $('pendente-texto').textContent = 'Seu pedido está reservado. Toque no botão pra pagar na página do Mercado Pago, com cartão ou Pix. Esta página atualiza sozinha quando o pagamento cair.';
+          } else if (p.mp_status === 'rejected') {
+            $('pendente-texto').textContent = 'O cartão foi recusado. Tente de novo na página do Mercado Pago, com outro cartão ou Pix.';
+          }
         }
         mostrar('pendente');
         if (Date.now() - inicio < 40 * 60000) setTimeout(consultar, 5000);
