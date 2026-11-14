@@ -301,7 +301,7 @@ fbq('track', 'PageView');
     if (/^[a-z0-9]{2,40}$/.test(agLink)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: agLink, ate: Date.now() + (['aline', 'camila'].indexOf(agLink) >= 0 ? 24 * 3600000 : 30 * 86400000) }));
   } catch (e) { /* tudo bem */ }
   try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && !INFLU && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
-  var MEIA_ESGOTADA = true; // meia-entrada da Pista VIP esgotada (Lucas, 13/11), igual à página de compra e ao servidor
+  var MEIA_ESGOTADA = false; // meia-entrada da Pista VIP esgotada (Lucas, 13/11), igual à página de compra e ao servidor
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
   var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
