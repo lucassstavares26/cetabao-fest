@@ -273,7 +273,7 @@ fbq('track', 'PageView');
   var API = 'https://cetabao-painel.vercel.app';
   // Mesma lista da página de compra (index.html) — mudou lá, muda aqui.
   var SETORES = [
-    { id: 'pista', nome: 'Pista VIP', meia: true },
+    { id: 'pista', nome: 'Setor VIP', meia: true },
     { id: 'open', nome: 'Open Bar', meia: false }
   ];
   // Preço e lote vêm SEMPRE do painel (é ele que cobra). Sem valor "de reserva"
@@ -309,12 +309,12 @@ fbq('track', 'PageView');
     if (/^[a-z0-9]{2,40}$/.test(agLink)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: agLink, ate: Date.now() + (['aline', 'camila'].indexOf(agLink) >= 0 ? 24 * 3600000 : 30 * 86400000) }));
   } catch (e) { /* tudo bem */ }
   try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && !INFLU && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
-  var MEIA_ESGOTADA = false; // meia-entrada da Pista VIP esgotada (Lucas, 13/11), igual à página de compra e ao servidor
+  var MEIA_ESGOTADA = false; // meia-entrada da Setor VIP esgotada (Lucas, 13/11), igual à página de compra e ao servidor
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
   var totalQtd = qtd.pista_inteira + qtd.pista_meia + qtd.open_inteira;
   var valido = Object.keys(qtd).every(function (k) { return Number.isInteger(qtd[k]) && qtd[k] >= 0; });
-  // Pista VIP: até 4 por compra (inteira + meia), igual à página de compra e ao servidor.
+  // Setor VIP: até 4 por compra (inteira + meia), igual à página de compra e ao servidor.
   if (!valido || totalQtd < 1 || totalQtd > QTD_MAX || qtd.pista_inteira + qtd.pista_meia > 4 || ((COMUNIDADE || MEIA_ESGOTADA) && qtd.pista_meia) ||
       (INFLU && (qtd.open_inteira !== 1 || qtd.pista_inteira || qtd.pista_meia))) {
     location.replace(VOLTAR); // endereço mexido ou incompleto: volta pra escolher
@@ -362,8 +362,8 @@ fbq('track', 'PageView');
     // Cupom: preço cheio riscado + o cupom (cent = preço cheio de uma unidade)
     var cup = function (cent, n) { return estado.cupom ? '<s>de ' + moeda(cent * n) + '</s> · Cupom ' + estado.cupom.codigo + ' ' + estado.cupom.pct + '% OFF' : ''; };
     $('itens').innerHTML =
-      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Pista VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.cupom ? cup(centavos(p || 0), qtd.pista_inteira) : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
-      (qtd.pista_meia ? linha(qtd.pista_meia, 'Pista VIP', 'Meia', comCupom(meiaCent(p || 0)) * qtd.pista_meia, !!p, cup(meiaCent(p || 0), qtd.pista_meia)) : '') +
+      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Setor VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.cupom ? cup(centavos(p || 0), qtd.pista_inteira) : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
+      (qtd.pista_meia ? linha(qtd.pista_meia, 'Setor VIP', 'Meia', comCupom(meiaCent(p || 0)) * qtd.pista_meia, !!p, cup(meiaCent(p || 0), qtd.pista_meia)) : '') +
       (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', comCupom(centavos(o || 0)) * qtd.open_inteira, !!o, estado.cupom ? cup(centavos(o || 0), qtd.open_inteira) : de('open', qtd.open_inteira)) : '') +
       (copoCent() ? '<div class="item"><span><b>' + qtdCopo + '× Copo oficial</b><small>Retire no dia do evento</small></span><span>' + moeda(copoCent()) + '</span></div>' : '');
     mostrarCopo();
@@ -616,8 +616,8 @@ fbq('track', 'PageView');
   // servidor numera: Pista inteira, Pista meia, Open Bar. O 1º já vem com o
   // nome de quem está pagando (e acompanha enquanto a pessoa não mexer nele).
   var ingressosDoPedido = [];
-  for (var a = 0; a < qtd.pista_inteira; a++) ingressosDoPedido.push({ setor: 'pista', nome: 'Pista VIP', meia: false });
-  for (var b = 0; b < qtd.pista_meia; b++) ingressosDoPedido.push({ setor: 'pista', nome: 'Pista VIP', meia: true });
+  for (var a = 0; a < qtd.pista_inteira; a++) ingressosDoPedido.push({ setor: 'pista', nome: 'Setor VIP', meia: false });
+  for (var b = 0; b < qtd.pista_meia; b++) ingressosDoPedido.push({ setor: 'pista', nome: 'Setor VIP', meia: true });
   for (var c = 0; c < qtd.open_inteira; c++) ingressosDoPedido.push({ setor: 'open', nome: 'Open Bar', meia: false });
   var primeiroMexido = false;
   $('lista-titulares').innerHTML = ingressosDoPedido.map(function (ing, i) {

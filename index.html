@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Ingressos · Cê Tá Bão Fest · 28/11 · Passos-MG</title>
-<meta name="description" content="Site oficial de ingressos do Cê Tá Bão Fest — sábado, 28/11, em Passos-MG. Pista VIP e Open Bar, sem taxa no Pix ou no cartão à vista — ou em até 4x no cartão.">
+<meta name="description" content="Site oficial de ingressos do Cê Tá Bão Fest — sábado, 28/11, em Passos-MG. Setor VIP e Open Bar, sem taxa no Pix ou no cartão à vista — ou em até 4x no cartão.">
 <link rel="canonical" href="https://www.cetabaofest.com.br/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.cetabaofest.com.br/">
 <meta property="og:title" content="Ingressos · Cê Tá Bão Fest · Passos-MG">
-<meta property="og:description" content="Sábado, 28/11. Pista VIP e Open Bar — sem taxa no Pix ou no cartão à vista.">
+<meta property="og:description" content="Sábado, 28/11. Setor VIP e Open Bar — sem taxa no Pix ou no cartão à vista.">
 <meta property="og:image" content="https://www.cetabaofest.com.br/img/compartilhar.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="1052">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Ingressos · Cê Tá Bão Fest · Passos-MG">
-<meta name="twitter:description" content="Sábado, 28/11. Pista VIP e Open Bar — sem taxa no Pix ou no cartão à vista.">
+<meta name="twitter:description" content="Sábado, 28/11. Setor VIP e Open Bar — sem taxa no Pix ou no cartão à vista.">
 <meta name="twitter:image" content="https://www.cetabaofest.com.br/img/compartilhar.jpg">
 <meta name="theme-color" content="#003c86">
 <meta name="format-detection" content="telephone=no">
@@ -188,8 +188,8 @@ fbq('track', 'PageView');
   }
   .setor.esgotado { opacity: .45; }
 
-  /* promo da Pista VIP (23/10): pacotes de 2, 3 e 4 inteiras com desconto. Só aparece com a promo ligada no painel. */
-  /* 23/10 (3ª versão, pedido do Lucas): topo BRANCO, pacotes no AMARELO da Pista VIP e "20% OFF" na mesma linha do título */
+  /* promo da Setor VIP (23/10): pacotes de 2, 3 e 4 inteiras com desconto. Só aparece com a promo ligada no painel. */
+  /* 23/10 (3ª versão, pedido do Lucas): topo BRANCO, pacotes no AMARELO da Setor VIP e "20% OFF" na mesma linha do título */
   /* As letras da promo acompanham a LARGURA DO CARTÃO (cqw = 1% dela), pra nada vazar da borda em tela nenhuma.
      A linha de antes de cada cqw é a reserva pra navegador antigo (cartão ≈ min(100vw, 480px) − 82px). */
   .setor-promo { container-type: inline-size; background: #fff; color: var(--tinta); border-color: var(--sol); box-shadow: 0 5px 0 var(--sol-sombra); }
@@ -198,7 +198,7 @@ fbq('track', 'PageView');
   .promo-tempo { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px 4px; border-radius: 999px; background: var(--brasa); color: #fff; letter-spacing: .12em; animation: promo-pisca 1.6s ease-in-out infinite; }
   @keyframes promo-pisca { 50% { background: var(--engradado); } }
   @media (prefers-reduced-motion: reduce) { .promo-tempo { animation: none; } }
-  /* "Promo Pista VIP" + "20% OFF" sempre numa linha: a letra do título encolhe com a tela (mesmo truque do #t-compra) */
+  /* "Promo Setor VIP" + "20% OFF" sempre numa linha: a letra do título encolhe com a tela (mesmo truque do #t-compra) */
   .setor-promo .setor-topo strong { color: var(--ceu); white-space: nowrap; font-size: min(25px, calc((min(100vw, 480px) - 142px) / 12.25)); font-size: min(25px, calc((100cqw - 60px) / 12.25)); }
   .promo-off { padding: .45em .55em .38em; border-radius: 9px; background: var(--sol); color: var(--engradado); font: 400 16px/1 var(--placa); white-space: nowrap; box-shadow: 0 3px 0 var(--sol-sombra); }
   .promo-off { font-size: min(16px, calc((min(100vw, 480px) - 142px) / 19.8)); font-size: min(16px, calc((100cqw - 60px) / 19.8)); }
@@ -243,16 +243,16 @@ fbq('track', 'PageView');
   .setor-open { --cor-setor: var(--open); --cor-texto: var(--open); --cor-preco: #fff; --cor-sombra: var(--open-escuro); }
   .setor-camarote { --cor-setor: var(--brasa); --cor-texto: var(--brasa); --cor-preco: #fff; --cor-sombra: var(--engradado-escuro); }
   /* copo oficial vendido sozinho (09/11): laranja da logo, foto + botão que leva pra /copo/ (só Pix) */
-  /* preço do copo no quadro igual ao da Pista VIP, no amarelo do "Comprar ingressos" (Lucas, 09/11) */
+  /* preço do copo no quadro igual ao da Setor VIP, no amarelo do "Comprar ingressos" (Lucas, 09/11) */
   .setor-copo { --cor-setor: var(--sol); --cor-texto: var(--engradado); --cor-preco: var(--engradado); --cor-sombra: var(--sol-sombra); }
   /* Card do copo no mesmo jeito do copo do checkout (Lucas, 09/11): fundo creme, borda tracejada amarela,
      copo recortado pequeno à esquerda e textos alinhados à esquerda. Baixinho, pra não tomar a tela. */
   .setores .setor.setor-copo { background: #fff8df; border: 2px dashed var(--sol); border-radius: 16px; box-shadow: none; }
-  /* topo = mesma estrutura do card da Pista VIP (título e preço com o mesmo tamanho e no mesmo lugar);
+  /* topo = mesma estrutura do card da Setor VIP (título e preço com o mesmo tamanho e no mesmo lugar);
      a borda do copo é 2px tracejada e a da Pista tem 8px à esquerda e 3px à direita: o padding compensa */
   .setores .setor.setor-copo .setor-topo { padding: 16px 17px 4px 22px; }
   .setores .setor.setor-copo .setor-topo strong { color: var(--ceu); }
-  /* celular bem pequeno: "COPO OFICIAL" é mais comprido que "PISTA VIP"; encolhe pra o preço ficar no lugar */
+  /* celular bem pequeno: "COPO OFICIAL" é mais comprido que "SETOR VIP"; encolhe pra o preço ficar no lugar */
   @media (max-width: 345px) { .setores .setor.setor-copo .setor-topo { padding-left: 14px; gap: 5px 8px; } .setores .setor.setor-copo .setor-topo strong { font-size: 18px; letter-spacing: 0; } }
   .copo-card { display: flex; align-items: center; gap: 14px; padding: 4px 17px 14px 14px; }
   .copo-info { flex: 1; min-width: 0; text-align: left; }
@@ -447,10 +447,10 @@ fbq('track', 'PageView');
     <h2 id="t-mapa">Mapa do festival</h2>
     <figure>
       <img src="/img/mapa-festival.webp" width="960" height="960" loading="lazy" decoding="async"
-           alt="Mapa do Cê Tá Bão Fest: Open Bar em azul à esquerda, Pista VIP em amarelo à direita e Setor Premium em vermelho embaixo, com lounges e mesas numerados; o palco fica no centro.">
+           alt="Mapa do Cê Tá Bão Fest: Open Bar em azul à esquerda, Setor VIP em amarelo à direita e Setor Premium em vermelho embaixo, com lounges e mesas numerados; o palco fica no centro.">
     </figure>
     <p class="legenda" aria-hidden="true">
-      <span><i style="background:var(--sol)"></i>Pista VIP</span>
+      <span><i style="background:var(--sol)"></i>Setor VIP</span>
       <span><i style="background:var(--open)"></i>Open Bar</span>
       <span><i style="background:var(--brasa)"></i>Setor Premium</span>
     </p>
@@ -473,7 +473,7 @@ fbq('track', 'PageView');
 
       <h3>🎟️ Escolha seu setor:</h3>
       <ul class="info-setores">
-        <li style="--cor: var(--sol)"><strong>🟡 Pista VIP</strong>Visão privilegiada do Palco 360°, praça de alimentação e banheiros exclusivos.</li>
+        <li style="--cor: var(--sol)"><strong>🟡 Setor VIP</strong>Visão privilegiada do Palco 360°, praça de alimentação e banheiros exclusivos.</li>
         <li style="--cor: #6fa8ff"><strong>🔵 Open Bar</strong>Bebidas à vontade, incluindo cerveja, vodka, energético, gin, tônica, água e refrigerante, além de acesso e banheiros exclusivos.</li>
         <li style="--cor: #ff6b6b"><strong>🔴 Premium — Lounge e Mesas Bistrô</strong>Para curtir com sua turma, com espaço reservado, visão privilegiada do Palco 360°, atendimento de garçom e banheiros exclusivos. (Compras pelo site ou pelo WhatsApp da produção)</li>
       </ul>
@@ -536,7 +536,7 @@ fbq('track', 'PageView');
   // Setores vendidos no site. Preço, lote e estoque vêm do painel (/api/site/publico).
   // A mesma lista existe em checkout/index.html — mudou aqui, muda lá.
   var SETORES = [
-    { id: 'pista', nome: 'Pista VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
+    { id: 'pista', nome: 'Setor VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
     { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: '', meia: false }
   ];
   // Preço e lote vêm SEMPRE do painel (aba "Vendas do site"). Não existe valor
@@ -545,8 +545,8 @@ fbq('track', 'PageView');
   // muda pro 3º"). Enquanto carrega, o cartão mostra "…".
   var PARCELAS = 4;
   var QTD_MAX = 10; // por pedido, somando os setores
-  var MEIA_ESGOTADA = false; // meia-entrada da Pista VIP esgotada (Lucas, 13/11). Igual ao servidor (MEIA_PISTA_ESGOTADA) e ao checkout.
-  var PISTA_MAX = 4; // Pista VIP: no máximo 4 por compra, somando inteira, meia e pacote da promo (Lucas, 23/10). Igual ao servidor.
+  var MEIA_ESGOTADA = false; // meia-entrada da Setor VIP esgotada (Lucas, 13/11). Igual ao servidor (MEIA_PISTA_ESGOTADA) e ao checkout.
+  var PISTA_MAX = 4; // Setor VIP: no máximo 4 por compra, somando inteira, meia e pacote da promo (Lucas, 23/10). Igual ao servidor.
   /* ================================================ */
 
   var $ = function (id) { return document.getElementById(id); };
@@ -558,7 +558,7 @@ fbq('track', 'PageView');
     carregou: false, // false = ainda buscando o preço no painel ("…" no lugar do valor)
     tentativas: 0,
     // pacote = pacote da promo escolhido no cartão da promo (2, 3 ou 4 inteiras da Pista). Fica SEPARADO do
-    // contador da Pista VIP (Lucas, 23/10: escolher na promo não marca a Pista); os dois nunca valem juntos.
+    // contador da Setor VIP (Lucas, 23/10: escolher na promo não marca a Pista); os dois nunca valem juntos.
     copo: null, // copo oficial à venda sozinho (preço do painel); null = não aparece
     vendendo: false,
     q: { pista_inteira: 0, pista_meia: 0, open_inteira: 0, pacote: 0 },
@@ -648,7 +648,7 @@ fbq('track', 'PageView');
         estado.vendendo = !!cfg.vendendo;
         estado.cupom = cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
         estado.promo = !estado.cupom && cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null; // cupom não soma com a promo
-        if (estado.cupom || MEIA_ESGOTADA) estado.q.pista_meia = 0; // link do cupom (07/11): só Pista VIP inteira, sem meia
+        if (estado.cupom || MEIA_ESGOTADA) estado.q.pista_meia = 0; // link do cupom (07/11): só Setor VIP inteira, sem meia
         // promo desligou (ou pacote guardado inválido): o pacote volta a ser inteira comum da Pista
         if (estado.q.pacote && !naPromo(estado.q.pacote)) { estado.q.pista_inteira = estado.q.pacote; estado.q.pacote = 0; }
         estado.carregou = true;
@@ -693,7 +693,7 @@ fbq('track', 'PageView');
       '<button type="button" data-qtd="' + chave + '" data-d="1" aria-label="Mais uma ' + titulo.toLowerCase() + '">+</button></div>';
   }
 
-  // Cartão da promo (Lucas, 23/10): "PROMO PISTA VIP — 2 de tanto por tanto…". Escolher um
+  // Cartão da promo (Lucas, 23/10): "PROMO SETOR VIP — 2 de tanto por tanto…". Escolher um
   // pacote só põe N inteiras da Pista no carrinho; o desconto vale igual pelo cartão da Pista.
   function cartaoPromo() {
     var s = setor('pista');
@@ -712,12 +712,12 @@ fbq('track', 'PageView');
     card.innerHTML =
       '<div class="setor-topo">' +
         '<small><span class="promo-tempo">⏳ Últimos 18 ingressos</span></small>' +
-        '<strong>Promo Pista VIP</strong>' +
+        '<strong>Promo Setor VIP</strong>' +
         '<span class="promo-off">' + estado.promo.pct + '%<span>OFF</span></span>' +
-        '<span class="desc">Comprando ' + estado.promo.min + ', 3 ou ' + estado.promo.max + ' ingressos da Pista VIP.</span>' +
+        '<span class="desc">Comprando ' + estado.promo.min + ', 3 ou ' + estado.promo.max + ' ingressos da Setor VIP.</span>' +
       '</div>' +
       '<div class="setor-opcoes">' + pacotes +
-        '<p class="promo-regra">Válido para inteira. Meia-entrada segue no valor normal, no cartão da Pista VIP abaixo.</p>' +
+        '<p class="promo-regra">Válido para inteira. Meia-entrada segue no valor normal, no cartão da Setor VIP abaixo.</p>' +
       '</div>';
     card.querySelectorAll('[data-pacote]').forEach(function (b) {
       b.addEventListener('click', function () { escolherPacote(Number(b.dataset.pacote)); });
@@ -737,7 +737,7 @@ fbq('track', 'PageView');
     atualizar();
   }
 
-  // Copo oficial (Lucas, 09/11): só pra quem já tem ingresso; compra em /copo/, só Pix. Fica em cima da Pista VIP.
+  // Copo oficial (Lucas, 09/11): só pra quem já tem ingresso; compra em /copo/, só Pix. Fica em cima da Setor VIP.
   function cartaoCopo() {
     if (!estado.copo || !estado.vendendo) return null;
     var copo = document.createElement('div');
@@ -783,7 +783,7 @@ fbq('track', 'PageView');
           '<div class="setor-opcoes">' +
             (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (estado.cupom ? '' : MEIA_ESGOTADA ? '<div class="opcao esgotada"><div><b>Meia-entrada</b></div><em>Esgotado</em></div>' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
             (s.meia && !estado.cupom && !MEIA_ESGOTADA ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
-            (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Pista VIP por compra.</p>' : '') +
+            (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Setor VIP por compra.</p>' : '') +
           '</div>');
       box.appendChild(card);
     });
@@ -873,9 +873,9 @@ fbq('track', 'PageView');
 
     var partes = [];
     // (o pacote guardado na aba pode aparecer antes da promo chegar do painel)
-    if (estado.q.pacote) partes.push('Promo Pista VIP: ' + estado.q.pacote + ' ingressos' + (estado.promo ? ' (' + estado.promo.pct + '% OFF)' : ''));
-    if (estado.q.pista_inteira) partes.push(estado.q.pista_inteira + 'x Pista VIP inteira' + (naPromo(estado.q.pista_inteira) ? ' (promo ' + estado.promo.pct + '% OFF)' : ''));
-    if (estado.q.pista_meia) partes.push(estado.q.pista_meia + 'x Pista VIP meia');
+    if (estado.q.pacote) partes.push('Promo Setor VIP: ' + estado.q.pacote + ' ingressos' + (estado.promo ? ' (' + estado.promo.pct + '% OFF)' : ''));
+    if (estado.q.pista_inteira) partes.push(estado.q.pista_inteira + 'x Setor VIP inteira' + (naPromo(estado.q.pista_inteira) ? ' (promo ' + estado.promo.pct + '% OFF)' : ''));
+    if (estado.q.pista_meia) partes.push(estado.q.pista_meia + 'x Setor VIP meia');
     if (estado.q.open_inteira) partes.push(estado.q.open_inteira + 'x Open Bar');
     if (partes.length && estado.cupom) partes.push('Cupom ' + estado.cupom.codigo + ' (' + estado.cupom.pct + '% OFF)');
     $('linha-resumo').textContent = partes.length ? partes.join(' · ') : 'Escolha seus ingressos acima';
