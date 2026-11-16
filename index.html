@@ -284,6 +284,7 @@ fbq('track', 'PageView');
   .setor-camarote .premium-preco { padding: 5px 8px 4px; border-radius: 8px; background: var(--brasa); color: #fff; font: 400 clamp(14px, 4.2vw, 17px)/1 var(--placa); box-shadow: 0 2px 0 var(--engradado-escuro); }
   .setor:not(.setor-promo) .desc { font: 500 14.5px/1.45 var(--texto); letter-spacing: 0; color: var(--tinta-suave); }
   .setor .tipo { background: none; padding: 0; color: var(--tinta-suave); font: 700 12.5px/1 var(--estreita); letter-spacing: .08em; }
+  .setor .idade { margin-left: auto; padding: 4px 9px 3px; border: 1.5px solid var(--brasa); border-radius: 999px; color: var(--brasa); font: 800 12px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
   .setor .abrir { color: var(--ceu); }
   .setor .resta { color: var(--brasa); }
   .setor:not(.setor-promo) .setor-opcoes { padding: 0 14px 14px 16px; gap: 8px; }
@@ -536,8 +537,8 @@ fbq('track', 'PageView');
   // Setores vendidos no site. Preço, lote e estoque vêm do painel (/api/site/publico).
   // A mesma lista existe em checkout/index.html — mudou aqui, muda lá.
   var SETORES = [
-    { id: 'pista', nome: 'Setor VIP', desc: '', tipo: 'Inteira e meia-entrada', meia: true },
-    { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: '', meia: false }
+    { id: 'pista', nome: 'Setor VIP', desc: '', tipo: 'Inteira e meia-entrada', idade: 16, meia: true },
+    { id: 'open', nome: 'Open Bar', desc: 'Cerveja • Vodka • Energético • Gin • Tônica • Água • Refrigerante', tipo: '', idade: 18, meia: false }
   ];
   // Preço e lote vêm SEMPRE do painel (aba "Vendas do site"). Não existe valor
   // "de reserva" aqui: um valor escrito na página fica velho quando o lote vira
@@ -776,7 +777,8 @@ fbq('track', 'PageView');
             : estado.carregou ? '<span class="preco em-breve">Valor<br>em breve</span>'
             : '<span class="preco em-breve" aria-label="Carregando o preço">…</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
-          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + (estado.cupom && s.meia ? 'Inteira' : s.tipo) + '</span>' : '') + '</span>' +
+          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + (estado.cupom && s.meia ? 'Inteira' : s.tipo) + '</span>' : '') +
+            (s.idade ? '<span class="idade">Maiores de ' + s.idade + ' anos</span>' : '') + '</span>' + // classificação etária (Lucas, 16/11)
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
         '</div>' +
         (esgotado ? '' :
