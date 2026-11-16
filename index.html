@@ -66,22 +66,6 @@ fbq('track', 'PageView');
     margin-left: auto; flex: none; width: 46px; height: 46px; display: grid; place-content: center; gap: 5px;
     border: 0; border-radius: 10px; background: none; cursor: pointer; touch-action: manipulation;
   }
-  /* contagem regressiva na faixa (Lucas, 16/11): só acrescenta, entre o "Site oficial" e o menu */
-  .faixa-conta {
-    margin-left: auto; flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    padding: 4px 8px; border-radius: 9px; background: rgba(255, 198, 26, .14); border: 1.5px solid rgba(255, 198, 26, .55);
-    color: #fff; text-align: center; white-space: nowrap;
-  }
-  .faixa-conta small { font: 800 9.5px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--sol); }
-  .faixa-conta b { font: 400 15px/1 var(--placa); letter-spacing: .02em; }
-  .faixa-conta:not([hidden]) + .faixa-menu-btn { margin-left: 0; } /* sem a contagem, o menu volta pro canto como era */
-  @media (max-width: 374px) {
-    .faixa { gap: 6px; }
-    .faixa-conta { padding: 3px 5px; }
-    .faixa-conta b { font-size: 13px; }
-  }
-  /* celular muito estreito (iPhone SE antigo): não cabe sem apertar o "Site oficial", então a faixa fica como era */
-  @media (max-width: 345px) { .faixa-conta { display: none; } .faixa-conta:not([hidden]) + .faixa-menu-btn { margin-left: auto; } }
   .faixa-menu-btn span { display: block; width: 26px; height: 3px; border-radius: 2px; background: #fff; transition: transform .2s, opacity .2s; }
   .faixa-menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
   .faixa-menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
@@ -405,7 +389,6 @@ fbq('track', 'PageView');
     <img src="/img/logo-horizontal.webp" alt="Cê Tá Bão Fest" width="243" height="96" fetchpriority="high">
   </a>
   <span class="faixa-oficial"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>Site oficial</span>
-  <span class="faixa-conta" id="faixa-conta" role="timer" hidden><small id="fc-rot">Faltam</small><b id="fc-tempo"></b></span>
   <button class="faixa-menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu"><span></span><span></span><span></span></button>
   <nav class="faixa-menu" id="menu" aria-label="Menu" hidden>
     <a class="menu-comprar" href="#compra" data-ir><svg aria-hidden="true"><use href="#i-ticket"/></svg>Comprar ingressos</a>
@@ -980,34 +963,6 @@ fbq('track', 'PageView');
     history.replaceState(null, '', location.pathname + location.search);
     requestAnimationFrame(function () { ir(false); });
   }
-})();
-</script>
-<script>
-/* Contagem regressiva da faixa do topo (Lucas, 16/11): dias e horas até sábado, 28/11, 16h (Brasília).
-   No dia: "É hoje" com as horas que faltam. Depois que começa: some. */
-(function () {
-  var INICIO = new Date('2026-11-28T16:00:00-03:00').getTime();
-  var caixa = document.getElementById('faixa-conta');
-  if (!caixa) return;
-  var rot = document.getElementById('fc-rot'), tempo = document.getElementById('fc-tempo');
-  var dois = function (n) { return (n < 10 ? '0' : '') + n; };
-  function atualizar() {
-    var falta = INICIO - Date.now();
-    if (falta <= 0) { caixa.hidden = true; return; }
-    var min = Math.floor(falta / 60000), dias = Math.floor(min / 1440), horas = Math.floor((min % 1440) / 60), resto = min % 60;
-    if (dias > 0) {
-      rot.textContent = 'Faltam';
-      tempo.textContent = dias + 'd ' + dois(horas) + 'h';
-      caixa.setAttribute('aria-label', 'Faltam ' + dias + (dias === 1 ? ' dia' : ' dias') + ' e ' + horas + (horas === 1 ? ' hora' : ' horas') + ' para o Cê Tá Bão Fest');
-    } else {
-      rot.textContent = 'É hoje!';
-      tempo.textContent = horas + 'h ' + dois(resto) + 'min';
-      caixa.setAttribute('aria-label', 'É hoje! Faltam ' + horas + ' horas e ' + resto + ' minutos');
-    }
-    caixa.hidden = false;
-  }
-  atualizar();
-  setInterval(atualizar, 30000);
 })();
 </script>
 </body>
