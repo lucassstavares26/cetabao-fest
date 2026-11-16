@@ -782,7 +782,7 @@ fbq('track', 'PageView');
         (esgotado ? '' :
           '<div class="setor-opcoes">' +
             (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (estado.cupom ? '' : MEIA_ESGOTADA ? '<div class="opcao esgotada"><div><b>Meia-entrada</b></div><em>Esgotado</em></div>' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
-            (s.meia && !estado.cupom && !MEIA_ESGOTADA ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Documento obrigatório na entrada.</p>' : '') +
+            (s.meia && !estado.cupom && !MEIA_ESGOTADA ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Permitido apenas acima de 16 anos. Documento obrigatório na entrada.</p>' : '') +
             (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Setor VIP por compra.</p>' : '') +
           '</div>');
       box.appendChild(card);
