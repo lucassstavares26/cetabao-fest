@@ -343,7 +343,9 @@ fbq('track', 'PageView');
   var naPromo = function () { return !!estado.promo && qtd.pista_inteira >= estado.promo.min && qtd.pista_inteira <= estado.promo.max; };
   // Cupom: % em tudo (inteira, meia, Open Bar), igual a cupomEmCentavos do servidor. Não soma com a promo.
   var comCupom = function (cent) { return estado.cupom ? Math.round(cent * (100 - estado.cupom.pct) / 100) : cent; };
-  var inteiraPistaCent = function (p) { return estado.cupom ? comCupom(centavos(p)) : naPromo() ? Math.round(centavos(p) * (100 - estado.promo.pct) / 100) : centavos(p); };
+  // Promo da Setor VIP (17/11): 1 por R$ 80, 2 por R$ 150 (3 ou 4: o preço do par). Igual ao servidor e à página de compra.
+  var vipCent = function (n) { return n === 1 ? centavos(estado.promoVip.uma) : Math.round(centavos(estado.promoVip.duas) / 2); };
+  var inteiraPistaCent = function (p) { return estado.promoVip ? vipCent(qtd.pista_inteira) : estado.cupom ? comCupom(centavos(p)) : naPromo() ? Math.round(centavos(p) * (100 - estado.promo.pct) / 100) : centavos(p); };
   function totalCent() {
     var p = estado.preco.pista, o = estado.preco.open;
     return (qtd.pista_inteira ? inteiraPistaCent(p || 0) * qtd.pista_inteira : 0) + (qtd.pista_meia ? comCupom(meiaCent(p || 0)) * qtd.pista_meia : 0) +
@@ -362,7 +364,7 @@ fbq('track', 'PageView');
     // Cupom: preço cheio riscado + o cupom (cent = preço cheio de uma unidade)
     var cup = function (cent, n) { return estado.cupom ? '<s>de ' + moeda(cent * n) + '</s> · Cupom ' + estado.cupom.codigo + ' ' + estado.cupom.pct + '% OFF' : ''; };
     $('itens').innerHTML =
-      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Setor VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.cupom ? cup(centavos(p || 0), qtd.pista_inteira) : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
+      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Setor VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.promoVip ? '<s>de ' + moeda(centavos(p || 0) * qtd.pista_inteira) + '</s> · Promo Setor VIP 🔥' : estado.cupom ? cup(centavos(p || 0), qtd.pista_inteira) : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
       (qtd.pista_meia ? linha(qtd.pista_meia, 'Setor VIP', 'Meia', comCupom(meiaCent(p || 0)) * qtd.pista_meia, !!p, cup(meiaCent(p || 0), qtd.pista_meia)) : '') +
       (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', comCupom(centavos(o || 0)) * qtd.open_inteira, !!o, estado.cupom ? cup(centavos(o || 0), qtd.open_inteira) : de('open', qtd.open_inteira)) : '') +
       (copoCent() ? '<div class="item"><span><b>' + qtdCopo + '× Copo oficial</b><small>Retire no dia do evento</small></span><span>' + moeda(copoCent()) + '</span></div>' : '');
@@ -444,6 +446,10 @@ fbq('track', 'PageView');
         estado.cupom = !COMUNIDADE && !INFLU && cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
         if (estado.cupom && qtd.pista_meia) estado.cupom = null; // cupom (07/11): só inteira. Com meia, preço normal
         if (estado.cupom) cfg.promo = null; // cupom não soma com a promo da Pista
+        // Promo da Setor VIP (17/11): só inteira e sem cupom. Chegou com meia (link antigo): volta pra escolher.
+        if (!COMUNIDADE && !INFLU && cfg.promo_vip && qtd.pista_meia) { location.replace(VOLTAR); return; }
+        estado.promoVip = !COMUNIDADE && !INFLU && cfg.promo_vip && cfg.promo_vip.uma > 0 && qtd.pista_inteira > 0 ? cfg.promo_vip : null;
+        if (estado.promoVip) { estado.cupom = null; cfg.promo = null; }
         estado.copo = !INFLU && cfg.copo && cfg.copo.preco > 0 ? cfg.copo.preco : null;
         if (!estado.copo) qtdCopo = 0; // copo desligado no painel: sai do pedido
         estado.lote = cfg.lote || null;
