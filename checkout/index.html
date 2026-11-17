@@ -62,6 +62,9 @@ fbq('track', 'PageView');
   .copo-poucas { margin-top: 3px; font: 700 11px/1 var(--estreita); letter-spacing: .12em; text-transform: uppercase; color: var(--brasa); }
   .copo-acao { margin-top: 9px; }
   .copo-add { padding: 9px 14px; border: 0; border-radius: 10px; background: var(--ceu); color: #fff; font: 800 14px/1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
+  .qtd-sup { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding: 10px 12px 10px 14px; border-radius: 14px; background: #eef3ff; border: 1.5px solid #cfdcf7; }
+  .qtd-sup b { font: 800 15px/1.15 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--tinta); }
+  .qtd-sup small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--tinta-suave); }
   .copo-qtd { display: inline-flex; align-items: center; gap: 4px; }
   .copo-qtd button { width: 36px; height: 36px; border: 2px solid var(--ceu); border-radius: 10px; background: #fff; color: var(--ceu); font: 700 20px/1 var(--texto); cursor: pointer; touch-action: manipulation; }
   .copo-qtd button:disabled { opacity: .35; cursor: default; }
@@ -159,6 +162,10 @@ fbq('track', 'PageView');
     <p class="evento-info">Sábado, 28 de novembro · 16h<br>Parque de Exposições · Passos-MG</p>
     <p class="divisor" aria-hidden="true">✦</p>
     <div id="itens"></div>
+    <div class="qtd-sup" id="qtd-sup" hidden>
+      <span><b>Quantos Open Bar?</b><small>Cada ingresso sai com um nome.</small></span>
+      <span class="copo-qtd"><button type="button" id="sup-menos" aria-label="Menos um Open Bar">−</button><b id="sup-n" aria-live="polite" style="min-width:28px;text-align:center;font-size:20px">1</b><button type="button" id="sup-mais" aria-label="Mais um Open Bar">+</button></span>
+    </div>
     <div class="copo" id="copo" hidden>
       <span class="copo-giro"><span class="giro"><img class="frente" src="/img/copo-frente.webp" alt="Copo oficial do Cê Tá Bão Fest" width="271" height="492"><img class="verso" src="/img/copo-verso.webp" alt="" width="272" height="522"></span></span>
       <div class="copo-info">
@@ -624,11 +631,13 @@ fbq('track', 'PageView');
   // ---------- nome em cada ingresso (ingresso nominal). Mesma ordem em que o
   // servidor numera: Pista inteira, Pista meia, Open Bar. O 1º já vem com o
   // nome de quem está pagando (e acompanha enquanto a pessoa não mexer nele).
-  var ingressosDoPedido = [];
+  var ingressosDoPedido = [], titulares = [];
+  function montarTitulares() {
+  var antes = titulares.map(function (el) { return el.value; });
+  ingressosDoPedido = [];
   for (var a = 0; a < qtd.pista_inteira; a++) ingressosDoPedido.push({ setor: 'pista', nome: 'Setor VIP', meia: false });
   for (var b = 0; b < qtd.pista_meia; b++) ingressosDoPedido.push({ setor: 'pista', nome: 'Setor VIP', meia: true });
   for (var c = 0; c < qtd.open_inteira; c++) ingressosDoPedido.push({ setor: 'open', nome: 'Open Bar', meia: false });
-  var primeiroMexido = false;
   $('lista-titulares').innerHTML = ingressosDoPedido.map(function (ing, i) {
     return '<div class="campo titular" id="c-tit-' + i + '">' +
       '<label class="rot" for="tit-' + i + '">Ingresso ' + (i + 1) +
@@ -636,10 +645,40 @@ fbq('track', 'PageView');
       '<input id="tit-' + i + '" type="text" autocomplete="off" autocapitalize="words" placeholder="' + (i === 0 ? 'Seu nome ou de quem vai usar' : 'Nome completo de quem vai usar') + '" maxlength="80">' +
       '<small>Digite o nome completo de quem vai usar este ingresso.</small></div>';
   }).join('');
-  var titulares = ingressosDoPedido.map(function (_, i) { return $('tit-' + i); });
+  titulares = ingressosDoPedido.map(function (_, i) { return $('tit-' + i); });
   titulares.forEach(function (el, i) {
+    if (antes[i]) el.value = antes[i];
     el.addEventListener('input', function () { if (i === 0) primeiroMexido = true; if (estado.tentou) validar(); });
   });
+  }
+  var primeiroMexido = false;
+  montarTitulares();
+
+  // Link do suporte (Lucas, 17/11): só Open Bar → a pessoa escolhe quantos aqui mesmo (1 a 10).
+  var supQtd = SUPORTE && !qtd.pista_inteira && !qtd.pista_meia && qtd.open_inteira > 0;
+  function mostrarSup() {
+    $('qtd-sup').hidden = !supQtd;
+    if (!supQtd) return;
+    $('sup-n').textContent = qtd.open_inteira;
+    $('sup-menos').disabled = qtd.open_inteira <= 1;
+    $('sup-mais').disabled = qtd.open_inteira >= QTD_MAX;
+  }
+  function mudarOpen(n) {
+    n = Math.max(1, Math.min(QTD_MAX, n));
+    if (n === qtd.open_inteira) return;
+    qtd.open_inteira = n;
+    totalQtd = n;
+    try { var u = new URL(location.href); u.searchParams.set('oi', n); history.replaceState(null, '', u); } catch (e) { /* tudo bem */ }
+    montarTitulares();
+    copiarNome();
+    mostrarSup();
+    montarResumo();
+    rascunho();
+    if (estado.metodo === 'cartao') prepararCartao(); // o valor do cartão mudou: monta de novo
+  }
+  $('sup-menos').addEventListener('click', function () { mudarOpen(qtd.open_inteira - 1); });
+  $('sup-mais').addEventListener('click', function () { mudarOpen(qtd.open_inteira + 1); });
+  mostrarSup();
 
   // ---------- dados do comprador (guardados neste aparelho pra não redigitar)
   var campos = { nome: $('nome'), cpf: $('cpf'), email: $('email'), whatsapp: $('whatsapp') };
