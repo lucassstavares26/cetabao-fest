@@ -297,6 +297,8 @@ fbq('track', 'PageView');
     try { INFLU = JSON.parse(sessionStorage.getItem('cetabao_influencer') || 'null'); } catch (e) { INFLU = null; }
     if (!INFLU || !/^\d{12,15}$/.test(INFLU.w || '')) { location.replace('/influencer/'); return; }
   }
+  // Link do suporte (Lucas, 17/11): ?s=jessica passa pelo Open Bar esgotado, preço normal, sem cupom. O /api/comprar confere a chave.
+  var SUPORTE = !INFLU && !COMUNIDADE && /^[a-z0-9]{2,30}$/.test(q.get('s') || '') ? q.get('s') : null;
   var VOLTAR = INFLU ? '/influencer/' : COMUNIDADE ? '/blackfriday/' : '/#compra';
   // Cupom do link do remarketing (guardado 24 h pela página de compra, 04/11). O painel confirma se vale.
   var CUPOM = null;
@@ -308,7 +310,7 @@ fbq('track', 'PageView');
     // Aline e Camila: 24 h; agências: 30 dias (igual ao index.html)
     if (/^[a-z0-9]{2,40}$/.test(agLink)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: agLink, ate: Date.now() + (['aline', 'camila'].indexOf(agLink) >= 0 ? 24 * 3600000 : 30 * 86400000) }));
   } catch (e) { /* tudo bem */ }
-  try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && !INFLU && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
+  try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && !INFLU && !SUPORTE && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
   var MEIA_ESGOTADA = false; // meia-entrada da Setor VIP esgotada (Lucas, 13/11), igual à página de compra e ao servidor
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
@@ -427,6 +429,7 @@ fbq('track', 'PageView');
           if (!(c.id in estado.preco)) return;
           estado.preco[c.id] = c.preco || null;
           estado.restam[c.id] = c.restam;
+          if (SUPORTE && c.id === 'open') estado.restam.open = null; // link do suporte: o painel confere o estoque de verdade
         });
         if (COMUNIDADE) {
           // Promo da comunidade: preço próprio e sem a promo do site. Sem ela (desligada ou link trocado), não vende.
@@ -797,7 +800,7 @@ fbq('track', 'PageView');
             titulares: titulares.map(function (el) { return el.value.trim(); }),
             metodo: estado.metodo, cartao: cartao, aceite: true, empresa: $('zx_ref').value, origem: origem, carrinho: sessaoCarrinho, meta: meta,
             comunidade: COMUNIDADE || undefined, agencia: INFLU ? undefined : agencia, cupom: estado.cupom ? estado.cupom.codigo : undefined,
-            influencer: INFLU ? INFLU.w : undefined
+            influencer: INFLU ? INFLU.w : undefined, suporte: SUPORTE || undefined
           })
         }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); });
       })

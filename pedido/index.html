@@ -218,10 +218,13 @@
         }
         // Open Bar das influenciadoras (10/11): comprar de novo volta pro link delas (preço de 50%), não pro site.
         if (p.influencer) $('expirou-link').href = '/influencer/';
+        // Link do suporte (?s=jessica, 17/11): Pix vencido ou cartão recusado voltam pro mesmo link
+        var linkSuporte = p.suporte && p.qtds ? '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '') + '&s=' + encodeURIComponent(p.suporte) : null;
+        if (linkSuporte) $('expirou-link').href = linkSuporte;
         if (p.status === 'pago') return pago(p);
         if (p.status === 'divergente') { $('cod-div').textContent = p.codigo; mostrar('divergente'); return; }
         if (p.status === 'cancelado' && p.recusado && p.qtds) {
-          voltarSite = p.influencer ? '/influencer/' : '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
+          voltarSite = p.influencer ? '/influencer/' : linkSuporte ? linkSuporte : '/checkout/?pi=' + (p.qtds.pi || 0) + '&pm=' + (p.qtds.pm || 0) + '&oi=' + (p.qtds.oi || 0) + (p.qtds.cp ? '&cp=' + p.qtds.cp : '');
           mostrar('recusado'); return;
         }
         if (p.status === 'cancelado') { mostrar('cancelado'); return; }
