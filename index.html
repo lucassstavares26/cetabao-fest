@@ -312,15 +312,16 @@ fbq('track', 'PageView');
   /* celular estreito: botões um pouco menores pra "R$ 210,00 cada" caber; abaixo de 345px o "cada" pode descer de linha */
   @media (max-width: 385px) { .opcao { gap: 6px; padding-left: 12px; } .opcao button { width: 38px; height: 40px; } .opcao output { width: 26px; } .opcao span { font-size: 15.5px; } }
   @media (max-width: 345px) { .setor:not(.setor-promo) small { letter-spacing: .1em; } .setor:not(.setor-promo) .setor-topo strong { font-size: 21px; } .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 6px 8px 5px; font-size: 15px; } }
-  /* promo da Setor VIP (17/11): faixa amarela com 1 e 2 ingressos, preço cheio riscado */
-  .setor .promo-vip { grid-column: 1 / -1; display: grid; gap: 6px; margin-top: 4px; padding: 10px 12px; border-radius: 12px; background: #fff6d6; border: 1.5px dashed var(--sol-sombra, #c99a00); }
+  /* promo da Setor VIP (17/11): faixa amarela com 1 e 2 ingressos, preço cheio riscado. Sempre UMA linha por opção:
+     as letras acompanham a largura da faixa (cqw = 1% dela), igual ao cartão da promo antiga. Os px vêm antes pra navegador velho. */
+  .setor .promo-vip { container-type: inline-size; grid-column: 1 / -1; display: grid; gap: 6px; margin-top: 4px; padding: 10px 12px; border-radius: 12px; background: #fff6d6; border: 1.5px dashed var(--sol-sombra, #c99a00); }
   .setor .promo-vip b { font: 800 13px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; color: var(--brasa); }
-  .setor .promo-vip span { display: flex; align-items: baseline; gap: 8px; font: 700 15px/1.2 var(--estreita); color: var(--tinta); }
-  .setor .promo-vip em { flex: 1; font-style: normal; text-transform: uppercase; letter-spacing: .04em; }
-  .setor .promo-vip s { color: var(--tinta-suave); font-weight: 600; font-size: 13px; }
-  .setor .setor-topo .promo-vip strong { font: 400 19px/1 var(--placa); letter-spacing: 0; color: var(--brasa); white-space: nowrap; }
+  .setor .promo-vip span { display: flex; align-items: baseline; gap: 6px; gap: min(8px, 2.6cqw); white-space: nowrap; font: 700 13px/1.2 var(--estreita); font-size: min(15px, 5.6cqw); color: var(--tinta); }
+  .setor .promo-vip em { flex: 1 1 auto; min-width: 0; font-style: normal; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap; }
+  .setor .promo-vip s { flex: none; color: var(--tinta-suave); font-weight: 600; font-size: 11px; font-size: min(13px, 4.6cqw); white-space: nowrap; }
+  .setor .setor-topo .promo-vip span strong { flex: none; font: 400 16px/1 var(--placa); font-size: min(19px, 7.4cqw); letter-spacing: 0; color: var(--brasa); white-space: nowrap; }
   @media (max-width: 345px) { .setor .idade { width: 24px; height: 24px; margin-left: 4px; font-size: 11px; top: -1px; } .setor:not(.setor-promo) .setor-topo { gap: 5px 8px; } .setor:not(.setor-promo) .setor-topo strong { font-size: 19px; } }
-  @media (max-width: 345px) { .setor .promo-vip { padding: 9px 10px; } .setor .promo-vip span { gap: 5px; } .setor .promo-vip em { font-size: 13px; letter-spacing: 0; white-space: nowrap; } .setor .promo-vip s { font-size: 10.5px; } .setor .setor-topo .promo-vip strong { font-size: 15px; } }
+  @media (max-width: 345px) { .setor .promo-vip { padding: 9px 10px; } }
   @media (max-width: 345px) { .opcao { gap: 4px; padding: 8px 6px 8px 10px; } .opcao button { width: 34px; height: 38px; } .opcao span { white-space: normal; } }
   .nota-meia { padding: 2px 4px 0; font-size: 13.5px; line-height: 1.35; }
   .nota-meia strong { color: var(--engradado); }
