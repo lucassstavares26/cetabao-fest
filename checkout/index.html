@@ -436,7 +436,7 @@ fbq('track', 'PageView');
           if (!(c.id in estado.preco)) return;
           estado.preco[c.id] = c.preco || null;
           estado.restam[c.id] = c.restam;
-          if (SUPORTE && c.id === 'open') estado.restam.open = null; // link do suporte: o painel confere o estoque de verdade
+          if ((SUPORTE || INFLU) && c.id === 'open') estado.restam.open = null; // link do suporte e das influenciadoras: passam pelo Open Bar esgotado, o painel confere o estoque de verdade
         });
         if (COMUNIDADE) {
           // Promo da comunidade: preço próprio e sem a promo do site. Sem ela (desligada ou link trocado), não vende.
