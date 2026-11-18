@@ -305,7 +305,9 @@ fbq('track', 'PageView');
     if (!INFLU || !/^\d{12,15}$/.test(INFLU.w || '')) { location.replace('/influencer/'); return; }
   }
   // Link do suporte (Lucas, 17/11): ?s=jessica passa pelo Open Bar esgotado, preço normal, sem cupom. O /api/comprar confere a chave.
-  var SUPORTE = !INFLU && !COMUNIDADE && /^[a-z0-9]{2,30}$/.test(q.get('s') || '') ? q.get('s') : null;
+  // DESATIVADO em 18/11 (Lucas): ?s=jessica vira checkout normal (Open Bar esgotado). O painel também recusa (LINKS_SUPORTE vazio).
+  // Pra religar: var SUPORTE = !INFLU && !COMUNIDADE && /^[a-z0-9]{2,30}$/.test(q.get('s') || '') ? q.get('s') : null;
+  var SUPORTE = null;
   var VOLTAR = INFLU ? '/influencer/' : COMUNIDADE ? '/blackfriday/' : '/#compra';
   // Cupom do link do remarketing (guardado 24 h pela página de compra, 04/11). O painel confirma se vale.
   var CUPOM = null;
