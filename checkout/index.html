@@ -337,7 +337,7 @@ fbq('track', 'PageView');
   var qtdCopo = lerQ('cp');
   if (!Number.isInteger(qtdCopo) || qtdCopo < 0 || qtdCopo > COPO_MAX || INFLU) qtdCopo = 0;
   var qtdSetor = function (id) { return id === 'pista' ? qtd.pista_inteira + qtd.pista_meia : qtd.open_inteira; };
-  var estado = {
+  var estado = { loteSetor: {},
     preco: { pista: null, open: null },
     restam: { pista: null, open: null }, lote: null, promo: null, carregou: false, tentativas: 0,
     de: { pista: null, open: null }, encerrada: false, // promo da comunidade: preço normal (riscado) e se o link ainda vale
@@ -366,8 +366,10 @@ fbq('track', 'PageView');
   function copoCent() { return estado.copo && qtdCopo ? centavos(estado.copo) * qtdCopo : 0; }
 
   function montarResumo() {
-    var linha = function (n, nome, tipo, cent, temPreco, extra) {
-      return '<div class="item"><span><b>' + n + '× ' + nome + ' — ' + tipo + '</b><small>' + [estado.lote, extra].filter(Boolean).join(' · ') + '</small></span>' +
+    // lote do setor (19/11: "Lote Extra" só no Open Bar); comunidade/influencer mantêm a etiqueta da promo
+    var linha = function (n, nome, tipo, cent, temPreco, extra, id) {
+      var lote = COMUNIDADE || INFLU ? estado.lote : (estado.loteSetor[id] || estado.lote);
+      return '<div class="item"><span><b>' + n + '× ' + nome + ' — ' + tipo + '</b><small>' + [lote, extra].filter(Boolean).join(' · ') + '</small></span>' +
         '<span>' + (temPreco ? moeda(cent) : estado.carregou ? 'em breve' : '…') + '</span></div>';
     };
     var p = estado.preco.pista, o = estado.preco.open;
@@ -375,9 +377,9 @@ fbq('track', 'PageView');
     // Cupom: preço cheio riscado + o cupom (cent = preço cheio de uma unidade)
     var cup = function (cent, n) { return estado.cupom ? '<s>de ' + moeda(cent * n) + '</s> · Cupom ' + estado.cupom.codigo + ' ' + estado.cupom.pct + '% OFF' : ''; };
     $('itens').innerHTML =
-      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Setor VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.promoVip ? '<s>de ' + moeda(centavos(p || 0) * qtd.pista_inteira) + '</s> · Promo Setor VIP 🔥' : estado.cupom ? cup(centavos(p || 0), qtd.pista_inteira) : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira)) : '') +
-      (qtd.pista_meia ? linha(qtd.pista_meia, 'Setor VIP', 'Meia', comCupom(meiaCent(p || 0)) * qtd.pista_meia, !!p, cup(meiaCent(p || 0), qtd.pista_meia)) : '') +
-      (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', comCupom(centavos(o || 0)) * qtd.open_inteira, !!o, estado.cupom ? cup(centavos(o || 0), qtd.open_inteira) : de('open', qtd.open_inteira)) : '') +
+      (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Setor VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.promoVip ? '<s>de ' + moeda(centavos(p || 0) * qtd.pista_inteira) + '</s> · Promo Setor VIP 🔥' : estado.cupom ? cup(centavos(p || 0), qtd.pista_inteira) : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira), 'pista') : '') +
+      (qtd.pista_meia ? linha(qtd.pista_meia, 'Setor VIP', 'Meia', comCupom(meiaCent(p || 0)) * qtd.pista_meia, !!p, cup(meiaCent(p || 0), qtd.pista_meia), 'pista') : '') +
+      (qtd.open_inteira ? linha(qtd.open_inteira, 'Open Bar', 'Inteira', comCupom(centavos(o || 0)) * qtd.open_inteira, !!o, estado.cupom ? cup(centavos(o || 0), qtd.open_inteira) : de('open', qtd.open_inteira), 'open') : '') +
       (copoCent() ? '<div class="item"><span><b>' + qtdCopo + '× Copo oficial</b><small>Retire no dia do evento</small></span><span>' + moeda(copoCent()) + '</span></div>' : '');
     mostrarCopo();
     var t = totalCent();
@@ -434,7 +436,9 @@ fbq('track', 'PageView');
         buscando = false;
         carregadoEm = Date.now();
         estado.tentativas = 0;
+        estado.loteSetor = {};
         (cfg.setores || []).forEach(function (c) {
+          estado.loteSetor[c.id] = c.lote || null;
           if (!(c.id in estado.preco)) return;
           estado.preco[c.id] = c.preco || null;
           estado.restam[c.id] = c.restam;

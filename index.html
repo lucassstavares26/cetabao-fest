@@ -654,7 +654,7 @@ fbq('track', 'PageView');
         estado.tentativas = 0;
         (cfg.setores || []).forEach(function (c) {
           var s = setor(c.id);
-          if (s) { s.preco = c.preco || null; s.restam = c.restam; }
+          if (s) { s.preco = c.preco || null; s.restam = c.restam; s.lote = c.lote || null; } // lote do setor (19/11: "Lote Extra" só no Open Bar)
         });
         estado.lote = cfg.lote || null;
         estado.copo = cfg.copo && cfg.copo.preco > 0 ? cfg.copo.preco : null;
@@ -784,7 +784,7 @@ fbq('track', 'PageView');
       card.dataset.setor = s.id;
       card.innerHTML =
         '<div class="setor-topo">' +
-          '<small><span class="rot">Ingresso</span>' + (estado.lote ? '<span class="lote-tag">' + estado.lote + '</span>' : '') + (estado.cupom && !esgotado ? '<span class="lote-tag cupom-tag">' + estado.cupom.pct + '% OFF</span>' : '') + '</small>' +
+          '<small><span class="rot">Ingresso</span>' + ((s.lote || estado.lote) ? '<span class="lote-tag">' + (s.lote || estado.lote) + '</span>' : '') + (estado.cupom && !esgotado ? '<span class="lote-tag cupom-tag">' + estado.cupom.pct + '% OFF</span>' : '') + '</small>' +
           '<strong>' + s.nome + (s.idade ? ' <span class="idade" title="Maiores de ' + s.idade + ' anos">+' + s.idade + '</span>' : '') + '</strong>' + // classificação etária: bolinha +16/+18 ao lado do nome (Lucas, 17/11)
           (esgotado ? '<span class="preco">Esgotado</span>'
             : s.id === 'pista' && s.preco && estado.promoVip ? '<span class="preco"><span class="de-cupom">a partir de</span>' + moeda(centavos(estado.promoVip.uma)) + '</span>'
