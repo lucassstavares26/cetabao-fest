@@ -106,6 +106,10 @@
   .bilhete .campo { margin-top: 10px; }
   .bilhete .dica { margin-top: 6px; font-size: 13px; line-height: 1.4; color: var(--tinta-suave); }
   .campo input.menor { font-size: 17px; }
+  .mapa { margin: 22px auto 0; max-width: 560px; padding: 14px 12px 12px; border-radius: 22px; background: #0b0b0d; box-shadow: 0 10px 26px rgba(0, 0, 0, .35); text-align: center; }
+  .mapa h3 { font: 400 clamp(17px, 5.4vw, 22px)/1.1 var(--placa); color: var(--sol); }
+  .mapa p { margin-top: 4px; font-size: 13.5px; line-height: 1.4; color: rgba(255, 255, 255, .78); }
+  .mapa img { display: block; width: 100%; height: auto; margin-top: 10px; border-radius: 12px; }
   .pronto-email { margin-top: 10px; font: 700 16px/1.4 var(--texto); color: var(--tinta); overflow-wrap: anywhere; }
 </style>
 </head>
@@ -202,6 +206,13 @@
       <p class="sub" id="aviso-texto"></p>
       <button class="trocar" type="button" id="trocar2">Usar outro número</button>
     </div>
+
+    <!-- Mapa (Lucas, 22/11): logo abaixo do número, fica em todas as etapas -->
+    <figure class="mapa" id="mapa">
+      <h3>Onde fica o Setor das Estrelas ⭐</h3>
+      <p>Dentro do Setor VIP, ao lado do palco.</p>
+      <img src="/img/mapa-estrelas.webp" alt="Mapa do festival: a Área das Estrelas fica dentro do Setor VIP, ao lado do palco central" width="1000" height="917" loading="lazy">
+    </figure>
   </section>
 
   <section class="ficha" aria-label="Quando e onde">
