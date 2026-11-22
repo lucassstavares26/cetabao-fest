@@ -453,10 +453,10 @@ fbq('track', 'PageView');
           cfg.lote = 'Promo Comunidade';
         }
         if (INFLU) {
-          // Travado (Lucas, 19/11): "de R$ 240 por R$ 120", seja qual for o lote do Open Bar no site.
-          // Igual a INFLUENCER_OPEN_TRAVADO / precoInfluencerCent do servidor.
-          estado.de = { pista: null, open: 240 };
-          if (estado.preco.open) estado.preco.open = 120;
+          // 22/11 (Lucas): 50% do Open Bar do lote atual, sem trava (19/11 era "de R$ 240 por R$ 120").
+          // Igual a baseInfluencer / precoInfluencerCent do servidor (arredonda no centavo).
+          estado.de = { pista: null, open: estado.preco.open };
+          if (estado.preco.open) estado.preco.open = Math.round(Math.round(estado.preco.open * 100) * 50 / 100) / 100;
           cfg.promo = null;
           cfg.lote = 'Influencer 50% OFF';
         }
