@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Setor das Estrelas · Cê Tá Bão Fest</title>
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Setor das Estrelas · Cê Tá Bão Fest">
+<meta property="og:description" content="Retirada de ingresso das influencers. Sábado, 28/11 · Passos-MG.">
+<meta property="og:image" content="https://www.cetabaofest.com.br/img/compartilhar.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="1052">
+<meta name="theme-color" content="#003c86">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<style>
+  /* Setor das Estrelas (Lucas, 22/11): retirada de ingresso das influencers, sem valor, 1 vez por número.
+     O painel (/api/estrelas) confere o WhatsApp na lista copiada da Central de Influenciadores e emite
+     cortesia de Setor VIP com a etiqueta SETOR DAS ESTRELAS. Visual igual ao da /influencer/. */
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  :root { --faixa-h: 58px; }
+  .faixa {
+    position: sticky; top: 0; z-index: 60; height: var(--faixa-h);
+    display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px;
+    background: rgba(0, 37, 96, .94); border-bottom: 3px solid var(--sol);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  .faixa-marca { flex: none; display: block; }
+  .faixa-marca img { width: auto; height: 38px; }
+  .faixa-oficial {
+    display: inline-flex; align-items: center; gap: 5px; min-width: 0;
+    padding: 5px 9px 4px 6px; border-radius: 999px; border: 1.5px solid rgba(37, 211, 102, .55); background: rgba(37, 211, 102, .12);
+    font: 800 13px/1 var(--estreita); letter-spacing: .1em; text-transform: uppercase; color: #fff; white-space: nowrap;
+  }
+  .faixa-oficial svg { width: 16px; height: 16px; flex: none; color: #25d366; }
+  @media (max-width: 370px) { .faixa { gap: 7px; padding-left: 10px; } .faixa-marca img { height: 32px; } .faixa-oficial { font-size: 11.5px; } }
+  .artistas { position: relative; overflow: hidden; background: var(--ceu-foto, #004697); }
+  .artistas img { width: 100%; }
+  .artistas::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18%; background: linear-gradient(180deg, rgba(180, 18, 18, 0), var(--engradado)); }
+  .porteira {
+    padding: 4px var(--lado) 28px;
+    background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e);
+  }
+  .nomes { padding-top: 2px; }
+  .cabeca { font: 400 clamp(20px, 7.2vw, 32px)/1.05 var(--placa); color: #fff; text-wrap: balance; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  .e-comercial { font: 800 1.12em/1 var(--estreita); vertical-align: -.02em; }
+  .mais { margin-top: 6px; font: 400 clamp(19px, 6.6vw, 30px)/1 var(--placa); color: #fff; text-shadow: 0 3px 0 var(--engradado-escuro); }
+  .demais { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 9px; margin-top: 14px; padding-inline: 6px; }
+  .demais li { font: 400 clamp(11px, 3.3vw, 15px)/1.25 var(--placa); color: var(--sol); text-shadow: 0 2px 0 var(--engradado-escuro); }
+  .demais li:not(:last-child)::after { content: "/"; margin-left: 9px; color: rgba(255, 255, 255, .45); text-shadow: none; }
+  .destaque { padding: 0 var(--lado); background: linear-gradient(180deg, #9c0e0e 50%, var(--engradado) 50%); }
+  .placa {
+    position: relative; display: block; padding: 18px 16px 15px; border-radius: 16px; transform: rotate(-1.5deg);
+    background: repeating-linear-gradient(90deg, transparent 0 15px, rgba(0, 0, 0, .04) 15px 17px), var(--sol);
+    box-shadow: 0 6px 0 var(--sol-sombra), 0 18px 34px rgba(0, 0, 0, .45);
+    font: 400 clamp(26px, 8.4vw, 36px)/1.05 var(--placa); color: var(--engradado); text-align: center;
+  }
+  .placa span { display: block; font-size: .7em; color: var(--engradado-escuro); }
+  .placa::before, .placa::after { content: ""; position: absolute; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--sol-sombra); box-shadow: inset 0 1px 1px rgba(0, 0, 0, .35); }
+  .placa::before { left: 9px; }
+  .placa::after { right: 9px; }
+  .compra { padding: 40px var(--lado) 44px; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 3px, transparent 3px 48px), linear-gradient(180deg, var(--engradado), #9c0e0e); }
+  .cartao h2 { font-size: clamp(22px, 6.4vw, 26px); color: var(--ceu); }
+  .cartao .sub { margin-top: 8px; font-size: 15px; line-height: 1.45; color: var(--tinta-suave); }
+  .campo { display: grid; gap: 6px; margin-top: 20px; text-align: left; }
+  .campo label { font: 800 13px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--campo-rotulo, #5b6b8c); }
+  .campo input {
+    width: 100%; padding: 14px 14px; border-radius: 12px; border: 1.5px solid #cfd8ea; background: #f6f8fc;
+    font: 600 20px/1.2 var(--texto); color: var(--tinta); letter-spacing: .02em;
+  }
+  .campo input:focus { outline: none; border-color: var(--ceu); background: #fff; box-shadow: 0 0 0 3px rgba(0, 70, 151, .15); }
+  .erro { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: #fdecec; color: #b3261e; font-size: 14.5px; line-height: 1.4; text-align: left; }
+  .cartao .btn { margin-top: 18px; }
+  .cartao .btn:disabled { cursor: not-allowed; opacity: .5; box-shadow: none; }
+  .ola { font: 800 15px/1.2 var(--estreita); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-suave); }
+  .oferta { position: relative; margin-top: 18px; text-align: left; border: 3px solid var(--open); border-left-width: 8px; border-radius: 18px; padding: 16px 14px 14px 16px; box-shadow: 0 8px 20px rgba(18, 34, 74, .1); }
+  .oferta small { display: block; font: 800 11.5px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--open); }
+  .oferta h3 { margin-top: 6px; font: 800 clamp(23px, 6.6vw, 27px)/1 var(--estreita); letter-spacing: .02em; text-transform: uppercase; color: var(--tinta); }
+  .oferta .off { position: absolute; top: 14px; right: 12px; padding: 6px 9px 5px; border-radius: 10px; background: var(--engradado); color: #fff; font: 400 17px/1 var(--placa); }
+  .de-por { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 10px; }
+  .de-por s { font: 700 16px/1 var(--estreita); color: var(--tinta-suave); }
+  .de-por b { font: 400 clamp(26px, 7.8vw, 32px)/1 var(--placa); color: var(--engradado); }
+  .oferta .desc { margin-top: 8px; font-size: 14.5px; line-height: 1.45; color: var(--tinta-suave); }
+  .regras { margin-top: 14px; font-size: 13.5px; line-height: 1.45; color: var(--tinta-suave); }
+  .trocar { display: inline-block; margin-top: 14px; font: 700 14px/1 var(--texto); color: var(--ceu); text-decoration: underline; background: none; border: 0; cursor: pointer; }
+  .ficha { display: grid; gap: 6px; padding: 26px var(--lado) 30px; background: var(--ceu-fundo); color: var(--ceu-texto); font-size: 15px; }
+  .ficha b { color: #fff; }
+  .qtds { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .qtds button {
+    padding: 14px 8px 12px; border-radius: 14px; border: 2px solid #cfd8ea; background: #f6f8fc; cursor: pointer;
+    font: 800 19px/1.1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--tinta);
+  }
+  .qtds button small { display: block; margin-top: 4px; font: 600 12.5px/1.2 var(--texto); letter-spacing: 0; text-transform: none; color: var(--tinta-suave); }
+  .qtds button[aria-pressed="true"] { border-color: var(--ceu); background: #e8f0fc; box-shadow: 0 0 0 3px rgba(0, 70, 151, .15); }
+  .bilhete { margin-top: 16px; padding: 14px; border-radius: 14px; border: 2px dashed #cfd8ea; text-align: left; }
+  .bilhete small { display: block; font: 800 11.5px/1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; color: var(--ceu); }
+  .bilhete .dono { margin-top: 6px; font: 700 18px/1.25 var(--texto); color: var(--tinta); overflow-wrap: anywhere; }
+  .bilhete .campo { margin-top: 10px; }
+  .bilhete .dica { margin-top: 6px; font-size: 13px; line-height: 1.4; color: var(--tinta-suave); }
+  .campo input.menor { font-size: 17px; }
+  .pronto-email { margin-top: 10px; font: 700 16px/1.4 var(--texto); color: var(--tinta); overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8.5V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.5a2.5 2.5 0 0 0 0 5V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4.5a2.5 2.5 0 0 0 0-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 5v14" stroke="currentColor" stroke-width="2" stroke-dasharray="2 2.2"/></symbol>
+</svg>
+<header class="faixa">
+  <span class="faixa-marca"><img src="/img/logo-horizontal.webp" alt="Cê Tá Bão Fest" width="243" height="96" fetchpriority="high"></span>
+  <span class="faixa-oficial"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>Site oficial</span>
+</header>
+<main>
+  <figure class="artistas">
+    <img src="/img/topo-artistas.webp" alt="Artistas do Cê Tá Bão Fest: Henrique e Diego, Kamisa 10 e as demais atrações" width="800" height="762" fetchpriority="high">
+  </figure>
+
+  <section class="porteira" aria-label="Atrações">
+    <div class="nomes">
+      <p class="sr">Cê Tá Bão Fest · Passos-MG · sábado, 28/11</p>
+      <p class="cabeca">Henrique <span class="e-comercial">&amp;</span> Diego</p>
+      <p class="mais">+ Kamisa 10</p>
+      <ul class="demais">
+        <li>Luan e Rafael</li>
+        <li>DJ Sarah Leonel</li>
+        <li>DJ Dion Dion</li>
+        <li>Grupo Atitude Mais</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="destaque">
+    <h1 class="placa">Setor das Estrelas <span>Retirada de ingresso</span></h1>
+  </div>
+
+  <section class="compra" aria-label="Retirada de ingresso do Setor das Estrelas">
+    <!-- 1) WhatsApp -->
+    <form class="cartao" id="passo-numero" novalidate>
+      <span class="etiqueta">Só pra influencers</span>
+      <h2>Retire seus ingressos ⭐</h2>
+      <p class="sub">Digite o WhatsApp que você cadastrou na Central de Influenciadores.</p>
+      <div class="campo">
+        <label for="whatsapp">Seu WhatsApp</label>
+        <input id="whatsapp" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="(35) 99999-9999" maxlength="16">
+      </div>
+      <p class="erro" id="erro-numero" role="alert" hidden></p>
+      <button class="btn btn-sol" type="submit" id="consultar"><svg><use href="#i-ticket"/></svg><span>Continuar</span></button>
+    </form>
+
+    <!-- 2) Quantidade, nomes e e-mail -->
+    <form class="cartao" id="passo-retirar" novalidate hidden>
+      <span class="etiqueta">Setor das Estrelas</span>
+      <p class="ola" id="ola"></p>
+      <h2>Quantos ingressos?</h2>
+      <div class="qtds" role="group" aria-label="Quantidade de ingressos">
+        <button type="button" data-qtd="1" aria-pressed="false">1 ingresso<small>só o meu</small></button>
+        <button type="button" data-qtd="2" aria-pressed="true">2 ingressos<small>o meu + 1</small></button>
+      </div>
+      <div class="bilhete">
+        <small>Ingresso 1</small>
+        <p class="dono" id="dono"></p>
+      </div>
+      <div class="bilhete" id="ingresso2">
+        <small>Ingresso 2</small>
+        <div class="campo">
+          <label for="convidado">Nome de quem vai usar</label>
+          <input id="convidado" class="menor" type="text" autocomplete="off" maxlength="80" placeholder="Nome completo (opcional)">
+        </div>
+        <p class="dica">Ainda não sabe? Deixe em branco: o ingresso sai como “Setor das Estrelas”.</p>
+      </div>
+      <div class="campo">
+        <label for="email">Seu e-mail</label>
+        <input id="email" class="menor" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="voce@email.com">
+      </div>
+      <p class="erro" id="erro-retirar" role="alert" hidden></p>
+      <button class="btn btn-sol" type="submit" id="retirar"><svg><use href="#i-ticket"/></svg><span>Retirar 2 ingressos</span></button>
+      <p class="regras">Sem custo. Cada número retira uma vez só, então confira antes de enviar. Os ingressos vão na hora pro seu e-mail.</p>
+      <button class="trocar" type="button" id="trocar">Não é você? Trocar o número</button>
+    </form>
+
+    <!-- 3) Pronto -->
+    <div class="cartao" id="passo-pronto" hidden>
+      <span class="etiqueta">Setor das Estrelas</span>
+      <h2>Pronto! 🎉</h2>
+      <p class="sub" id="pronto-texto"></p>
+      <p class="pronto-email" id="pronto-email"></p>
+      <a class="btn btn-sol" id="ver" href="#"><svg><use href="#i-ticket"/></svg><span>Ver meus ingressos</span></a>
+      <p class="regras">Na página dos ingressos você pode mandar o 2º ingresso pelo WhatsApp pra quem vai usar.</p>
+    </div>
+
+    <!-- 4) Já retirou -->
+    <div class="cartao" id="passo-aviso" hidden>
+      <span class="etiqueta">Cê Tá Bão Fest</span>
+      <h2 id="aviso-titulo"></h2>
+      <p class="sub" id="aviso-texto"></p>
+      <button class="trocar" type="button" id="trocar2">Usar outro número</button>
+    </div>
+  </section>
+
+  <section class="ficha" aria-label="Quando e onde">
+    <p><b>Sábado, 28/11 · 16h</b></p>
+    <p>Parque de Exposições · Passos-MG</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var $ = function (id) { return document.getElementById(id); };
+  function mascaraFone(v) {
+    var d = String(v).replace(/\D/g, '');
+    if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2);
+    d = d.slice(0, 11);
+    if (d.length <= 2) return d ? '(' + d : '';
+    if (d.length <= 7) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  }
+  var achada = null;
+  var qtd = 2;
+
+  function passo(qual) {
+    ['passo-numero', 'passo-retirar', 'passo-pronto', 'passo-aviso'].forEach(function (id) { $(id).hidden = id !== qual; });
+    window.scrollTo({ top: document.querySelector('.compra').offsetTop - 70, behavior: 'smooth' });
+  }
+  function erro(id, texto) { $(id).textContent = texto; $(id).hidden = !texto; }
+  function aviso(titulo, texto) { $('aviso-titulo').textContent = titulo; $('aviso-texto').textContent = texto; passo('passo-aviso'); }
+  function trocar() { achada = null; erro('erro-numero', ''); passo('passo-numero'); $('whatsapp').focus(); }
+  $('trocar').addEventListener('click', trocar);
+  $('trocar2').addEventListener('click', trocar);
+  function jaRetirou(email) {
+    aviso('Você já retirou! ⭐', 'Os ingressos desse número já foram retirados' + (email ? ' e foram pro e-mail ' + email : '') + '. Cada número retira uma vez só. Não achou o e-mail? Olhe o spam ou fale com a produção.');
+  }
+
+  function marcarQtd(n) {
+    qtd = n;
+    document.querySelectorAll('.qtds button').forEach(function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.qtd) === n)); });
+    $('ingresso2').hidden = n !== 2;
+    $('retirar').querySelector('span').textContent = n === 2 ? 'Retirar 2 ingressos' : 'Retirar meu ingresso';
+  }
+  document.querySelectorAll('.qtds button').forEach(function (b) { b.addEventListener('click', function () { marcarQtd(Number(b.dataset.qtd)); erro('erro-retirar', ''); }); });
+
+  $('whatsapp').addEventListener('input', function () { $('whatsapp').value = mascaraFone($('whatsapp').value); erro('erro-numero', ''); });
+
+  $('passo-numero').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var digitos = $('whatsapp').value.replace(/\D/g, '');
+    if (digitos.length < 10) { erro('erro-numero', 'Digite o WhatsApp com DDD.'); return; }
+    var b = $('consultar');
+    b.disabled = true; b.querySelector('span').textContent = 'Conferindo…';
+    erro('erro-numero', '');
+    fetch(API + '/api/estrelas?w=' + encodeURIComponent(digitos), { cache: 'no-store' })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        b.disabled = false; b.querySelector('span').textContent = 'Continuar';
+        if (res.status !== 200 || !res.j.ok) { erro('erro-numero', res.j.erro || 'Não consegui conferir agora. Tente de novo.'); return; }
+        var j = res.j;
+        if (j.jaRetirou) { jaRetirou(j.emailRetirada); return; }
+        achada = { w: digitos, nome: j.nome };
+        $('ola').textContent = 'Oi, ' + j.nome.split(' ')[0] + '!';
+        $('dono').textContent = j.nome;
+        marcarQtd(2);
+        erro('erro-retirar', '');
+        passo('passo-retirar');
+      })
+      .catch(function () { b.disabled = false; b.querySelector('span').textContent = 'Continuar'; erro('erro-numero', 'Sem conexão. Confira a internet e tente de novo.'); });
+  });
+
+  $('passo-retirar').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    if (!achada) return;
+    var email = $('email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { erro('erro-retirar', 'Digite um e-mail válido. É pra ele que os ingressos vão.'); $('email').focus(); return; }
+    var convidado = qtd === 2 ? $('convidado').value.trim() : '';
+    var b = $('retirar');
+    var rotulo = b.querySelector('span').textContent;
+    b.disabled = true; b.querySelector('span').textContent = 'Gerando seus ingressos…';
+    erro('erro-retirar', '');
+    fetch(API + '/api/estrelas', {
+      method: 'POST', cache: 'no-store', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ w: achada.w, qtd: qtd, email: email, convidado: convidado })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        b.disabled = false; b.querySelector('span').textContent = rotulo;
+        var j = res.j;
+        if (res.status === 200 && j.ok) {
+          $('pronto-texto').textContent = (qtd === 2 ? 'Seus 2 ingressos do Setor das Estrelas estão garantidos.' : 'Seu ingresso do Setor das Estrelas está garantido.') +
+            (j.emailOk ? ' Mandamos pro e-mail:' : ' Não conseguimos mandar o e-mail agora, mas eles já estão no link abaixo. Guarde ele:');
+          $('pronto-email').textContent = j.emailOk ? j.email : '';
+          $('ver').href = j.link;
+          passo('passo-pronto');
+          return;
+        }
+        if (res.status === 409 && /já retirou/.test(j.erro || '')) { aviso('Você já retirou! ⭐', j.erro); return; }
+        erro('erro-retirar', j.erro || 'Não consegui gerar agora. Tente de novo.');
+      })
+      .catch(function () { b.disabled = false; b.querySelector('span').textContent = rotulo; erro('erro-retirar', 'Sem conexão. Confira a internet e tente de novo.'); });
+  });
+})();
+</script>
+</body>
+</html>
