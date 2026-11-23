@@ -138,7 +138,7 @@
 
   <div class="bloco estado" id="carregando"><span class="espera" aria-hidden="true"></span><p>Carregando…</p></div>
 
-  <p class="guardado" id="guardado" hidden>Seu lugar está guardado por <b id="guardado-tempo">20:00</b></p>
+  <p class="guardado" id="guardado" hidden><span id="guardado-o-que">Seu lugar está guardado</span> por <b id="guardado-tempo">20:00</b></p>
 
   <section class="bloco" id="resumo" aria-label="O que você está pagando" hidden>
     <p class="evento">Cê Tá Bão Fest</p>
@@ -377,8 +377,9 @@
         if (c.status !== 'aberta') {
           var doSite = c.origem === 'site';
           $('fechado-titulo').textContent = c.status === 'cancelada' ? 'Este link de pagamento foi cancelado' : doSite ? 'O tempo pra pagar acabou' : 'Este link de pagamento venceu';
-          $('fechado-texto').textContent = doSite ? 'O lugar foi liberado. Se ainda estiver livre, é só escolher de novo.' : 'Fale com o nosso suporte que a gente manda um link novo.';
+          $('fechado-texto').textContent = doSite ? (ehLP(c) ? 'É só fazer o pedido de novo.' : 'O lugar foi liberado. Se ainda estiver livre, é só escolher de novo.') : 'Fale com o nosso suporte que a gente manda um link novo.';
           $('fechado-site').hidden = !doSite;
+          $('fechado-site').href = ehLP(c) ? '/loungepremium/' : '/lounge/';
           $('fechado-zap').href = zapSuporte('Oi! O link de pagamento do ' + c.lugar + ' (' + c.codigo + ') ' + (c.status === 'cancelada' ? 'foi cancelado' : 'venceu') + '. Pode me mandar outro?');
           mostrar('fechado');
           return;
@@ -390,10 +391,13 @@
   }
   function seguir(ms) { if (Date.now() - inicio < 45 * 60000) setTimeout(consultar, ms); }
 
+  // Lounge Premium (23/11): ingresso individual vendido em /loungepremium/, não é lugar do mapa.
+  function ehLP(c) { return /^Lounge Premium/i.test(c.lugar || ''); }
   function montarResumo(c) {
     $('lugar').textContent = c.lugar;
     var consumo = CONSUMO[c.categoria];
-    $('lugar-info').textContent = c.qtd + ' pessoas' + (consumo ? ' · ' + moeda(consumo) + ' de consumação' : '');
+    $('lugar-info').textContent = ehLP(c) ? c.qtd + (c.qtd > 1 ? ' ingressos individuais' : ' ingresso individual') + ' · Setor Premium' : c.qtd + ' pessoas' + (consumo ? ' · ' + moeda(consumo) + ' de consumação' : '');
+    $('guardado-o-que').textContent = ehLP(c) ? (c.qtd > 1 ? 'Seus ingressos estão guardados' : 'Seu ingresso está guardado') : 'Seu lugar está guardado';
     $('valor').textContent = moeda(c.valor);
     mostrarTotal();
   }

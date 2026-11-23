@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Lounge Premium · Cê Tá Bão Fest</title>
+<meta name="description" content="Ingresso Lounge Premium do Cê Tá Bão Fest: acesso ao Setor Premium, pague no Pix ou cartão.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#003c86">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<style>
+  body { text-align: left; }
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
+  .barra-topo img { width: 54px; }
+  .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
+  .conteudo { padding: 22px var(--lado) 40px; display: grid; gap: 18px; }
+  h1 { font-size: clamp(30px, 9vw, 38px); }
+  .lead { margin-top: 6px; color: var(--ceu-texto); font-size: 15.5px; }
+  .bloco { padding: 18px 16px; border-radius: 20px; background: #fff; color: var(--tinta); box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .28); }
+
+  .ingresso-lp { border: 3px solid #e2e7f1; border-left: 8px solid var(--brasa); border-radius: 16px; padding: 14px 14px 16px; }
+  .ingresso-lp .topo { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .ingresso-lp h2 { font: 400 clamp(21px, 6.2vw, 25px)/1.1 var(--placa); color: var(--ceu); }
+  .ingresso-lp .preco { flex: none; padding: 6px 10px; border-radius: 10px; background: var(--brasa); color: #fff; font: 400 clamp(16px, 5vw, 20px)/1 var(--placa); box-shadow: 0 3px 0 var(--engradado-escuro); }
+  .ingresso-lp ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 4px; font: 700 15.5px/1.3 var(--estreita); letter-spacing: .02em; }
+  .ingresso-lp .cada { margin-top: 2px; color: var(--tinta-suave); font-size: 14px; }
+
+  .qtd { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--campo-borda); }
+  .qtd .rot { font: 800 13px/1.1 var(--estreita); letter-spacing: .16em; text-transform: uppercase; }
+  .passo { display: flex; align-items: center; gap: 10px; }
+  .passo button { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--ceu); background: #fff; color: var(--ceu); font: 800 24px/1 var(--estreita); cursor: pointer; touch-action: manipulation; }
+  .passo button:disabled { opacity: .35; cursor: default; }
+  .passo output { min-width: 28px; text-align: center; font: 400 24px/1 var(--placa); color: var(--tinta); font-variant-numeric: tabular-nums; }
+
+  .total { display: flex; align-items: baseline; justify-content: space-between; margin-top: 16px; font: 800 15px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; }
+  .total b { font: 400 30px/1 var(--placa); letter-spacing: 0; color: var(--ceu); }
+  .bloco .btn { margin-top: 14px; }
+  .bloco .btn-zap { min-height: 46px; font-size: 15px; background: #fff; color: var(--verde-escuro); border: 2px solid var(--verde); box-shadow: none; }
+  .aviso { margin-top: 10px; color: var(--tinta-suave); font-size: 13.5px; text-align: center; }
+  .erro-geral { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
+  .fechado { text-align: center; }
+  .fechado h2 { font: 400 24px/1.1 var(--placa); color: var(--ceu); }
+  .fechado p { margin-top: 8px; color: var(--tinta-suave); }
+  .btn:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+  .ver-mapa { font-size: 14px; }
+  .ver-mapa summary { cursor: pointer; font-weight: 700; color: var(--ceu); }
+  .ver-mapa img { width: 100%; margin-top: 10px; border-radius: 12px; }
+</style>
+<script src="/suporte.js" defer></script>
+</head>
+<body data-suporte-msg="Oi! Tenho uma dúvida sobre o Lounge Premium do Cê Tá Bão Fest.">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-zap" viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41z"/></symbol>
+</svg>
+
+<header class="barra-topo">
+  <img src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+  <span>Setor Premium</span>
+</header>
+
+<main class="conteudo">
+  <div>
+    <h1>Lounge Premium</h1>
+    <p class="lead">Ingresso individual com acesso ao Setor Premium: espaço exclusivo, com melhor visão para o palco.</p>
+  </div>
+
+  <section class="bloco" id="compra" aria-live="polite">
+    <div class="ingresso-lp">
+      <div class="topo">
+        <h2>Lounge Premium</h2>
+        <span class="preco" id="preco">R$ 180</span>
+      </div>
+      <ul>
+        <li>🎟️ Ingresso individual (1 QR Code por pessoa)</li>
+        <li>⭐ Acesso ao Setor Premium</li>
+      </ul>
+      <div class="qtd">
+        <span class="rot">Quantidade</span>
+        <div class="passo">
+          <button type="button" id="menos" aria-label="Menos um ingresso">−</button>
+          <output id="qtd" aria-live="polite">1</output>
+          <button type="button" id="mais" aria-label="Mais um ingresso">+</button>
+        </div>
+      </div>
+    </div>
+    <p class="total"><span>Total</span><b id="total">R$ 180,00</b></p>
+    <button class="btn btn-sol" type="button" id="continuar">Continuar para o pagamento</button>
+    <p class="aviso">Pague no Pix ou no cartão. Os ingressos chegam no seu e-mail.</p>
+    <p class="erro-geral" id="erro" role="alert" hidden></p>
+    <a class="btn btn-zap" id="zap" target="_blank" rel="noopener" href="https://wa.me/553531690079"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Prefiro falar no WhatsApp</span></a>
+    <input type="text" id="zx_ref" tabindex="-1" autocomplete="off" readonly aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+  </section>
+
+  <section class="bloco fechado" id="fechado" hidden>
+    <h2>Vendas online fechadas no momento</h2>
+    <p>Fale com a produção pelo WhatsApp pra garantir seu Lounge Premium.</p>
+    <a class="btn btn-zap" target="_blank" rel="noopener" href="https://wa.me/553531690079?text=Oi!%20Quero%20o%20ingresso%20Lounge%20Premium%20do%20C%C3%AA%20T%C3%A1%20B%C3%A3o%20Fest."><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Chamar no WhatsApp</span></a>
+  </section>
+
+  <section class="bloco">
+    <details class="ver-mapa">
+      <summary>Ver onde fica o Setor Premium no mapa</summary>
+      <img src="/img/mapa-festival.webp" alt="Mapa do Cê Tá Bão Fest: o Setor Premium em vermelho." loading="lazy">
+    </details>
+  </section>
+</main>
+
+<footer class="rodape" style="padding-bottom:30px;text-align:center">
+  <p>Cê Tá Bão Fest · Sábado, 28/11 · 16h · Parque de Exposições · Passos-MG</p>
+</footer>
+
+<script>
+(function () {
+  /* ================= CONFIGURAÇÃO ================= */
+  var API = 'https://cetabao-painel.vercel.app';
+  var SUPORTE = '553531690079';
+  /* ================================================ */
+
+  var $ = function (id) { return document.getElementById(id); };
+  var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
+  var estado = { preco: 180, max: 10, qtd: 1, vendendo: true, enviando: false };
+
+  function montar() {
+    $('preco').textContent = moeda(estado.preco).replace(',00', '');
+    $('qtd').textContent = estado.qtd;
+    $('menos').disabled = estado.qtd <= 1;
+    $('mais').disabled = estado.qtd >= estado.max;
+    $('total').textContent = moeda(Math.round(estado.preco * 100) * estado.qtd / 100);
+    var texto = 'Oi! Quero ' + estado.qtd + ' ingresso' + (estado.qtd > 1 ? 's' : '') + ' Lounge Premium do Cê Tá Bão Fest.';
+    $('zap').href = 'https://wa.me/' + SUPORTE + '?text=' + encodeURIComponent(texto);
+    $('compra').hidden = !estado.vendendo;
+    $('fechado').hidden = estado.vendendo;
+  }
+
+  $('menos').addEventListener('click', function () { if (estado.qtd > 1) { estado.qtd--; $('erro').hidden = true; montar(); } });
+  $('mais').addEventListener('click', function () { if (estado.qtd < estado.max) { estado.qtd++; $('erro').hidden = true; montar(); } });
+
+  function carregar() {
+    return fetch(API + '/api/site/lounge-premium', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (p) {
+        if (p.preco) estado.preco = p.preco;
+        if (p.qtd_max) estado.max = p.qtd_max;
+        estado.qtd = Math.min(estado.qtd, estado.max);
+        estado.vendendo = !!p.vendendo;
+        montar();
+      })
+      .catch(function () { montar(); });
+  }
+
+  $('continuar').addEventListener('click', function () {
+    if (estado.enviando) return;
+    estado.enviando = true;
+    var b = $('continuar');
+    b.disabled = true;
+    b.innerHTML = '<span class="girando"></span><span>Preparando o pagamento…</span>';
+    fetch(API + '/api/site/lounge-premium', {
+      method: 'POST',
+      headers: { 'content-type': 'text/plain;charset=UTF-8' },
+      body: JSON.stringify({ qtd: estado.qtd, empresa: $('zx_ref').value })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
+      .then(function (res) {
+        if (res.status === 200 && res.j.token) { location.href = '/pagar/' + res.j.token; return; }
+        throw new Error(res.j.erro || 'Não deu certo agora. Tente de novo.');
+      })
+      .catch(function (e) {
+        estado.enviando = false;
+        b.disabled = false;
+        b.textContent = 'Continuar para o pagamento';
+        var msg = e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Sem conexão. Confira a internet e tente de novo.';
+        carregar().then(function () { $('erro').textContent = msg; $('erro').hidden = false; });
+      });
+  });
+
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    estado.enviando = false;
+    $('continuar').disabled = false;
+    $('continuar').textContent = 'Continuar para o pagamento';
+    carregar();
+  });
+  montar();
+  carregar();
+})();
+</script>
+</body>
+</html>
