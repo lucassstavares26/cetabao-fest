@@ -621,13 +621,15 @@ fbq('track', 'PageView');
   var naPromo = function (n) { return !!estado.promo && n >= estado.promo.min && n <= estado.promo.max; };
   var promoCent = function (preco) { return Math.round(centavos(preco) * (100 - estado.promo.pct) / 100); };
   // Cupom: % em tudo (inteira, meia, Open Bar), igual a cupomEmCentavos do servidor. Não soma com a promo.
-  var comCupom = function (cent) { return estado.cupom ? Math.round(cent * (100 - estado.cupom.pct) / 100) : cent; };
+  // Cupom de patrocinador (URB, 23/11): vem com setores: ['pista'] e só desconta nesses setores. Sem setores = tudo.
+  var cupomNo = function (id) { return !!estado.cupom && (!estado.cupom.setores || estado.cupom.setores.indexOf(id) >= 0); };
+  var comCupom = function (cent, id) { return cupomNo(id) ? Math.round(cent * (100 - estado.cupom.pct) / 100) : cent; };
   // Promo da Setor VIP (Lucas, 17/11): 1 por R$ 80, 2 por R$ 150 (de 3 em diante, o preço do par). Só inteira, sem cupom. Igual a unidadePromoVipCent do servidor.
   var vipCent = function (n) { return n === 1 ? centavos(estado.promoVip.uma) : Math.round(centavos(estado.promoVip.duas) / 2); };
-  var inteiraPistaCent = function (p) { return estado.promoVip ? vipCent(inteirasPista()) : estado.cupom ? comCupom(centavos(p)) : naPromo(inteirasPista()) ? promoCent(p) : centavos(p); };
+  var inteiraPistaCent = function (p) { return estado.promoVip ? vipCent(inteirasPista()) : cupomNo('pista') ? comCupom(centavos(p), 'pista') : naPromo(inteirasPista()) ? promoCent(p) : centavos(p); };
   function totalCent() {
     var p = setor('pista').preco, o = setor('open').preco;
-    return (p ? inteiraPistaCent(p) * inteirasPista() + comCupom(meiaCent(p)) * estado.q.pista_meia : 0) + (o ? comCupom(centavos(o)) * estado.q.open_inteira : 0);
+    return (p ? inteiraPistaCent(p) * inteirasPista() + comCupom(meiaCent(p), 'pista') * estado.q.pista_meia : 0) + (o ? comCupom(centavos(o), 'open') * estado.q.open_inteira : 0);
   }
 
   // ---------- preços / lote / estoque do painel
@@ -662,8 +664,10 @@ fbq('track', 'PageView');
         estado.cupom = cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
         estado.promo = !estado.cupom && cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null; // cupom não soma com a promo
         estado.promoVip = cfg.promo_vip && cfg.promo_vip.uma > 0 ? cfg.promo_vip : null;
+        // Cupom de patrocinador (URB) vale NO LUGAR da promo VIP; o cupom comum (VOLTA10) é que sai pra promo VIP.
+        if (estado.promoVip && estado.cupom && estado.cupom.setores && cupomNo('pista')) estado.promoVip = null;
         if (estado.promoVip) { estado.cupom = null; estado.promo = null; } // promo VIP não soma com cupom
-        if (estado.cupom || MEIA_ESGOTADA || estado.promoVip) estado.q.pista_meia = 0; // link do cupom (07/11): só Setor VIP inteira, sem meia
+        if (cupomNo('pista') || MEIA_ESGOTADA || estado.promoVip) estado.q.pista_meia = 0; // link do cupom (07/11): só Setor VIP inteira, sem meia
         // promo desligou (ou pacote guardado inválido): o pacote volta a ser inteira comum da Pista
         if (estado.q.pacote && !naPromo(estado.q.pacote)) { estado.q.pista_inteira = estado.q.pacote; estado.q.pacote = 0; }
         estado.carregou = true;
@@ -784,25 +788,25 @@ fbq('track', 'PageView');
       card.dataset.setor = s.id;
       card.innerHTML =
         '<div class="setor-topo">' +
-          '<small><span class="rot">Ingresso</span>' + ((s.lote || estado.lote) ? '<span class="lote-tag">' + (s.lote || estado.lote) + '</span>' : '') + (estado.cupom && !esgotado ? '<span class="lote-tag cupom-tag">' + estado.cupom.pct + '% OFF</span>' : '') + '</small>' +
+          '<small><span class="rot">Ingresso</span>' + ((s.lote || estado.lote) ? '<span class="lote-tag">' + (s.lote || estado.lote) + '</span>' : '') + (cupomNo(s.id) && !esgotado ? '<span class="lote-tag cupom-tag">' + estado.cupom.pct + '% OFF</span>' : '') + '</small>' +
           '<strong>' + s.nome + (s.idade ? ' <span class="idade" title="Maiores de ' + s.idade + ' anos">+' + s.idade + '</span>' : '') + '</strong>' + // classificação etária: bolinha +16/+18 ao lado do nome (Lucas, 17/11)
           (esgotado ? '<span class="preco">Esgotado</span>'
             : s.id === 'pista' && s.preco && estado.promoVip ? '<span class="preco"><span class="de-cupom">a partir de</span>' + moeda(centavos(estado.promoVip.uma)) + '</span>'
-            : s.preco ? '<span class="preco">' + (estado.cupom ? '<span class="de-cupom">de <s>' + moeda(centavos(s.preco)) + '</s></span>' : '') + moeda(comCupom(centavos(s.preco))) + '</span>'
+            : s.preco ? '<span class="preco">' + (cupomNo(s.id) ? '<span class="de-cupom">de <s>' + moeda(centavos(s.preco)) + '</s></span>' : '') + moeda(comCupom(centavos(s.preco), s.id)) + '</span>'
             : estado.carregou ? '<span class="preco em-breve">Valor<br>em breve</span>'
             : '<span class="preco em-breve" aria-label="Carregando o preço">…</span>') +
           (s.desc ? '<span class="desc">' + s.desc + '</span>' : '') +
           (s.id === 'pista' && s.preco && estado.promoVip && !esgotado ? '<div class="promo-vip"><b>🔥 Promoção</b>' +
             '<span><em>1 ingresso</em><s>' + moeda(centavos(s.preco)) + '</s><strong>' + moeda(centavos(estado.promoVip.uma)) + '</strong></span>' +
             '<span><em>2 ingressos</em><s>' + moeda(centavos(s.preco) * 2) + '</s><strong>' + moeda(centavos(estado.promoVip.duas)) + '</strong></span></div>' : '') +
-          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + ((estado.cupom || (estado.promoVip && s.id === 'pista')) && s.meia ? 'Inteira' : s.tipo) + '</span>' : '') +
+          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + ((cupomNo(s.id) || (estado.promoVip && s.id === 'pista')) && s.meia ? 'Inteira' : s.tipo) + '</span>' : '') +
             '</span>' +
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
         '</div>' +
         (esgotado ? '' :
           '<div class="setor-opcoes">' +
-            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (estado.cupom || estado.promoVip ? '' : MEIA_ESGOTADA ? '<div class="opcao esgotada"><div><b>Meia-entrada</b></div><em>Esgotado</em></div>' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
-            (s.meia && !estado.cupom && !estado.promoVip && !MEIA_ESGOTADA ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Permitido apenas acima de 16 anos. Documento obrigatório na entrada.</p>' : '') +
+            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (cupomNo('pista') || estado.promoVip ? '' : MEIA_ESGOTADA ? '<div class="opcao esgotada"><div><b>Meia-entrada</b></div><em>Esgotado</em></div>' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
+            (s.meia && !cupomNo('pista') && !estado.promoVip && !MEIA_ESGOTADA ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Permitido apenas acima de 16 anos. Documento obrigatório na entrada.</p>' : '') +
             (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Setor VIP por compra.</p>' : '') +
           '</div>');
       box.appendChild(card);
@@ -871,7 +875,7 @@ fbq('track', 'PageView');
         var meia = e.dataset.preco === 'pista_meia';
         if (e.dataset.preco === 'pista_inteira' && estado.promoVip && s.preco) { var nv = estado.q.pista_inteira; e.textContent = moeda(vipCent(nv || 1)) + ' cada' + (nv >= 2 ? ' 🔥' : ''); return; }
         var promo = e.dataset.preco === 'pista_inteira' && naPromo(estado.q.pista_inteira);
-        e.textContent = s.preco ? moeda(meia ? comCupom(meiaCent(s.preco)) : promo ? promoCent(s.preco) : comCupom(centavos(s.preco))) + ' cada' + (promo ? ' 🔥' : '') : estado.carregou ? 'Valor em breve' : '…';
+        e.textContent = s.preco ? moeda(meia ? comCupom(meiaCent(s.preco), s.id) : promo ? promoCent(s.preco) : comCupom(centavos(s.preco), s.id)) + ' cada' + (promo ? ' 🔥' : '') : estado.carregou ? 'Valor em breve' : '…';
       });
       card.querySelectorAll('[data-valor]').forEach(function (e) { e.textContent = estado.q[e.dataset.valor]; });
       card.querySelectorAll('[data-d="-1"]').forEach(function (b) { b.disabled = estado.q[b.dataset.qtd] < 1; });
@@ -898,7 +902,7 @@ fbq('track', 'PageView');
     if (estado.q.pista_inteira) partes.push(estado.q.pista_inteira + 'x Setor VIP inteira' + (naPromo(estado.q.pista_inteira) ? ' (promo ' + estado.promo.pct + '% OFF)' : ''));
     if (estado.q.pista_meia) partes.push(estado.q.pista_meia + 'x Setor VIP meia');
     if (estado.q.open_inteira) partes.push(estado.q.open_inteira + 'x Open Bar');
-    if (partes.length && estado.cupom) partes.push('Cupom ' + estado.cupom.codigo + ' (' + estado.cupom.pct + '% OFF)');
+    if (partes.length && estado.cupom && (!estado.cupom.setores || inteirasPista())) partes.push('Cupom ' + estado.cupom.codigo + ' (' + estado.cupom.pct + '% OFF' + (estado.cupom.setores ? ' no Setor VIP' : '') + ')');
     $('linha-resumo').textContent = partes.length ? partes.join(' · ') : 'Escolha seus ingressos acima';
     var t = totalCent();
     $('total').textContent = total && semPreco() ? 'Em breve' : moeda(t);
