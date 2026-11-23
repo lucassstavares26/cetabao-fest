@@ -355,7 +355,9 @@ fbq('track', 'PageView');
   // Cupom: % em tudo (inteira, meia, Open Bar), igual a cupomEmCentavos do servidor. Não soma com a promo.
   // Cupom de patrocinador (URB, 23/11): vem com setores: ['pista'] e só desconta nesses setores. Sem setores = tudo.
   var cupomNo = function (id) { return !!estado.cupom && (!estado.cupom.setores || estado.cupom.setores.indexOf(id) >= 0); };
-  var comCupom = function (cent, id) { return cupomNo(id) ? Math.round(cent * (100 - estado.cupom.pct) / 100) : cent; };
+  // ATENA (23/11): pcts = % de cada setor (VIP 20, Open Bar 10). Sem pcts = o mesmo pct em tudo.
+  var pctNo = function (id) { return estado.cupom && estado.cupom.pcts && estado.cupom.pcts[id] != null ? estado.cupom.pcts[id] : estado.cupom ? estado.cupom.pct : 0; };
+  var comCupom = function (cent, id) { return cupomNo(id) ? Math.round(cent * (100 - pctNo(id)) / 100) : cent; };
   // Promo da Setor VIP (17/11): 1 por R$ 80, 2 por R$ 150 (3 ou 4: o preço do par). Igual ao servidor e à página de compra.
   var vipCent = function (n) { return n === 1 ? centavos(estado.promoVip.uma) : Math.round(centavos(estado.promoVip.duas) / 2); };
   var inteiraPistaCent = function (p) { return estado.promoVip ? vipCent(qtd.pista_inteira) : cupomNo('pista') ? comCupom(centavos(p), 'pista') : naPromo() ? Math.round(centavos(p) * (100 - estado.promo.pct) / 100) : centavos(p); };
@@ -377,7 +379,7 @@ fbq('track', 'PageView');
     var p = estado.preco.pista, o = estado.preco.open;
     var de = function (id, n) { return (COMUNIDADE || INFLU) && estado.de[id] ? '<s>de ' + moeda(centavos(estado.de[id]) * n) + '</s>' : ''; };
     // Cupom: preço cheio riscado + o cupom (cent = preço cheio de uma unidade)
-    var cup = function (cent, n, id) { return cupomNo(id) ? '<s>de ' + moeda(cent * n) + '</s> · Cupom ' + estado.cupom.codigo + ' ' + estado.cupom.pct + '% OFF' : ''; };
+    var cup = function (cent, n, id) { return cupomNo(id) ? '<s>de ' + moeda(cent * n) + '</s> · Cupom ' + estado.cupom.codigo + ' ' + pctNo(id) + '% OFF' : ''; };
     $('itens').innerHTML =
       (qtd.pista_inteira ? linha(qtd.pista_inteira, 'Setor VIP', 'Inteira', inteiraPistaCent(p || 0) * qtd.pista_inteira, !!p, estado.promoVip ? '<s>de ' + moeda(centavos(p || 0) * qtd.pista_inteira) + '</s> · Promo Setor VIP 🔥' : cupomNo('pista') ? cup(centavos(p || 0), qtd.pista_inteira, 'pista') : naPromo() ? 'Promo ' + estado.promo.pct + '% OFF' : de('pista', qtd.pista_inteira), 'pista') : '') +
       (qtd.pista_meia ? linha(qtd.pista_meia, 'Setor VIP', 'Meia', comCupom(meiaCent(p || 0), 'pista') * qtd.pista_meia, !!p, cup(meiaCent(p || 0), qtd.pista_meia, 'pista'), 'pista') : '') +
