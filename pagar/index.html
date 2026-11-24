@@ -395,7 +395,7 @@
   function ehLP(c) { return /^Lounge Premium/i.test(c.lugar || ''); }
   function montarResumo(c) {
     $('lugar').textContent = c.lugar;
-    var consumo = CONSUMO[c.categoria];
+    var consumo = c.sem_consumacao ? 0 : CONSUMO[c.categoria]; // link vendido sem consumação (24/11)
     $('lugar-info').textContent = ehLP(c) ? c.qtd + (c.qtd > 1 ? ' ingressos individuais' : ' ingresso individual') + ' · Setor Premium' : c.qtd + ' pessoas' + (consumo ? ' · ' + moeda(consumo) + ' de consumação' : '');
     $('guardado-o-que').textContent = ehLP(c) ? (c.qtd > 1 ? 'Seus ingressos estão guardados' : 'Seu ingresso está guardado') : 'Seu lugar está guardado';
     $('valor').textContent = moeda(c.valor);
