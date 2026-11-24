@@ -583,10 +583,15 @@ fbq('track', 'PageView');
     // De onde a pessoa veio (anúncio, link): vai junto pro pedido.
     if (!sessionStorage.getItem('cetabao_origem')) sessionStorage.setItem('cetabao_origem', (location.search.slice(1) || document.referrer || '').slice(0, 120));
   } catch (e) { /* sem armazenamento: segue */ }
+  var CUPOM_VIRA_AG = { GLADIADORES: 'gladiadores' };
+  var viraAg = function (c) { return Object.prototype.hasOwnProperty.call(CUPOM_VIRA_AG, c); };
   // Link de agência apoiadora (?ag=<login>, 03/11): fica guardado 30 dias neste aparelho e vai
   // junto na compra (o checkout manda). Entrou pelo link de outra agência = vale o mais recente.
   try {
-    var ag = (new URLSearchParams(location.search).get('ag') || '').trim().toLowerCase();
+    // Link de parceiro que nasceu como cupom (Lucas, 24/11): ?cupom=GLADIADORES abre o site normal (sem desconto)
+    // e marca a venda pros Gladiadores, igual a ?ag=gladiadores. A mesma lista existe em checkout/index.html.
+    var cpAg = (new URLSearchParams(location.search).get('cupom') || '').trim().toUpperCase();
+    var ag = (new URLSearchParams(location.search).get('ag') || (Object.prototype.hasOwnProperty.call(CUPOM_VIRA_AG, cpAg) ? CUPOM_VIRA_AG[cpAg] : '')).trim().toLowerCase();
     // Links das influencers Aline e Camila (Lucas, 11/11): valem só 24 h a partir do clique (clicar de novo renova).
     // As agências (EVVO) continuam 30 dias. A mesma lista existe em checkout/index.html.
     var AG_24H = ['aline', 'camila'];
@@ -600,9 +605,9 @@ fbq('track', 'PageView');
   var CUPOM = null;
   try {
     var cp = (new URLSearchParams(location.search).get('cupom') || '').trim().toUpperCase();
-    if (/^[A-Z0-9]{3,20}$/.test(cp)) localStorage.setItem('cetabao_cupom', JSON.stringify({ c: cp, ate: Date.now() + 24 * 3600000 }));
+    if (/^[A-Z0-9]{3,20}$/.test(cp) && !viraAg(cp)) localStorage.setItem('cetabao_cupom', JSON.stringify({ c: cp, ate: Date.now() + 24 * 3600000 }));
     var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null');
-    if (cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c;
+    if (cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now() && !viraAg(cg.c)) CUPOM = cg.c;
     else localStorage.removeItem('cetabao_cupom'); // venceu (ou é da versão antiga): apaga
   } catch (e) { /* sem armazenamento: segue */ }
 

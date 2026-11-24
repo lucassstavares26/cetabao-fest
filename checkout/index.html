@@ -314,12 +314,15 @@ fbq('track', 'PageView');
   // Veio do botão "Abrir no Chrome/Safari" da tela de cartão recusado (07/11): cupom e agência chegam no link.
   try {
     var cpLink = (q.get('cupom') || '').trim().toUpperCase();
+    var CUPOM_VIRA_AG = { GLADIADORES: 'gladiadores' }; // igual ao index.html (24/11): vira link de parceiro, sem desconto
+    var cpAg = Object.prototype.hasOwnProperty.call(CUPOM_VIRA_AG, cpLink) ? CUPOM_VIRA_AG[cpLink] : '';
+    if (cpAg) cpLink = '';
     if (/^[A-Z0-9]{3,20}$/.test(cpLink)) localStorage.setItem('cetabao_cupom', JSON.stringify({ c: cpLink, ate: Date.now() + 24 * 3600000 }));
-    var agLink = (q.get('ag') || '').trim().toLowerCase();
+    var agLink = (q.get('ag') || cpAg).trim().toLowerCase();
     // Aline e Camila: 24 h; agências: 30 dias (igual ao index.html)
     if (/^[a-z0-9]{2,40}$/.test(agLink)) localStorage.setItem('cetabao_agencia', JSON.stringify({ s: agLink, ate: Date.now() + (['aline', 'camila'].indexOf(agLink) >= 0 ? 24 * 3600000 : 30 * 86400000) }));
   } catch (e) { /* tudo bem */ }
-  try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && !INFLU && !SUPORTE && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now()) CUPOM = cg.c; } catch (e) { /* tudo bem */ }
+  try { var cg = JSON.parse(localStorage.getItem('cetabao_cupom') || 'null'); if (!COMUNIDADE && !INFLU && !SUPORTE && cg && /^[A-Z0-9]{3,20}$/.test(cg.c) && cg.ate > Date.now() && cg.c !== 'GLADIADORES') CUPOM = cg.c; } catch (e) { /* tudo bem */ }
   var MEIA_ESGOTADA = false; // meia-entrada da Setor VIP esgotada (Lucas, 13/11), igual à página de compra e ao servidor
   var lerQ = function (k) { var v = q.get(k); return v === null || v === '' ? 0 : Number(v); };
   var qtd = { pista_inteira: lerQ('pi'), pista_meia: lerQ('pm'), open_inteira: lerQ('oi') };
