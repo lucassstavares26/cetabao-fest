@@ -475,7 +475,8 @@ fbq('track', 'PageView');
         estado.promoVip = !COMUNIDADE && !INFLU && cfg.promo_vip && cfg.promo_vip.uma > 0 && qtd.pista_inteira > 0 ? cfg.promo_vip : null;
         // Cupom de patrocinador (URB) vale NO LUGAR da promo VIP; o cupom comum (VOLTA10) é que sai pra promo VIP.
         if (estado.promoVip && estado.cupom && estado.cupom.setores && cupomNo('pista')) estado.promoVip = null;
-        if (estado.promoVip) { estado.cupom = null; cfg.promo = null; }
+        // Cupom só de Open Bar (VOLTA10, 24/11: setores sem pista) SOMA com a promo VIP; o resto sai pra promo VIP.
+        if (estado.promoVip) { if (!(estado.cupom && estado.cupom.setores)) estado.cupom = null; cfg.promo = null; }
         estado.copo = !INFLU && cfg.copo && cfg.copo.preco > 0 ? cfg.copo.preco : null;
         if (!estado.copo) qtdCopo = 0; // copo desligado no painel: sai do pedido
         estado.lote = cfg.lote || null;

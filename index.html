@@ -673,7 +673,8 @@ fbq('track', 'PageView');
         estado.promoVip = cfg.promo_vip && cfg.promo_vip.uma > 0 ? cfg.promo_vip : null;
         // Cupom de patrocinador (URB) vale NO LUGAR da promo VIP; o cupom comum (VOLTA10) é que sai pra promo VIP.
         if (estado.promoVip && estado.cupom && estado.cupom.setores && cupomNo('pista')) estado.promoVip = null;
-        if (estado.promoVip) { estado.cupom = null; estado.promo = null; } // promo VIP não soma com cupom
+        // Cupom só de Open Bar (VOLTA10, 24/11: setores sem pista) SOMA com a promo VIP; o resto sai pra promo VIP.
+        if (estado.promoVip) { if (!(estado.cupom && estado.cupom.setores)) estado.cupom = null; estado.promo = null; } // promo VIP não soma com cupom
         if (cupomNo('pista') || MEIA_ESGOTADA || estado.promoVip) estado.q.pista_meia = 0; // link do cupom (07/11): só Setor VIP inteira, sem meia
         // promo desligou (ou pacote guardado inválido): o pacote volta a ser inteira comum da Pista
         if (estado.q.pacote && !naPromo(estado.q.pacote)) { estado.q.pista_inteira = estado.q.pacote; estado.q.pacote = 0; }
