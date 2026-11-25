@@ -119,14 +119,16 @@ fbq('track', 'PageView');
 
   /* ---------- faixa da URB (Lucas, 25/11): só no link do cupom (?cupom=URB / URBSUPORTE), em cima da compra ---------- */
   .faixa-urb {
-    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 16px;
-    margin: 0 0 34px; padding: 16px 18px; border-radius: 16px;
+    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: clamp(10px, 3.4vw, 16px);
+    margin: 0 0 34px; padding: 16px clamp(12px, 4vw, 18px); border-radius: 16px;
     background: radial-gradient(120% 140% at 0% 0%, #1d1d1d, #050505 70%); color: #fff;
     border: 2px solid var(--sol); box-shadow: 0 6px 0 var(--sol-sombra), 0 16px 30px rgba(0, 0, 0, .4);
   }
   .faixa-urb[hidden] { display: none; }
-  .faixa-urb img { display: block; width: auto; height: 62px; }
-  .faixa-urb small { display: block; font: 800 13px/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; color: var(--sol); }
+  .faixa-urb img { display: block; width: auto; height: clamp(42px, 14vw, 62px); }
+  .faixa-urb > div { min-width: 0; container-type: inline-size; }
+  /* "Patrocinadora oficial do evento" sempre numa linha (Lucas, 25/11): a letra acompanha a largura do texto (cqw), até 13px */
+  .faixa-urb small { display: block; font: 800 min(13px, 6.1cqw)/1 var(--estreita); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; color: var(--sol); }
   .faixa-urb p { margin-top: 7px; font: 400 clamp(15px, 4.4vw, 19px)/1.25 var(--placa); text-transform: uppercase; }
   .faixa-urb mark { padding: 0 5px; border-radius: 4px; background: var(--sol); color: #050505; white-space: nowrap; }
 
