@@ -37,7 +37,7 @@
   /* mapa do Setor Premium (mesmo desenho do painel) */
   .mapa-premium { padding: 12px; border-radius: 16px; border: 4px solid #5a0b10; background: radial-gradient(120% 90% at 60% 0%, #e01b24 0%, #b10f19 55%, #7d0a12 100%); }
   .mapa-grade { display: flex; gap: 10px; }
-  .mesas { display: grid; grid-template-columns: repeat(2, 30px); gap: 6px; align-self: start; }
+  .mesas { display: grid; grid-template-columns: 30px; gap: 6px; align-self: start; }
   .lounges { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; align-content: start; }
   .lugar { position: relative; display: grid; place-items: center; border: 2px solid transparent; font: 800 14px/1 var(--estreita); cursor: pointer; touch-action: manipulation; padding: 0; color: #fff; }
   .mesas .lugar { width: 30px; height: 30px; border-radius: 50%; }
@@ -203,7 +203,7 @@
 
   function montarMapa() {
     var mesas = '';
-    for (var i = 1; i <= 10; i++) mesas += botaoLugar('mesa', i + 10) + botaoLugar('mesa', i);
+    for (var i = 1; i <= 10; i++) mesas += botaoLugar('mesa', i); // 26/11: mesas só de 1 a 10
     $('mesas').innerHTML = mesas;
     // O palco ocupa o canto de cima do L (colunas 4-7, linhas 1-4); cada lounge vai na sua linha/coluna.
     $('lounges').innerHTML = '<div class="palco" aria-hidden="true">PALCO</div>' + MAPA_LOUNGES.map(function (linha, r) {
