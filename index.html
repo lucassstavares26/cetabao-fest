@@ -293,6 +293,8 @@ fbq('track', 'PageView');
   .setor:not(.setor-promo) .preco:not(.em-breve) { padding: 6px 9px 5px; border-radius: 9px; background: var(--cor-setor); color: var(--cor-preco); font: 400 clamp(16px, 4.8vw, 20px)/1 var(--placa); box-shadow: 0 2px 0 var(--cor-sombra); }
   /* Lounge e Mesas: cada opção na cor da categoria (as mesmas do mapa em /lounge/) */
   .premium-ouro { --cor-cat: #f5c518; }
+  .premium.esgotado ul { opacity: .5; margin-bottom: 0; }
+  .premium-esgotado { font: 400 clamp(18px, 5.2vw, 21px)/1 var(--placa); color: #c0392b; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
   .premium-prata { --cor-cat: #c9d1db; }
   .premium-bronze { --cor-cat: #d98c45; }
   .premium-mesa { --cor-cat: #5b8cff; }
@@ -562,7 +564,7 @@ fbq('track', 'PageView');
   // Ordem na tela: Mesa Bistrô primeiro (Lucas, 11/11: começar pelo valor menor).
   var PREMIUM = [
     { cat: 'mesa', nome: 'Mesa Bistrô', artigo: 'a', pessoas: 6, preco: 900, consumo: 150 },
-    { cat: 'ouro', nome: 'Lounge Ouro', artigo: 'o', pessoas: 10, preco: 2500, consumo: 500 },
+    { cat: 'ouro', nome: 'Lounge Ouro', artigo: 'o', pessoas: 10, preco: 2500, consumo: 500, esgotado: true }, // ESGOTADO (Lucas, 26/11) — tirar o esgotado pra voltar a vender
     { cat: 'prata', nome: 'Lounge Prata', artigo: 'o', pessoas: 10, preco: 2300, consumo: 350 }
   ];
   var premiumVendendo = false;
@@ -858,6 +860,10 @@ fbq('track', 'PageView');
         '<span class="rodape-card"><span class="tipo">Lounges e Mesa Bistrô</span><span class="abrir" data-abrir-rot></span></span>' +
       '</button>' +
       '<div class="setor-opcoes">' + PREMIUM.map(function (p) {
+        if (p.esgotado) {
+          return '<div class="premium premium-' + p.cat + ' esgotado"><div class="premium-topo"><b>' + p.nome + '</b><span class="premium-esgotado">Esgotado</span></div>' +
+            '<ul><li>👥 Para ' + p.pessoas + ' pessoas</li><li>🍻 ' + moeda(centavos(p.consumo)) + ' de consumação</li></ul></div>';
+        }
         return '<div class="premium premium-' + p.cat + '"><div class="premium-topo"><b>' + p.nome + '</b>' +
             (p.preco ? '<span class="premium-preco">' + moeda(centavos(p.preco)) + '</span>' : '') + '</div>' +
           '<ul><li>👥 Para ' + p.pessoas + ' pessoas</li><li>🍻 ' + moeda(centavos(p.consumo)) + ' de consumação</li></ul>' +

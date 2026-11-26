@@ -32,6 +32,9 @@
   .cat::before { content: ""; position: absolute; left: 12px; top: 14px; width: 14px; height: 14px; border-radius: 50%; background: var(--cor); box-shadow: 0 0 0 2px rgba(0, 0, 0, .15); }
   .cat b { display: block; font: 800 15px/1.1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; }
   .cat span { display: block; margin-top: 4px; font-size: 13.5px; color: var(--tinta-suave); }
+  .cat.esgotada { cursor: default; opacity: .6; background: #f3f3f3; }
+  .cat.esgotada b { text-decoration: line-through; }
+  .cat.esgotada span { color: #c0392b; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
   .cat[aria-pressed="true"] { border-color: var(--ceu); background: #e8eefb; box-shadow: 0 0 0 3px rgba(0, 60, 134, .12); }
 
   /* mapa do Setor Premium (mesmo desenho do painel) */
@@ -147,7 +150,7 @@
   var SUPORTE = '553531690079';
   // Mesma lista PREMIUM da página de compra (index.html) — o preço que vale vem do painel.
   var CATS = {
-    ouro: { nome: 'Lounge Ouro', tipo: 'camarote', cor: '#f5c518', preco: 2500, consumo: 500 },
+    ouro: { nome: 'Lounge Ouro', tipo: 'camarote', cor: '#f5c518', preco: 2500, consumo: 500, esgotado: true }, // ESGOTADO (Lucas, 26/11)
     prata: { nome: 'Lounge Prata', tipo: 'camarote', cor: '#c9d1db', preco: 2300, consumo: 350 },
     mesa: { nome: 'Mesa Bistrô', tipo: 'mesa', cor: '#5b8cff', preco: 900, consumo: 150 }
   };
@@ -171,14 +174,16 @@
   var $ = function (id) { return document.getElementById(id); };
   var moeda = function (v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); };
   var pedido = new URLSearchParams(location.search).get('c');
-  var estado = { cat: CATS[pedido] ? pedido : 'ouro', escolhido: null, ocupados: { camarote: [], mesa: [] }, pessoas: { camarote: 10, mesa: 6 }, vendendo: true, enviando: false };
+  var primeiraAVenda = Object.keys(CATS).filter(function (k) { return !CATS[k].esgotado; })[0] || 'ouro';
+  var estado = { cat: CATS[pedido] && !CATS[pedido].esgotado ? pedido : primeiraAVenda, escolhido: null, ocupados: { camarote: [], mesa: [] }, pessoas: { camarote: 10, mesa: 6 }, vendendo: true, enviando: false };
 
   function montarCats() {
     $('cats').innerHTML = Object.keys(CATS).map(function (k) {
       var c = CATS[k];
+      if (c.esgotado) return '<button type="button" class="cat esgotada" style="--cor:' + c.cor + '" disabled aria-disabled="true"><b>' + c.nome + '</b><span>Esgotado</span></button>';
       return '<button type="button" class="cat" data-cat="' + k + '" style="--cor:' + c.cor + '" aria-pressed="' + (k === estado.cat) + '"><b>' + c.nome + '</b><span>' + moeda(c.preco) + '</span></button>';
     }).join('');
-    $('cats').querySelectorAll('.cat').forEach(function (b) {
+    $('cats').querySelectorAll('.cat[data-cat]').forEach(function (b) {
       b.addEventListener('click', function () {
         estado.cat = b.dataset.cat;
         if (estado.escolhido && categoria(estado.escolhido) !== estado.cat) estado.escolhido = null;
