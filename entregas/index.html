@@ -43,6 +43,18 @@
   .carro .desfazer { min-width: 90px; height: 40px; background: transparent; color: var(--tinta-suave); border: 2px solid #c9d3e6; font-size: 13px; }
   .carro button:disabled { opacity: .5; }
   .vazio, .sem-chave { text-align: center; font-size: 16px; color: var(--tinta-suave); }
+  /* carro fora da lista (27/11): cadastra na hora e já marca entregue */
+  .abrir-manual { width: 100%; margin-top: 12px; height: 46px; border: 2px dashed var(--ceu); border-radius: 12px; background: #f3f7ff; color: var(--ceu); font: 800 15px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+  .manual { display: grid; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1.5px dashed #d5dcec; }
+  .manual input { width: 100%; height: 52px; padding: 0 14px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff; font: 600 18px/1.2 var(--texto); color: var(--tinta); }
+  .manual input:focus { outline: none; border-color: var(--ceu); }
+  .manual .erro input { border-color: var(--brasa); background: #fff6f6; }
+  #m-placa { text-transform: uppercase; letter-spacing: .12em; }
+  .manual .botoes { display: flex; gap: 8px; }
+  .manual .botoes button { flex: 1; height: 52px; border: 0; border-radius: 12px; font: 800 16px/1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; cursor: pointer; }
+  .manual .salvar { background: var(--sol); color: var(--engradado); box-shadow: 0 4px 0 var(--sol-sombra); }
+  .manual .cancelar { flex: 0 0 110px !important; background: transparent; color: var(--tinta-suave); border: 2px solid #c9d3e6 !important; }
+  .ok-msg { padding: 12px 14px; border-radius: 14px; background: var(--verde); color: #fff; font: 800 17px/1.25 var(--estreita); text-align: center; box-shadow: 0 4px 0 var(--verde-escuro); }
   .problema { padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
 </style>
 </head>
@@ -66,8 +78,16 @@
       <button type="button" data-f="falta" aria-pressed="false">Falta entregar</button>
       <button type="button" data-f="entregue" aria-pressed="false">Entregues</button>
     </div>
+    <button type="button" class="abrir-manual" id="abrir-manual">+ Carro fora da lista</button>
+    <form class="manual" id="manual" novalidate hidden>
+      <div id="mc-nome"><label class="rot" for="m-nome">Nome</label><input id="m-nome" type="text" autocomplete="off" autocapitalize="words" placeholder="Nome da pessoa" maxlength="80"></div>
+      <div id="mc-placa"><label class="rot" for="m-placa">Placa</label><input id="m-placa" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABC1D23" maxlength="8"></div>
+      <div id="mc-whatsapp"><label class="rot" for="m-whatsapp">WhatsApp (opcional)</label><input id="m-whatsapp" type="tel" inputmode="numeric" autocomplete="off" placeholder="(35) 99999-9999" maxlength="16"></div>
+      <div class="botoes"><button type="button" class="cancelar" id="m-cancelar">Cancelar</button><button type="submit" class="salvar" id="m-salvar">Salvar e entregar</button></div>
+    </form>
   </section>
 
+  <p class="ok-msg" id="ok-msg" hidden></p>
   <p class="problema" id="problema" hidden></p>
   <div class="lista" id="lista"><p class="vazio">Carregando…</p></div>
 </main>
@@ -148,7 +168,58 @@
       .then(function () { delete salvando[placa]; desenhar(); });
   });
 
-  $('busca').addEventListener('input', desenhar);
+  // ---------- carro fora da lista: cadastra e já marca entregue
+  var digitos = function (v) { var d = String(v).replace(/\D/g, ''); if (d.length > 11 && d.indexOf('55') === 0) d = d.slice(2); return d.slice(0, 11); };
+  var mascara = function (d) {
+    return d.length <= 2 ? (d.length ? '(' + d : '') : d.length <= 6 ? '(' + d.slice(0, 2) + ') ' + d.slice(2)
+      : d.length <= 10 ? '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6) : '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  };
+  function okMsg(t) { $('ok-msg').textContent = t; $('ok-msg').hidden = !t; }
+  function abrirManual(abrir) {
+    $('manual').hidden = !abrir; $('abrir-manual').hidden = abrir;
+    if (abrir) {
+      var q = $('busca').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(q)) $('m-placa').value = q; // já digitou a placa na busca
+      else if ($('busca').value.trim() && !$('m-nome').value) $('m-nome').value = $('busca').value.trim();
+      $('m-nome').focus();
+    }
+  }
+  $('abrir-manual').addEventListener('click', function () { okMsg(''); abrirManual(true); });
+  $('m-cancelar').addEventListener('click', function () { $('manual').reset(); abrirManual(false); });
+  $('m-placa').addEventListener('input', function (e) { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 8); $('mc-placa').classList.remove('erro'); });
+  $('m-nome').addEventListener('input', function () { $('mc-nome').classList.remove('erro'); });
+  $('m-whatsapp').addEventListener('input', function (e) { e.target.value = mascara(digitos(e.target.value)); $('mc-whatsapp').classList.remove('erro'); });
+  $('manual').addEventListener('submit', function (e) {
+    e.preventDefault();
+    problema(''); okMsg('');
+    var nome = $('m-nome').value.trim(), placa = $('m-placa').value.replace(/-/g, ''), zap = digitos($('m-whatsapp').value);
+    var ok = true;
+    if (nome.length < 2) { $('mc-nome').classList.add('erro'); ok = false; }
+    if (!/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/.test(placa)) { $('mc-placa').classList.add('erro'); ok = false; }
+    if (zap && zap.length < 10) { $('mc-whatsapp').classList.add('erro'); ok = false; }
+    if (!ok) { problema('Confira os campos em vermelho. Placa: ABC1234 ou ABC1D23.'); return; }
+    var b = $('m-salvar'); b.disabled = true; b.textContent = 'Salvando…';
+    fetch(API + '/api/pitstop/entregas', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ k: K, acao: 'manual', nome: nome, placa: placa, whatsapp: zap }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw j; return j; }); })
+      .then(function (j) {
+        var c = carros.find(function (x) { return x.placa === j.placa; });
+        if (!c) { c = { nome: j.carro ? j.carro.nome : nome, placa: j.placa, whatsapp: j.carro ? j.carro.whatsapp : '' }; carros.push(c); }
+        c.entregue_em = j.entregue_em;
+        if (j.ja) problema('Atenção: o ingresso de ' + c.nome + ' (' + mostraPlaca(c.placa) + ') JÁ tinha sido entregue (' + quando(j.entregue_em) + ').');
+        else okMsg('✓ ' + c.nome + ' · ' + mostraPlaca(c.placa) + (j.ja_na_lista ? ' já estava na lista: ingresso entregue.' : ' cadastrado e ingresso entregue.'));
+        $('manual').reset(); abrirManual(false);
+        $('busca').value = c.placa;
+        desenhar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
+      .catch(function (j) {
+        if (j && j.campo) $('mc-' + j.campo).classList.add('erro');
+        problema((j && j.erro) || 'Não deu pra salvar. Confira a internet e toque de novo.');
+      })
+      .then(function () { b.disabled = false; b.textContent = 'Salvar e entregar'; });
+  });
+
+  $('busca').addEventListener('input', function () { okMsg(''); desenhar(); });
   document.querySelectorAll('.filtros button').forEach(function (b) {
     b.addEventListener('click', function () {
       filtro = b.dataset.f;
