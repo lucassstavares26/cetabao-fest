@@ -131,7 +131,7 @@
       return semAcento(c.nome).indexOf(q) >= 0 || (qPlaca && c.placa.indexOf(qPlaca) >= 0) || (c.whatsapp && c.whatsapp.replace(/\D/g, '').slice(-4) === q.replace(/\D/g, ''));
     });
     if (!lista.length) { $('lista').innerHTML = '<p class="vazio">' + (q ? 'Ninguém com esse nome ou placa na lista de adesivados.' : 'Nada aqui.') + '</p>'; return; }
-    $('lista').innerHTML = lista.slice(0, 80).map(function (c) {
+    $('lista').innerHTML = lista.map(function (c) {
       var ocupado = salvando[c.placa] ? ' disabled' : '';
       return '<div class="carro' + (c.entregue_em ? ' entregue' : '') + '">' +
         '<div class="info"><p class="nome">' + esc(c.nome) + '</p>' +
@@ -141,7 +141,7 @@
           ? '<button type="button" class="desfazer" data-placa="' + c.placa + '" data-acao="desfazer"' + ocupado + '>Desfazer</button>'
           : '<button type="button" class="entregar" data-placa="' + c.placa + '" data-acao="entregar"' + ocupado + '>' + (salvando[c.placa] ? 'Salvando…' : 'Ingresso<br>entregue') + '</button>') +
         '</div>';
-    }).join('') + (lista.length > 80 ? '<p class="vazio">Mostrando 80 de ' + lista.length + '. Digite o nome ou a placa pra achar.</p>' : '');
+    }).join(''); // mostra todos (27/11: são ~170, cabe tranquilo)
   }
 
   function carregar() {
