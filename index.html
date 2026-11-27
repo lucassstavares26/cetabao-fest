@@ -277,6 +277,10 @@ fbq('track', 'PageView');
   .copo-comprar:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--sol-sombra); }
   /* copo recortado (sem fundo), girando: frente → vira → verso → vira */
   .copo-card .copo-giro { width: 64px; } /* copo girando: estilo.css */
+  /* Estacionamento (27/11): mesmo card do copo, com a placa azul de "P" no lugar do copo */
+  .setores .setor.setor-estac { background: #eef4ff; border-color: var(--ceu); }
+  .copo-card .placa-p { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 14px; background: var(--ceu); border: 3px solid #fff; box-shadow: 0 0 0 2px var(--ceu); color: #fff; font: 400 36px/1 var(--placa); }
+  .setor-estac .copo-pix { color: var(--ceu); }
 
   /* faixa fina com a cor do setor, do lado esquerdo */
   .setor:not(.setor-promo) .setor-topo { padding: 16px 16px 14px 16px; gap: 5px 12px; }
@@ -693,6 +697,7 @@ fbq('track', 'PageView');
         });
         estado.lote = cfg.lote || null;
         estado.copo = cfg.copo && cfg.copo.preco > 0 ? cfg.copo.preco : null;
+        estado.estacionamento = cfg.estacionamento && cfg.estacionamento.preco > 0 ? cfg.estacionamento.preco : null; // 27/11
         estado.vendendo = !!cfg.vendendo;
         estado.cupom = cfg.cupom && cfg.cupom.pct > 0 ? cfg.cupom : null;
         estado.promo = !estado.cupom && cfg.promo && cfg.promo.pct > 0 ? cfg.promo : null; // cupom não soma com a promo
@@ -809,13 +814,35 @@ fbq('track', 'PageView');
     return copo;
   }
 
+  // Estacionamento (Lucas, 27/11): compra em /estacionamento/, só Pix, R$ 50 a vaga. Fica em cima do copo.
+  function cartaoEstacionamento() {
+    if (!estado.estacionamento || !estado.vendendo) return null;
+    var c = document.createElement('div');
+    c.className = 'setor setor-copo setor-estac expandido';
+    c.dataset.setor = 'estacionamento';
+    c.innerHTML =
+      '<div class="setor-topo"><strong>Estacionamento</strong><span class="preco">' + moeda(centavos(estado.estacionamento)) + '</span></div>' +
+      '<div class="copo-card">' +
+        '<span class="placa-p" aria-hidden="true">P</span>' +
+        '<div class="copo-info">' +
+          '<p class="copo-txt">Garanta sua vaga no estacionamento do evento. Você recebe um QR Code pra mostrar na entrada.</p>' +
+          '<p class="copo-pix">Pagamento só no Pix · por carro</p>' +
+          '<a class="copo-comprar" href="/estacionamento/">Comprar vaga</a>' +
+        '</div>' +
+      '</div>';
+    return c;
+  }
+
   function montar() {
     var box = $('setores');
     box.innerHTML = '';
     var promo = cartaoPromo();
     if (promo) box.appendChild(promo);
     estado.setores.forEach(function (s) {
-      if (s.id === 'pista') { var copo = cartaoCopo(); if (copo) box.appendChild(copo); }
+      if (s.id === 'pista') {
+        var estac = cartaoEstacionamento(); if (estac) box.appendChild(estac); // 27/11: em cima do copo
+        var copo = cartaoCopo(); if (copo) box.appendChild(copo);
+      }
       var esgotado = s.restam === 0;
       var card = document.createElement('div');
       card.className = 'setor setor-' + s.id + (esgotado ? ' esgotado' : ' expandido');

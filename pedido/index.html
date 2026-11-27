@@ -144,7 +144,7 @@
     </ul>
     <!-- copo sem ingresso no nosso site (09/11): QR Code pra retirar o copo no evento -->
     <div class="cartao" id="copo-qr" hidden>
-      <h2>QR Code de retirada</h2>
+      <h2 id="copo-qr-titulo">QR Code de retirada</h2>
       <img class="pix-qr" id="copo-qr-img" width="240" height="240" alt="QR Code de retirada do copo">
       <p id="copo-qr-texto"></p>
     </div>
@@ -214,6 +214,15 @@
           $('pix-rodape').textContent = 'Esta página atualiza sozinha. A confirmação também chega no seu e-mail.';
           $('expirou-texto').textContent = 'Este Pix venceu e nada foi cobrado. Se quiser, é só fazer um pedido novo.';
           $('expirou-link').href = '/copo/';
+          $('pendente-texto').textContent = 'Pix costuma cair em segundos. Esta página atualiza sozinha.';
+        }
+        // Estacionamento (página /estacionamento/, 27/11): só Pix, sem ingresso neste pedido.
+        if (p.estacionamento) {
+          $('titulo').innerHTML = 'Seu <span>estacionamento</span>';
+          $('pix-pronto').textContent = 'Pronto: a vaga fica garantida na hora.';
+          $('pix-rodape').textContent = 'Esta página atualiza sozinha. A confirmação também chega no seu e-mail.';
+          $('expirou-texto').textContent = 'Este Pix venceu e nada foi cobrado. Se quiser, é só fazer um pedido novo.';
+          $('expirou-link').href = '/estacionamento/';
           $('pendente-texto').textContent = 'Pix costuma cair em segundos. Esta página atualiza sozinha.';
         }
         // Open Bar das influenciadoras (10/11): comprar de novo volta pro link delas (preço de 50%), não pro site.
@@ -287,6 +296,23 @@
 
   function pago(p) {
     if (pixRelogio) clearInterval(pixRelogio);
+    if (p.estacionamento) {
+      // Estacionamento (27/11): nada de ingresso, PDF nem Purchase. QR pra mostrar na entrada do estacionamento.
+      var uma = p.estacionamento === 1;
+      $('pago-titulo').textContent = uma ? 'Vaga garantida!' : 'Vagas garantidas!';
+      $('pago-texto').textContent = 'No dia do evento, mostre o QR Code abaixo na entrada do estacionamento. Ele também foi pro seu e-mail. O estacionamento não inclui ingresso do evento.';
+      if (p.qr_estacionamento) {
+        $('copo-qr-titulo').textContent = 'QR Code do estacionamento';
+        $('copo-qr-img').src = p.qr_estacionamento;
+        $('copo-qr-img').alt = 'QR Code do estacionamento';
+        $('copo-qr-texto').textContent = '🚗 ' + (uma ? '1 vaga' : p.estacionamento + ' vagas') + ' · Pedido ' + p.codigo;
+        $('copo-qr').hidden = false;
+      }
+      $('instrucoes').hidden = true;
+      $('ingressos').innerHTML = '';
+      mostrar('pago');
+      return;
+    }
     if (p.so_copo) {
       // Pedido só de copo: nada de ingresso, PDF nem Purchase (copo sozinho não é compra de ingresso).
       var um = p.copo === 1;
