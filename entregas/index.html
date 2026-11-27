@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Entrega Pit Stop · Cê Tá Bão Fest</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#003c86">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cetabao-painel.vercel.app">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/estilo.css">
+<script src="/sem-zoom.js"></script>
+<style>
+  html, body { overflow-x: hidden; overflow-x: clip; }
+  .barra-topo { display: flex; align-items: center; gap: 10px; padding: 12px var(--lado); background: var(--ceu-fundo); border-bottom: 1px solid var(--vidro-borda); }
+  .barra-topo img { width: 54px; }
+  .barra-topo span { font: 800 12px/1 var(--estreita); letter-spacing: .2em; text-transform: uppercase; color: var(--ceu-texto); }
+  .barra-topo b { margin-left: auto; font: 800 15px/1 var(--estreita); letter-spacing: .04em; text-transform: uppercase; color: var(--sol); text-align: right; }
+  .xadrez { height: 14px; background: repeating-conic-gradient(#0b1d45 0 25%, #fff 0 50%) 0 0 / 14px 14px; }
+  .conteudo { padding: 22px var(--lado) 44px; display: grid; gap: 16px; text-align: left; }
+  h1 { font-size: clamp(28px, 8.4vw, 36px); text-align: center; }
+  .bloco { padding: 18px 16px; border-radius: 20px; background: #fff; color: var(--tinta); box-shadow: 0 8px 0 var(--engradado-escuro), 0 22px 44px rgba(0, 0, 0, .28); }
+  .rot { display: block; margin-bottom: 7px; font: 800 12px/1 var(--estreita); letter-spacing: .18em; text-transform: uppercase; color: var(--tinta); }
+  #busca { width: 100%; height: 56px; padding: 0 14px; border: 2px solid var(--campo-borda); border-radius: 12px; background: #fff; font: 600 19px/1.2 var(--texto); color: var(--tinta); }
+  #busca::placeholder { color: #9aa6c2; font-weight: 500; }
+  #busca:focus { outline: none; border-color: var(--ceu); box-shadow: 0 0 0 4px rgba(0, 60, 134, .12); }
+  .filtros { display: flex; gap: 8px; margin-top: 12px; }
+  .filtros button { flex: 1; height: 40px; border: 2px solid var(--campo-borda); border-radius: 10px; background: #fff; font: 800 13px/1 var(--estreita); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-suave); cursor: pointer; }
+  .filtros button[aria-pressed="true"] { border-color: var(--ceu); background: #e8eefb; color: var(--ceu); }
+  .lista { display: grid; gap: 10px; }
+  .carro { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 16px; background: #fff; color: var(--tinta); border: 3px solid transparent; box-shadow: 0 4px 0 var(--engradado-escuro); }
+  .carro.entregue { background: #eefaf2; border-color: var(--verde); }
+  .carro .info { flex: 1; min-width: 0; }
+  .carro .nome { font: 800 18px/1.15 var(--estreita); letter-spacing: .02em; text-transform: uppercase; overflow-wrap: anywhere; }
+  .carro .placa { display: inline-block; margin-top: 6px; padding: 4px 8px; border-radius: 6px; border: 2px solid #1b2a4a; background: #fff; font: 800 16px/1 var(--estreita); letter-spacing: .14em; }
+  .carro .zap { margin-left: 8px; font-size: 13px; color: var(--tinta-suave); }
+  .carro .quando { margin-top: 6px; font: 800 13px/1.2 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--verde-escuro); }
+  .carro button { flex: none; min-width: 112px; height: 52px; padding: 0 12px; border: 0; border-radius: 12px; font: 800 15px/1.05 var(--estreita); letter-spacing: .04em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
+  .carro .entregar { background: var(--sol); color: var(--engradado); box-shadow: 0 4px 0 var(--sol-sombra); }
+  .carro .desfazer { min-width: 90px; height: 40px; background: transparent; color: var(--tinta-suave); border: 2px solid #c9d3e6; font-size: 13px; }
+  .carro button:disabled { opacity: .5; }
+  .vazio, .sem-chave { text-align: center; font-size: 16px; color: var(--tinta-suave); }
+  .problema { padding: 12px 14px; border-radius: 14px; background: #fff0f0; border: 2px solid #f5b5b5; color: #8f0f15; font-weight: 600; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<header class="barra-topo">
+  <img src="/img/logo.webp" alt="Cê Tá Bão Fest" width="400" height="420">
+  <span>Pit Stop</span>
+  <b id="total"></b>
+</header>
+<div class="xadrez" aria-hidden="true"></div>
+
+<main class="conteudo">
+  <h1>Entrega de ingressos</h1>
+
+  <section class="bloco" id="area">
+    <label class="rot" for="busca">Nome ou placa</label>
+    <input id="busca" type="search" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ex.: Maria ou ABC1D23">
+    <div class="filtros" role="group" aria-label="Filtro">
+      <button type="button" data-f="todos" aria-pressed="true">Todos</button>
+      <button type="button" data-f="falta" aria-pressed="false">Falta entregar</button>
+      <button type="button" data-f="entregue" aria-pressed="false">Entregues</button>
+    </div>
+  </section>
+
+  <p class="problema" id="problema" hidden></p>
+  <div class="lista" id="lista"><p class="vazio">Carregando…</p></div>
+</main>
+
+<script>
+(function () {
+  var API = 'https://cetabao-painel.vercel.app';
+  var $ = function (id) { return document.getElementById(id); };
+
+  // Mesma chave do link /adesivar/ (?k=…): fica guardada neste celular.
+  var K = '';
+  try {
+    var daUrl = new URLSearchParams(location.search).get('k');
+    if (daUrl) localStorage.setItem('cetabao_adesivar_k', daUrl);
+    K = daUrl || localStorage.getItem('cetabao_adesivar_k') || '';
+  } catch (e) { K = new URLSearchParams(location.search).get('k') || ''; }
+  if (!K) {
+    $('area').innerHTML = '<p class="sem-chave">Abra o link completo que o Lucas mandou.</p>';
+    $('lista').innerHTML = '';
+    return;
+  }
+
+  var carros = [];
+  var filtro = 'todos';
+  var salvando = {};
+  var mostraPlaca = function (p) { return /^[A-Z]{3}[0-9]{4}$/.test(p) ? p.slice(0, 3) + '-' + p.slice(3) : p; };
+  var semAcento = function (t) { return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase(); };
+  var esc = function (t) { return String(t || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var quando = function (iso) { return new Date(iso).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(', ', ' às '); };
+  function problema(msg) { $('problema').textContent = msg; $('problema').hidden = !msg; }
+
+  function desenhar() {
+    var feitos = carros.filter(function (c) { return c.entregue_em; }).length;
+    $('total').textContent = feitos + ' de ' + carros.length + ' entregues';
+    var q = semAcento($('busca').value).trim();
+    var qPlaca = q.replace(/[^A-Z0-9]/g, '');
+    var lista = carros.filter(function (c) {
+      if (filtro === 'falta' && c.entregue_em) return false;
+      if (filtro === 'entregue' && !c.entregue_em) return false;
+      if (!q) return true;
+      return semAcento(c.nome).indexOf(q) >= 0 || (qPlaca && c.placa.indexOf(qPlaca) >= 0) || (c.whatsapp && c.whatsapp.replace(/\D/g, '').slice(-4) === q.replace(/\D/g, ''));
+    });
+    if (!lista.length) { $('lista').innerHTML = '<p class="vazio">' + (q ? 'Ninguém com esse nome ou placa na lista de adesivados.' : 'Nada aqui.') + '</p>'; return; }
+    $('lista').innerHTML = lista.slice(0, 80).map(function (c) {
+      var ocupado = salvando[c.placa] ? ' disabled' : '';
+      return '<div class="carro' + (c.entregue_em ? ' entregue' : '') + '">' +
+        '<div class="info"><p class="nome">' + esc(c.nome) + '</p>' +
+        '<span class="placa">' + esc(mostraPlaca(c.placa)) + '</span>' + (c.whatsapp ? '<span class="zap">' + esc(c.whatsapp) + '</span>' : '') +
+        (c.entregue_em ? '<p class="quando">✓ Ingresso entregue · ' + quando(c.entregue_em) + '</p>' : '') + '</div>' +
+        (c.entregue_em
+          ? '<button type="button" class="desfazer" data-placa="' + c.placa + '" data-acao="desfazer"' + ocupado + '>Desfazer</button>'
+          : '<button type="button" class="entregar" data-placa="' + c.placa + '" data-acao="entregar"' + ocupado + '>' + (salvando[c.placa] ? 'Salvando…' : 'Ingresso<br>entregue') + '</button>') +
+        '</div>';
+    }).join('') + (lista.length > 80 ? '<p class="vazio">Mostrando 80 de ' + lista.length + '. Digite o nome ou a placa pra achar.</p>' : '');
+  }
+
+  function carregar() {
+    fetch(API + '/api/pitstop/entregas?k=' + encodeURIComponent(K), { cache: 'no-store' })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw j; return j; }); })
+      .then(function (j) { carros = j.carros || []; problema(''); desenhar(); })
+      .catch(function (j) { problema((j && j.erro) || 'Sem conexão. Confira a internet.'); if (!carros.length) $('lista').innerHTML = ''; });
+  }
+
+  $('lista').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-placa]');
+    if (!b) return;
+    var placa = b.dataset.placa, acao = b.dataset.acao;
+    var c = carros.find(function (x) { return x.placa === placa; });
+    if (acao === 'desfazer' && !confirm('Desfazer a entrega de ' + c.nome + ' (' + mostraPlaca(placa) + ')?')) return;
+    salvando[placa] = true; desenhar();
+    fetch(API + '/api/pitstop/entregas', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ k: K, placa: placa, acao: acao }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw j; return j; }); })
+      .then(function (j) {
+        c.entregue_em = j.entregue_em;
+        problema(j.ja ? 'Atenção: o ingresso de ' + c.nome + ' JÁ tinha sido entregue (' + quando(j.entregue_em) + ').' : '');
+      })
+      .catch(function (j) { problema((j && j.erro) || 'Não deu pra salvar. Confira a internet e toque de novo.'); })
+      .then(function () { delete salvando[placa]; desenhar(); });
+  });
+
+  $('busca').addEventListener('input', desenhar);
+  document.querySelectorAll('.filtros button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      filtro = b.dataset.f;
+      document.querySelectorAll('.filtros button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      desenhar();
+    });
+  });
+  // Outra pessoa pode estar dando baixa em outro celular: atualiza a cada 20 s.
+  setInterval(function () { if (document.visibilityState === 'visible' && !Object.keys(salvando).length) carregar(); }, 20000);
+  carregar();
+})();
+</script>
+</body>
+</html>
