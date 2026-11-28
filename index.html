@@ -300,6 +300,7 @@ fbq('track', 'PageView');
   .premium.esgotado ul { opacity: .5; margin-bottom: 0; }
   .premium-esgotado { font: 400 clamp(18px, 5.2vw, 21px)/1 var(--placa); color: #c0392b; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
   .premium-prata { --cor-cat: #c9d1db; }
+  .premium-ultimas { margin: 0 0 10px; font: 800 13px/1 var(--estreita); letter-spacing: .06em; text-transform: uppercase; color: var(--brasa); }
   .premium-bronze { --cor-cat: #d98c45; }
   .premium-mesa { --cor-cat: #5b8cff; }
   .setor-camarote .premium-preco { padding: 5px 8px 4px; border-radius: 8px; background: var(--brasa); color: #fff; font: 400 clamp(14px, 4.2vw, 17px)/1 var(--placa); box-shadow: 0 2px 0 var(--engradado-escuro); }
@@ -567,9 +568,9 @@ fbq('track', 'PageView');
   // A consumação também está em lounge/ e pagar/ — mudou aqui, muda lá.
   // Ordem na tela: Mesa Bistrô primeiro (Lucas, 11/11: começar pelo valor menor).
   var PREMIUM = [
-    { cat: 'mesa', nome: 'Mesa Bistrô', artigo: 'a', pessoas: 6, preco: 900, consumo: 150 },
+    { cat: 'mesa', nome: 'Mesa Bistrô', artigo: 'a', pessoas: 6, preco: 900, consumo: 150, ultimas: '🔥 Últimas 5' }, // aviso fixo (Lucas, 28/11) — apagar o ultimas pra tirar
     { cat: 'ouro', nome: 'Lounge Ouro', artigo: 'o', pessoas: 10, preco: 2500, consumo: 500, esgotado: true }, // ESGOTADO (Lucas, 26/11) — tirar o esgotado pra voltar a vender
-    { cat: 'prata', nome: 'Lounge Prata', artigo: 'o', pessoas: 10, preco: 2300, consumo: 350 }
+    { cat: 'prata', nome: 'Lounge Prata', artigo: 'o', pessoas: 10, preco: 2300, consumo: 350, ultimas: '🔥 Últimos 2' } // aviso fixo (Lucas, 28/11)
   ];
   var premiumVendendo = false;
   // Setores vendidos no site. Preço, lote e estoque vêm do painel (/api/site/publico).
@@ -894,6 +895,7 @@ fbq('track', 'PageView');
         return '<div class="premium premium-' + p.cat + '"><div class="premium-topo"><b>' + p.nome + '</b>' +
             (p.preco ? '<span class="premium-preco">' + moeda(centavos(p.preco)) + '</span>' : '') + '</div>' +
           '<ul><li>👥 Para ' + p.pessoas + ' pessoas</li><li>🍻 ' + moeda(centavos(p.consumo)) + ' de consumação</li></ul>' +
+          (p.ultimas ? '<p class="premium-ultimas">' + p.ultimas + '</p>' : '') +
           (premiumVendendo ? '<a class="btn btn-sol" href="/lounge/?c=' + p.cat + '">Comprar agora</a>' : '') +
           '<a class="btn btn-zap' + (premiumVendendo ? ' secundario' : '') + '" target="_blank" rel="noopener" href="' + reservar(p) + '"><svg aria-hidden="true"><use href="#i-zap"/></svg><span>Reservar no WhatsApp</span></a></div>';
       }).join('') + '</div>';
