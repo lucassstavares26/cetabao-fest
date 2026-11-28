@@ -584,7 +584,7 @@ fbq('track', 'PageView');
   // muda pro 3º"). Enquanto carrega, o cartão mostra "…".
   var PARCELAS = 4;
   var QTD_MAX = 10; // por pedido, somando os setores
-  var MEIA_ESGOTADA = false; // meia-entrada da Setor VIP esgotada (Lucas, 13/11). Igual ao servidor (MEIA_PISTA_ESGOTADA) e ao checkout.
+  var MEIA_ESGOTADA = true; // meia-entrada da Setor VIP fora (Lucas, 13/11; desde 28/11 a linha some do card). Igual ao servidor (MEIA_PISTA_ESGOTADA) e ao checkout.
   var PISTA_MAX = 4; // Setor VIP: no máximo 4 por compra, somando inteira, meia e pacote da promo (Lucas, 23/10). Igual ao servidor.
   /* ================================================ */
 
@@ -639,7 +639,7 @@ fbq('track', 'PageView');
     else localStorage.removeItem('cetabao_cupom'); // venceu (ou é da versão antiga): apaga
   } catch (e) { /* sem armazenamento: segue */ }
   // Faixa da URB (25/11): só pra quem veio pelo link da URB (o do suporte também).
-  if (CUPOM === 'URB' || CUPOM === 'URBSUPORTE') document.getElementById('faixa-urb').hidden = false;
+  // Faixa da URB desligada em 28/11 (cupom URB saiu). Religar: if (CUPOM === 'URB' || CUPOM === 'URBSUPORTE') document.getElementById('faixa-urb').hidden = false;
 
   // ---------- dinheiro: sempre em centavos inteiros (regra igual à do servidor)
   var centavos = function (reais) { return Math.round(reais * 100); };
@@ -860,13 +860,13 @@ fbq('track', 'PageView');
           (s.id === 'pista' && s.preco && estado.promoVip && !esgotado ? '<div class="promo-vip"><b>🔥 Promoção</b>' +
             '<span><em>1 ingresso</em><s>' + moeda(centavos(s.preco)) + '</s><strong>' + moeda(centavos(estado.promoVip.uma)) + '</strong></span>' +
             '<span><em>2 ingressos</em><s>' + moeda(centavos(s.preco) * 2) + '</s><strong>' + moeda(centavos(estado.promoVip.duas)) + '</strong></span></div>' : '') +
-          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + ((cupomNo(s.id) || (estado.promoVip && s.id === 'pista')) && s.meia ? 'Inteira' : s.tipo) + '</span>' : '') +
+          '<span class="rodape-card">' + (s.tipo ? '<span class="tipo">' + ((cupomNo(s.id) || ((estado.promoVip || MEIA_ESGOTADA) && s.id === 'pista')) && s.meia ? 'Inteira' : s.tipo) + '</span>' : '') +
             '</span>' +
           (!esgotado && s.restam !== null && s.restam <= 20 ? '<span class="resta">🔥 últimos ' + s.restam + '</span>' : '') +
         '</div>' +
         (esgotado ? '' :
           '<div class="setor-opcoes">' +
-            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (cupomNo('pista') || estado.promoVip ? '' : MEIA_ESGOTADA ? '<div class="opcao esgotada"><div><b>Meia-entrada</b></div><em>Esgotado</em></div>' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
+            (s.id === 'pista' ? linhaQtd('pista_inteira', 'Inteira') + (cupomNo('pista') || estado.promoVip || MEIA_ESGOTADA ? '' : linhaQtd('pista_meia', 'Meia-entrada')) : linhaQtd('open_inteira', 'Inteira')) +
             (s.meia && !cupomNo('pista') && !estado.promoVip && !MEIA_ESGOTADA ? '<p class="nota-meia" data-nota-meia hidden><strong>Meia:</strong> estudante, 60+, PcD e jovem de baixa renda (ID Jovem). Permitido apenas acima de 16 anos. Documento obrigatório na entrada.</p>' : '') +
             (s.id === 'pista' ? '<p class="nota-meia" data-nota-limite hidden><strong>Limite:</strong> até ' + PISTA_MAX + ' ingressos da Setor VIP por compra.</p>' : '') +
           '</div>');
